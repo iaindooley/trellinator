@@ -17,6 +17,7 @@ var MY_ID_KEY_ = "MY_ID";
 var MY_USERNAME_KEY_ = "MY_USERNAME";
 var FUNCTION_CONTINUE_INIT_ = "continueInitialization";
 var ADD_MEM_TO_BRD_ = "addMemberToBoard";
+var CRET_BRD_ = "createBoard";
 //-------------------------------------------------------------------
 //TriggerLib Params
 //////////////////////////////////////////////////////////////////////////

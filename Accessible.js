@@ -125,10 +125,16 @@ function doPosting(notifText)
   //"addMemberToBoard"
   if( actionType == ADD_MEM_TO_BRD_ && notifData.model.id == actionData.member.id)
   {
-    writeInfo_("Calling add menber to board...process");
+    writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
   }
-  //board level notification
+  //"createBoard"
+  else if(actionType == CRET_BRD_ && notifData.model.id == actionData.idMemberCreator)
+  {
+    writeInfo_("Calling board creation...process");
+    createNewBoardSheet_(actionData);
+  }
+  //all others board level notification
   else if(notifData.model.id == actionData.data.board.id)
   {
     writeInfo_("Calling board level notification...process");

@@ -104,7 +104,7 @@ function deleteWebhooks(boardID)
 // This GET is needed for Trello to make sure that the Web-app exists:
 function doGetting(e) 
 {
-  var out = HtmlService.createHtmlOutput("<p>Yes, it is Not Butler world!</p>");
+  var out = HtmlService.createHtmlOutput("<p>Yes, it is Trellinator world!</p>");
   //writeInfo_("doGet running....");                          
   return out;
 }  
@@ -121,29 +121,29 @@ function doPosting(notifText)
   var actionID = actionData.id;
   //var successFlag = false;
   writeInfo_("Examining Notification: [" + actionID + "-" + actionType + "]");
-
+  
   //"addMemberToBoard"
   if( actionType == ADD_MEM_TO_BRD_ && notifData.model.id == actionData.member.id)
   {
-    writeInfo_("Calling add member to board...process");
+    //writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
   }
   //"createBoard"
   else if(actionType == CRET_BRD_ && notifData.model.id == actionData.idMemberCreator)
   {
-    writeInfo_("Calling board creation...process");
+    //writeInfo_("Calling board creation...process");
     createNewBoardSheet_(actionData);
   }
   //all others board level notification
   else if(notifData.model.id == actionData.data.board.id)
   {
-    writeInfo_("Calling board level notification...process");
+    writeInfo_("Yes, this is a board level notification...");
     executeNotificationCommand_(notifData);
   }
   else
   {
     //ignore    
-    writeInfo_("Notification: [" + actionType + "-" + actionID + "] ignored.");
+    writeInfo_("Notification: [" + actionType + "-" + actionID + "] ignored (being not at the board level).");
   }
   var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")
   return postOut;

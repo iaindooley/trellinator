@@ -41,6 +41,7 @@ function processQueue()
       //exit if exceeding time limit
       if(triggerIsTimeLimitApproaching_(currTime))
       {
+        writeInfo_("time limit approaching...for queue processing...");
         if(i < qLength)//still remaining
         {
           nextMinute();
@@ -93,22 +94,22 @@ function nextMinute()
   //writeInfo_(arguments.callee.name);
   var funcName = PROCESS_QUEUE_FUNC_NAME_;
   //remove previously created one-off triggers every..6..hours
-  var currTime = (new Date()).valueOf();
-  Utilities.sleep(5);
-  var actionTime = PropertiesService.getDocumentProperties().getProperty(KEY_ACTION_TIME);
-  if(actionTime != null && parseInt(actionTime) < currTime)
-  {
-    triggerCreateSchedule_(funcName, 5);
-    actionTime = currTime + (1000 * 60 * 60 * 6);
-    Utilities.sleep(5);
-    PropertiesService.getDocumentProperties().setProperty(KEY_ACTION_TIME, actionTime);
-  }
+  //var currTime = (new Date()).valueOf();
+  //Utilities.sleep(5);
+  //var actionTime = PropertiesService.getDocumentProperties().getProperty(KEY_ACTION_TIME);
+//  if(actionTime != null && parseInt(actionTime) < currTime)
+//  {
+  triggerCreateSchedule_(funcName, 5);//has embedded removal for all triggers for this function
+//    actionTime = currTime + (1000 * 60 * 10);
+//    Utilities.sleep(5);
+//    PropertiesService.getDocumentProperties().setProperty(KEY_ACTION_TIME, actionTime);
+//  }
   //create one-off
   
   ScriptApp.newTrigger(funcName)
   .timeBased()  
   .inTimezone(SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone())  
-  .after(60000)// 1 minute
+  .after(15000)//15 sec but may be working in 1 minute
   .create();
 }
 //////////////////////////////////////////////////////////////////////////////

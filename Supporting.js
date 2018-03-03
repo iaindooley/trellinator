@@ -166,7 +166,7 @@ function writeInfo_(msg)
   if(!infoSheet)
   {
     infoSheet = ss.insertSheet(INFO_TAB_NAME_);
-    infoSheet.appendRow(["Date" , "Description"]).setFrozenRows(1);
+    infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
     infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
   }
   infoSheet.insertRows(2);
@@ -175,6 +175,11 @@ function writeInfo_(msg)
     msg = "No data";
   }
   infoSheet.getRange("A2:B2").setValues([[new Date(), msg]]);
+  var maxRow = infoSheet.getMaxRows();
+  if(maxRow > 500)
+  {
+    infoSheet.deleteRows(501,maxRow-500)
+  }
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function getWebhooksForToken_(trelloData) 
@@ -418,9 +423,12 @@ function executeNotificationCommand_(notifData)
 {
   try
   {
+    //writeInfo_("notification parser to find relevant functions...");
     var successFlag = false;
+    var quFlag = false;
     var tStart = (new Date()).valueOf();
     var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
+    writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var brdSheet = ss.getSheetByName(boardSheetName);
     if(!brdSheet)
@@ -443,19 +451,25 @@ function executeNotificationCommand_(notifData)
           //should execute or push to queue
           if(isTimeLimitApproaching_(tStart))
           {
+            writeInfo_("time limit approached...can't execute function: " + functionName);
+            quFlag = true;
             var funcObj = { "functionName" : functionName, "parameters" : notifData};
             push(new Date(), funcObj);
             continue;              
-          }          
+          }     
+          //else
+          writeInfo_("executing function: " + functionName);
           this[functionName](notifData);
           
         }
         catch(err)
         {
+          writeInfo_("function: " + functionName + " " + err);
+          quFlag = true;
           var funcObj = { "functionName" : functionName, "parameters" : notifData};
           push(new Date(), funcObj);
         }
-      }
+      }//if condition ends
     }//loop for all this board's rows ends
     
     var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
@@ -482,18 +496,26 @@ function executeNotificationCommand_(notifData)
           //should execute or push to queue
           if(isTimeLimitApproaching_(tStart))
           {           
+            writeInfo_("time limit approached in global commands, pushing-to-queue function: " + functionName);
+            quFlag = true;
             push(new Date(), funcObj);
             continue;              
           }   
+          writeInfo_("executing function from global commands: " + functionName);
           this[functionName](notifData);          
         }
         catch(err)
         {          
+          writeInfo_("function: " + functionName + " " + err);
+          quFlag = true;
           push(new Date(), funcObj);
         }
       }
     }//loop for all this board's rows ends
-    nextMinute();
+    if(quFlag)
+    {
+      nextMinute();
+    }
     successFlag = true;
     return successFlag;
   }

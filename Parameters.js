@@ -39,25 +39,26 @@ var DATE_FORMAT_ = "dd/MM/yyyy hh:mm";
 //-------------------------------------------------------------------
 var ACTION_LIST = ["addAdminToBoard",
 "addAdminToOrganization",
-"addAttachmentToCard",
+"addAttachmentToCard",//ok
 "addBoardsPinnedToMember",
-"addChecklistToCard",
-"addLabelToCard",
+"addChecklistToCard",//ok
+"addLabelToCard",//ok
 "addMemberToBoard",
-"addMemberToCard",
+"addMemberToCard",//ok
 "addMemberToOrganization",
 "addToOrganizationBoard",
-"commentCard",
-"convertToCardFromCheckItem",
+"commentCard",//ok
+"convertToCardFromCheckItem",//ok
 "copyBoard",
-"copyCard",
+"copyCard",//ok
 "copyChecklist",
 "createLabel",
 "copyCommentCard",
 "createBoard",
 "createBoardInvitation",
 "createBoardPreference",
-"createCard",
+"createCard",//ok
+"createCheckitem",//not documented
 "createChecklist",
 "createList",
 "createOrganization",
@@ -66,6 +67,7 @@ var ACTION_LIST = ["addAdminToBoard",
 "deleteBoardInvitation",
 "deleteCard",
 "deleteCheckItem",
+"deleteComment",//not documented
 "deleteLabel",
 "deleteOrganizationInvitation",
 "disablePlugin",
@@ -86,20 +88,20 @@ var ACTION_LIST = ["addAdminToBoard",
 "removeAdminFromBoard",
 "removeAdminFromOrganization",
 "removeBoardsPinnedFromMember",
-"removeChecklistFromCard",
+"removeChecklistFromCard",//ok
 "removeFromOrganizationBoard",
-"removeLabelFromCard",
+"removeLabelFromCard",//ok
 "removeMemberFromBoard",
 "removeMemberFromCard",
 "removeMemberFromOrganization",
 "unconfirmedBoardInvitation",
 "unconfirmedOrganizationInvitation",
 "updateBoard",
-"updateCard",
+"updateCard",//ok
 "updateCheckItem",
 "updateCheckItemStateOnCard",
 "updateChecklist",
-"updateLabel",
+"updateLabel",//ok
 "updateList",
 "updateMember",
 "updateOrganization",

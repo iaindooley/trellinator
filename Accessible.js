@@ -111,7 +111,7 @@ function doGetting(e)
 ////////////////////////////////////////////////////////////////////////////////////  
 // This POST is what does all the hard work
 function doPosting(notifText) 
-{   
+{
   //var notifText = e.postData.contents;    
   var notifData = JSON.parse(notifText);
   var actionData = notifData.action;

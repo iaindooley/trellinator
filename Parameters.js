@@ -23,6 +23,7 @@ var CRET_BRD_ = "createBoard";
 //////////////////////////////////////////////////////////////////////////
 var QUEUE_TAB_NAME_ = "ExecutionQueue";
 var PROCESS_QUEUE_FUNC_NAME_ = "processQueue";
+var LAST_QUEUE_COLUMN = "D";
 //var INFO_TAB_NAME_ = "InfoLog";
 var FUNC_DONE_STATUS_ = "DONE";
 var FUNC_LOCK_STATUS_ = "LOCK";

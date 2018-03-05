@@ -2,6 +2,7 @@
 //function processQueue()
 //function push(timeStamp, funcObj)
 //function nextMinute()
+//function clear(signatureStr)
 //////////////////////////////////////////////////////////////////////////////
 function triggerInit()
 {  
@@ -63,20 +64,24 @@ function processQueue()
   }
 }
 //////////////////////////////////////////////////////////////////////////////
-function push(timeStamp, funcObj)
+function push(timeStamp, funcObj, signatureStr)
 {
   try
   {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    if(!signatureStr)
+    {
+      var currTime = (new Date()).valueOf();
+      var timeStr = currTime.toString();
+      signatureStr = createMd5String_(timeStr);
+    }
     //simple checks
     if(timeStamp.getDate() && funcObj.functionName && funcObj.parameters)
     {
       var funcStr = JSON.stringify(funcObj);
       var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), DATE_FORMAT_);
-      qSheet.appendRow([timeStr, funcStr]);
-      //var dateCell = qSheet.getRange("A" + qSheet.getLastRow());
-      //dateCell.setValue(dateCell.getDisplayValue().slice(0,-3)).setNumberFormat(numberFormat);
+      qSheet.appendRow([timeStr, funcStr, "", signatureStr]);
     }
     else
     {
@@ -93,23 +98,46 @@ function nextMinute()
 {
   //writeInfo_(arguments.callee.name);
   var funcName = PROCESS_QUEUE_FUNC_NAME_;
-  //remove previously created one-off triggers every..6..hours
-  //var currTime = (new Date()).valueOf();
-  //Utilities.sleep(5);
-  //var actionTime = PropertiesService.getDocumentProperties().getProperty(KEY_ACTION_TIME);
-//  if(actionTime != null && parseInt(actionTime) < currTime)
-//  {
   triggerCreateSchedule_(funcName, 5);//has embedded removal for all triggers for this function
-//    actionTime = currTime + (1000 * 60 * 10);
-//    Utilities.sleep(5);
-//    PropertiesService.getDocumentProperties().setProperty(KEY_ACTION_TIME, actionTime);
-//  }
-  //create one-off
   
   ScriptApp.newTrigger(funcName)
   .timeBased()  
   .inTimezone(SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone())  
   .after(15000)//15 sec but may be working in 1 minute
   .create();
+}
+//////////////////////////////////////////////////////////////////////////////
+function clear(signatureStr)
+{
+  try
+  {
+    if(signatureStr == "")
+    {
+      throw "No signature available";
+    }
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    do  
+    {
+      var delLock = LockService.getScriptLock();
+      var successLock = delLock.tryLock(10000);//10 sec
+    }while(!successLock);
+
+    var qData = qSheet.getDataRange().getValues();
+    var total = qData.length - 1;
+    for(var i = total; i >= 1; i--)//reverse to keep row positions intact
+    {
+      var signat = "" + qData[i][3];
+      if(signat.search(signatureStr) > -1)//support both strings + regxp
+      {
+        qSheet.deleteRow(i + 1);
+      }
+    }//loop ends
+    delLock.releaseLock();
+  }
+  catch(error)
+  {
+    writeInfo_("Clearing " + signatureStr + " rows from queue " + error);
+  }
 }
 //////////////////////////////////////////////////////////////////////////////

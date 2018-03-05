@@ -552,3 +552,4 @@ function getAlphabeticalOrder_(currSheet)
   currSheet.activate();
   ss.moveActiveSheet(destIndex);
 }
+//////////////////////////////////////////////////////////////////////////////

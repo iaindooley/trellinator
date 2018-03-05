@@ -6,6 +6,7 @@
 //function checkAlreadyRunning_(funcName)
 //function setRunning_(funcName)
 //function setSafetyStatus_(safetyStatus)
+//function createMd5String_(currStr)
 //////////////////////////////////////////////////////////////////////////////
 function createQueueSheet_()
 {
@@ -23,12 +24,13 @@ function createQueueSheet_()
     qSheet.deleteColumns(6, 21);
     qSheet.deleteRows(101, 900);
   }
-  qSheet.getRange("A1:C1").setValues([["DateTime", "Function Call", "Status"]])
+  qSheet.getRange("A1:" + LAST_QUEUE_COLUMN + "1").setValues([["DateTime", "Function Call", "Status", "Signature"]])
   .setFontWeight("bold");
   //other settings
   qSheet.setFrozenRows(1);
   qSheet.setColumnWidth(1, 150);
   qSheet.setColumnWidth(2, 500);
+  qSheet.setColumnWidth(4, 200);
   //date time format show upto minute only
   var formatA = DATE_FORMAT_;//"dd/MM/yyyy hh:mm";//qSheet.getRange("A2").setValue(new Date()).getDisplayValue();
   //formatA = formatA + " 13:00";
@@ -36,7 +38,7 @@ function createQueueSheet_()
   //colA.setValue(formatA).clearContent();
   //wrap text column B
   qSheet.getRange("B:B").setWrap(true);
-  qSheet.getRange("A:C").setVerticalAlignment("center");
+  qSheet.getRange("A:" + LAST_QUEUE_COLUMN).setVerticalAlignment("center");
 }
 //////////////////////////////////////////////////////////////////////////////
 function triggerCreateSchedule_(funcName, minutes)
@@ -57,10 +59,16 @@ function triggerCreateSchedule_(funcName, minutes)
 }
 //////////////////////////////////////////////////////////////////////////////
 function removeCompleted_(qSheet)
-{
+{  
+  do  
+  {
+    var delLock = LockService.getScriptLock();
+    var successLock = delLock.tryLock(10000);//10 sec
+  }while(!successLock);
+  
   //setSafetyStatus_(UNSAFE_STATUS_);
   var qData = qSheet.getDataRange().getValues();
-  //remove already completed
+  //remove already completed ones
   for(var ro = qData.length - 1; ro >= 1; ro--)//start deleting from bottom to preserve positions
   {
     if(qData[ro][2] == FUNC_DONE_STATUS_)
@@ -69,7 +77,8 @@ function removeCompleted_(qSheet)
     }
   }//cleansing loop ends
   //order by time
-  qSheet.getRange("A2:C").sort({column: 1, ascending: true});
+  qSheet.getRange("A2:" + LAST_QUEUE_COLUMN).sort({column: 1, ascending: true});
+  delLock.releaseLock();
   SpreadsheetApp.flush();
   //setSafetyStatus_(SAFE_STATUS_);
 }
@@ -78,24 +87,25 @@ function callFunction_(qSheet, qDataRow, rowIndex)
 {
   try
   {
-    qSheet.getRange(rowIndex+1, 3).setValue(FUNC_LOCK_STATUS_);
+    qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_LOCK_STATUS_);
     var funcJStr = (qDataRow[1] + "").trim();
     if(funcJStr == "")
     {
-      qSheet.getRange(rowIndex+1, 3).setValue(FUNC_DONE_STATUS_);
+      qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);
       writeInfo_("Blank JSON text in row: " + (rowIndex+1) );
       return;
     }
     //continue
     var funcObj = JSON.parse(funcJStr);
     writeInfo_(funcObj.functionName + " executing...");    
-    this[funcObj.functionName](funcObj.parameters);
-    qSheet.getRange(rowIndex+1, 3).setValue(FUNC_DONE_STATUS_);        
+    var signat = qDataRow[QUEUE_SIGNATURE_COLUMN - 1] + "";
+    this[funcObj.functionName](funcObj.parameters, signat);
+    qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);        
   }
   catch(error)
   {
     writeInfo_(error);
-    qSheet.getRange(rowIndex+1, 3).clearContent();
+    qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).clearContent();
   }
 
 }
@@ -132,5 +142,14 @@ function setSafetyStatus_(safetyStatus)
 {
   Utilities.sleep(5);
   PropertiesService.getDocumentProperties().setProperty(KEY_SAFETY_STATUS, safetyStatus);  
+}
+//////////////////////////////////////////////////////////////////////////////
+function createMd5String_(currStr)
+{
+  var hash = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, currStr);
+  //Logger.log(hash);
+  var hashStr = hash.map(function(byt){return ("0" + ((byt+256)%256).toString(16)).slice(-2)}).join("");
+  //Logger.log(hashStr);
+  return hashStr;
 }
 //////////////////////////////////////////////////////////////////////////////

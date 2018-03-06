@@ -23,9 +23,6 @@ var CRET_BRD_ = "createBoard";
 //////////////////////////////////////////////////////////////////////////
 var QUEUE_TAB_NAME_ = "ExecutionQueue";
 var PROCESS_QUEUE_FUNC_NAME_ = "processQueue";
-var LAST_QUEUE_COLUMN = "D";
-var QUEUE_STATUS_COLUMN = 3;
-var QUEUE_SIGNATURE_COLUMN = 4;
 //var INFO_TAB_NAME_ = "InfoLog";
 var FUNC_DONE_STATUS_ = "DONE";
 var FUNC_LOCK_STATUS_ = "LOCK";
@@ -37,9 +34,18 @@ var KEY_ACTION_TIME = "ACTION_TIME";//
 var SAFE_STATUS_ = "SAFE";
 var UNSAFE_STATUS_ = "UNSAFE";
 var TIME_OUT_LIMIT_TRIG_ = 120;//seconds
-var DATE_FORMAT_ = "dd/MM/yyyy HH:mm";
+var LAST_QUEUE_COLUMN = "D";
+var QUEUE_STATUS_COLUMN = 3;
+var QUEUE_SIGNATURE_COLUMN = 4;
+var DATE_FORMAT_ = "dd/MM/yyyy hh:mm";
 //////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------
+var EXCLUDED_SHEET_NAMES = [INFO_TAB_NAME_ ,
+                            CONFIG_NAME_ ,
+                            BOARD_DB_NAME_ ,
+                            QUEUE_TAB_NAME_
+                           ];
+var CLEAR_TRIG_ACTION_LIST = ["Clear Triggers"];
 var ACTION_LIST = ["addAdminToBoard",
 "addAdminToOrganization",
 "addAttachmentToCard",//ok

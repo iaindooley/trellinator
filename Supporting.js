@@ -269,11 +269,12 @@ function registerAllBoards_(tStart)
       {
         var boardSheetName = boardList[i][0] + " [" + boardList[i][1] + "]";
         var currBSheet = createSheetByName_(boardSheetName);      
-        currBSheet.getRange("A1:B1").setValues([["Notification Type", "Function Call"]])
+        currBSheet.getRange("A1:C1").setValues([["Notification Type", "Function Call", "Clear Triggers"]])
         .setFontWeight("bold");
         currBSheet.setColumnWidth(1, 250)
         .setColumnWidth(2, 200); 
         createDropDown_(currBSheet, "A2", ACTION_LIST);
+        createDropDown_(currBSheet, "C2", CLEAR_TRIG_ACTION_LIST);
         brdSheet.deleteRow(i+1);
       }
       //tStart = showUpdateProgress_(tStart, sheet, msgList);
@@ -317,7 +318,7 @@ function createSheetByName_(shName)
 function createGlobalSheet_()
 {
   var globalSheet = createSheetByName_(GLOBAL_COMMANDS_NAME_);
-  globalSheet.getRange("A1:D1").setValues([["Include", "Exclude", "Notification Type", "Function Call"]])
+  globalSheet.getRange("A1:E1").setValues([["Include", "Exclude", "Notification Type", "Function Call", "Clear Triggers"]])
   .setFontWeight("bold");
   //globalSheet = SpreadsheetApp.getActiveSheet();
   globalSheet.setColumnWidth(1, 200)
@@ -327,6 +328,7 @@ function createGlobalSheet_()
   .getRange("A:B").setWrap(true);
   
   createDropDown_(globalSheet, "C2", ACTION_LIST);
+  createDropDown_(globalSheet, "E2", CLEAR_TRIG_ACTION_LIST);
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var configSheet = ss.getSheetByName(CONFIG_NAME_);  
@@ -459,7 +461,10 @@ function executeNotificationCommand_(notifData)
           }     
           //else
           writeInfo_("executing function: " + functionName);
-          this[functionName](notifData);
+          var currStr = [boardSheetName , notifData.action.type , functionName].join(",");
+          var signatStr = createMd5String_(currStr);
+          writeInfo_(currStr + "\n" + signatStr);
+          this[functionName](notifData, signatStr);
           
         }
         catch(err)
@@ -502,7 +507,10 @@ function executeNotificationCommand_(notifData)
             continue;              
           }   
           writeInfo_("executing function from global commands: " + functionName);
-          this[functionName](notifData);          
+          var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
+          var signatStr = createMd5String_(currStr);
+          writeInfo_(currStr + "\n" + signatStr);
+          this[functionName](notifData, signatStr);          
         }
         catch(err)
         {          

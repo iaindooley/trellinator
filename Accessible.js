@@ -146,8 +146,8 @@ function doPosting(notifText)
     writeInfo_("Notification: [" + actionType + "-" + actionID + "] ignored (being not at the board level).");
   }
   var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")
+  flushInfoBuffer();
   return postOut;
-  
 }
 ////////////////////////////////////////////////////////////////////
 function onEdit(e)

@@ -159,27 +159,42 @@ function getFetchParameters_(methodType)
            "muteHttpExceptions":true}
 }
 ///////////////////////////////////////////////////////////////////////////////////
+var write_info_buffer = new Array();
+function flushInfoBuffer()
+{
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
+    if(!infoSheet)
+    {
+      infoSheet = ss.insertSheet(INFO_TAB_NAME_);
+      infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
+      infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
+    }
+
+    var msg = null;
+
+    while(msg = write_info_buffer.pop())
+    {   
+        infoSheet.insertRows(2);
+
+        if(!msg)
+            msg = "No data";
+
+        infoSheet.getRange("A2:B2").setValues([[new Date(), msg]]);
+    }   
+
+    var maxRow = infoSheet.getMaxRows();
+
+    if(maxRow > 500)
+        infoSheet.deleteRows(501,maxRow-500)
+}
+
 function writeInfo_(msg)
 {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
-  if(!infoSheet)
-  {
-    infoSheet = ss.insertSheet(INFO_TAB_NAME_);
-    infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
-    infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
-  }
-  infoSheet.insertRows(2);
-  if(!msg)
-  {
-    msg = "No data";
-  }
-  infoSheet.getRange("A2:B2").setValues([[new Date(), msg]]);
-  var maxRow = infoSheet.getMaxRows();
-  if(maxRow > 500)
-  {
-    infoSheet.deleteRows(501,maxRow-500)
-  }
+  if(write_info_buffer.length > 20)
+      flushInfoBuffer();
+  else
+      write_info_buffer.unshift(msg);
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function getWebhooksForToken_(trelloData) 

@@ -37,7 +37,7 @@ var KEY_ACTION_TIME = "ACTION_TIME";//
 var SAFE_STATUS_ = "SAFE";
 var UNSAFE_STATUS_ = "UNSAFE";
 var TIME_OUT_LIMIT_TRIG_ = 120;//seconds
-var DATE_FORMAT_ = "dd/MM/yyyy hh:mm";
+var DATE_FORMAT_ = "dd/MM/yyyy HH:mm";
 //////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------
 var ACTION_LIST = ["addAdminToBoard",

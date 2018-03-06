@@ -37,7 +37,7 @@ var TIME_OUT_LIMIT_TRIG_ = 120;//seconds
 var LAST_QUEUE_COLUMN = "D";
 var QUEUE_STATUS_COLUMN = 3;
 var QUEUE_SIGNATURE_COLUMN = 4;
-var DATE_FORMAT_ = "dd/MM/yyyy hh:mm";
+var DATE_FORMAT_ = "dd/MM/yyyy HH:mm";
 //////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------
 var EXCLUDED_SHEET_NAMES = [INFO_TAB_NAME_ ,

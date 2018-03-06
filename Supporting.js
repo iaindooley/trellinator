@@ -178,10 +178,7 @@ function flushInfoBuffer()
 
 function writeInfo_(msg)
 {
-  if(write_info_buffer.length > 20)
-      flushInfoBuffer();
-  else
-      write_info_buffer.unshift(msg);
+    write_info_buffer.unshift(msg);
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function getWebhooksForToken_(trelloData) 

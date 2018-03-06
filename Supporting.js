@@ -137,20 +137,7 @@ function getTrelloKeys_()
 ///////////////////////////////////////////////////////////////////////////////////
 function constructTrelloURL_(parameterURL)
 {
-  var freshURL = "";
-  var trelloBase = "https://api.trello.com/1/";
-  var trelloData = getTrelloKeys_();
-  
-  if (parameterURL.indexOf("?") == -1) 
-  {
-    freshURL =  trelloBase + parameterURL +"?key="+ trelloData.key + "&token="+ trelloData.token ;
-  }  
-  else 
-  {
-    freshURL = trelloBase + parameterURL +"&key="+ trelloData.key +"&token="+ trelloData.token;
-  }  
-  
-  return freshURL;
+    return TrelloApi.constructTrelloURL(parameterURL);
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function getFetchParameters_(methodType)

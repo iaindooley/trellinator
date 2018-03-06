@@ -29,8 +29,8 @@ function createQueueSheet_()
   //other settings
   qSheet.setFrozenRows(1);
   qSheet.setColumnWidth(1, 150);
-  qSheet.setColumnWidth(2, 500);
-  qSheet.setColumnWidth(4, 200);
+  qSheet.setColumnWidth(2, 600);
+  qSheet.setColumnWidth(4, 250);
   //date time format show upto minute only
   var formatA = DATE_FORMAT_;//"dd/MM/yyyy hh:mm";//qSheet.getRange("A2").setValue(new Date()).getDisplayValue();
   //formatA = formatA + " 13:00";

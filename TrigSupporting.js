@@ -31,10 +31,14 @@ function createQueueSheet_()
   qSheet.setColumnWidth(1, 150);
   qSheet.setColumnWidth(2, 600);
   qSheet.setColumnWidth(4, 250);
-  //date time format show upto minute only
-  var formatA = DATE_FORMAT_;//"dd/MM/yyyy hh:mm";//qSheet.getRange("A2").setValue(new Date()).getDisplayValue();
-  //formatA = formatA + " 13:00";
-  qSheet.getRange("A2:A").setNumberFormat(formatA); 
+  //date time format show upto minute only, 
+  //but keep different date formats due to different locals esp. US and AU locales
+  //example case me and Iain
+  var dateStr = qSheet.getRange("A2").clear().setValue(new Date(2017,11,23)).getDisplayValue();
+  var datePiece = dateStr.split(" ")[0];
+  datePiece = datePiece.replace("2017","yyyy").replace("12","MM").replace("23","dd");  
+  var formatA = datePiece + " " + TIME_FORMAT_;  
+  qSheet.getRange("A2:A").setNumberFormat(formatA).clearContent(); 
   //colA.setValue(formatA).clearContent();
   //wrap text column B
   qSheet.getRange("B:B").setWrap(true);
@@ -99,7 +103,8 @@ function callFunction_(qSheet, qDataRow, rowIndex)
     var funcObj = JSON.parse(funcJStr);
     writeInfo_(funcObj.functionName + " executing from queue...");    
     var signat = qDataRow[QUEUE_SIGNATURE_COLUMN - 1] + "";
-    this[funcObj.functionName](funcObj.parameters, signat);
+    var originalTime = qDataRow[0];
+    this[funcObj.functionName](funcObj.parameters, signat, originalTime);
     qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);        
   }
   catch(error)

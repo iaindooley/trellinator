@@ -134,6 +134,13 @@ function doPosting(notifText)
     //writeInfo_("Calling board creation...process");
     createNewBoardSheet_(actionData);
   }
+  //"updateBoard" with "action_update_board_name"
+  else if(actionType == UPDT_BRD && actionData.display.translationKey == RENAME_BRD && notifData.model.id == actionData.data.board.id)
+  {
+    //writeInfo_(notifText);
+    renameBoardSheet_(actionData);    
+  }
+
   //all others board level notification
   else if(notifData.model.id == actionData.data.board.id)
   {
@@ -150,33 +157,3 @@ function doPosting(notifText)
   return postOut;
 }
 ////////////////////////////////////////////////////////////////////
-function onEdit(e)
-{
-  var rng = e.range;
-  var ss = e.source;
-  var value = rng.getValue();
-  var row = rng.getRow();
-  var col = rng.getColumn();
-  var currSheet = rng.getSheet();
-  var shName = currSheet.getName();
-  var processFlag = false;
-  if(EXCLUDED_SHEET_NAMES.indexOf(shName) > -1 || row < 2 || value != CLEAR_TRIG_ACTION_LIST[0])
-  {
-    return;//ignore
-  }
-  //both cases
-  if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || col == 3)
-  {
-    processFlag = true;
-  }
-  else
-  {
-    return;//ignore
-  }
-  //now process
-  var dataRow = currSheet.getDataRange().getValues()[row-1];
-  var currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");//will cover both global and individual boards
-  var signatStr = createMd5String_(currStr);
-  writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
-  clear(signatStr);
-}

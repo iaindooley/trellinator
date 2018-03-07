@@ -18,6 +18,7 @@
 //function createNewBoardSheet_(actionData)
 //function executeNotificationCommand_(notifData)
 //function getAlphabeticalOrder_(currSheet)
+//function renameBoardSheet_(actionData)
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -173,9 +174,9 @@ function flushInfoBuffer()
     var maxRow = infoSheet.getMaxRows();
 
     if(maxRow > 500)
-        infoSheet.deleteRows(501,maxRow-500)
+        infoSheet.deleteRows(501,maxRow-500);
 }
-
+///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)
 {
     write_info_buffer.unshift(msg);
@@ -558,5 +559,26 @@ function getAlphabeticalOrder_(currSheet)
   //writeInfo_("prvs tab: " + prvsBName + "\nprvs item's index in array: " + index + "\n" + "index in tabs: " + destIndex);
   currSheet.activate();
   ss.moveActiveSheet(destIndex);
+}
+//////////////////////////////////////////////////////////////////////////////
+function renameBoardSheet_(actionData)
+{
+  try
+  {
+    var success = false;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var oldSheetName = actionData.data.old.name + " [" + actionData.data.board.id + "]";
+    var brdSheet = ss.getSheetByName(oldSheetName);
+    var nuSheetName = actionData.data.board.name + " [" + actionData.data.board.id + "]";
+    brdSheet.setName(nuSheetName);
+    writeInfo_("Board sheet renamed from: " + oldSheetName + "\nto: " + nuSheetName);
+    success = true;
+    return success;
+  }
+  catch(error)
+  {
+    writeInfo_("Renaming Board sheet " + error);
+    return success;
+  }
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -18,6 +18,8 @@ var MY_USERNAME_KEY_ = "MY_USERNAME";
 var FUNCTION_CONTINUE_INIT_ = "continueInitialization";
 var ADD_MEM_TO_BRD_ = "addMemberToBoard";
 var CRET_BRD_ = "createBoard";
+var UPDT_BRD = "updateBoard";
+var RENAME_BRD = "action_update_board_name";
 //-------------------------------------------------------------------
 //TriggerLib Params
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,7 @@ var TIME_OUT_LIMIT_TRIG_ = 120;//seconds
 var LAST_QUEUE_COLUMN = "D";
 var QUEUE_STATUS_COLUMN = 3;
 var QUEUE_SIGNATURE_COLUMN = 4;
-var DATE_FORMAT_ = "dd/MM/yyyy HH:mm";
+var TIME_FORMAT_ = "HH:mm";
 //////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------
 var EXCLUDED_SHEET_NAMES = [INFO_TAB_NAME_ ,

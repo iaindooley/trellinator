@@ -15,7 +15,8 @@ function processQueue()
 {
   try
   {
-    var currTime = (new Date()).valueOf();  
+    var currTimeObj = new Date();
+    var currTime = currTimeObj.valueOf();
     //writeInfo_(arguments.callee.name);
     if(checkAlreadyRunning_(PROCESS_QUEUE_FUNC_NAME_))
     {
@@ -32,17 +33,18 @@ function processQueue()
     var qLength = qData.length - 1;
     for(var i = 1; i < qData.length; i++)
     {     
-      var rowTime = (qData[i][0]).valueOf();
-      var status = qData[i][2] + "";
+      var rowTimeObj = qData[i][0];
+      var rowTime = rowTimeObj.valueOf();
+      var status = qData[i][QUEUE_STATUS_COLUMN - 1] + "";
       if(rowTime <= currTime && status == "")
       {
-        writeInfo_("Parsing row: " + (i+1));
+        //writeInfo_("Parsing row: " + (i+1));
         callFunction_(qSheet, qData[i], i);
       }
       //exit if exceeding time limit
       if(triggerIsTimeLimitApproaching_(currTime))
       {
-        writeInfo_("time limit approaching...for queue processing...");
+        writeInfo_("Time limit approaching...for queue processing...");
         if(i < qLength)//still remaining
         {
           nextMinute();
@@ -80,7 +82,9 @@ function push(timeStamp, funcObj, signatureStr)
     if(timeStamp.getDate() && funcObj.functionName && funcObj.parameters)
     {
       var funcStr = JSON.stringify(funcObj);
-      var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), DATE_FORMAT_);
+      var dateFormat = qSheet.getRange("A2").getNumberFormat();
+      dateFormat = (dateFormat.indexOf("MM") == -1) ? dateFormat.replace("mm","MM") : dateFormat; //1st instance only//required due to google getnumberformat bug      
+      var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), dateFormat);
       qSheet.appendRow([timeStr, funcStr, "", signatureStr]);
     }
     else

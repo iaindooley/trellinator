@@ -19,6 +19,7 @@
 //function executeNotificationCommand_(notifData)
 //function getAlphabeticalOrder_(currSheet)
 //function renameBoardSheet_(actionData)
+//function createGlobalGroupSheet_()
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -281,6 +282,7 @@ function registerAllBoards_(tStart)
     }//loop ends  
     //create global sheet
     createGlobalSheet_();
+    createGlobalGroupSheet_();
     //remove board sheet
     ss.deleteSheet(brdSheet);
     completeFlag = true;
@@ -300,8 +302,7 @@ function createSheetByName_(shName)
   //remove existing or clear data
   if(nuSheet)
   {
-    nuSheet.clear();    
-    //ss.deleteSheet(nuSheet);
+    nuSheet.clear();        
   }
   else
   {//create fresh
@@ -334,6 +335,7 @@ function createGlobalSheet_()
   var configSheet = ss.getSheetByName(CONFIG_NAME_);  
   globalSheet.activate();
   ss.moveActiveSheet(configSheet.getIndex() + 1);
+  configSheet.activate();
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function createDropDown_(currSheet, cellA1Notation, dropdownData)
@@ -582,3 +584,18 @@ function renameBoardSheet_(actionData)
   }
 }
 //////////////////////////////////////////////////////////////////////////////
+function createGlobalGroupSheet_()
+{
+  var globalGrpSheet = createSheetByName_(GLOBAL_GROUP_NAME_);
+  globalGrpSheet.getRange("A1:B1").setValues([["Group Name", "Boards"]])
+  .setFontWeight("bold");  
+  globalGrpSheet.setColumnWidth(1, 200)
+  .setColumnWidth(2, 600)
+  .getRange("A:B").setWrap(true).setVerticalAlignment("center");
+   
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var configSheet = ss.getSheetByName(CONFIG_NAME_);  
+  globalGrpSheet.activate();
+  ss.moveActiveSheet(configSheet.getIndex() + 1);  
+  configSheet.activate();
+}

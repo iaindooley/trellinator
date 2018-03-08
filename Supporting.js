@@ -20,6 +20,8 @@
 //function getAlphabeticalOrder_(currSheet)
 //function renameBoardSheet_(actionData)
 //function createGlobalGroupSheet_()
+//function checkExecutionCriteria_(includeList, excludeList, boardName)
+//function getBoardList4mGroup_(groupName)
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -479,6 +481,7 @@ function executeNotificationCommand_(notifData)
       }//if condition ends
     }//loop for all this board's rows ends
     
+    writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
     var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)
     {
@@ -491,23 +494,23 @@ function executeNotificationCommand_(notifData)
       if(mapRow[2] == notifData.action.type)
       {
         var functionName = mapRow[3] + "";
+        if(functionName == "")
+        {
+          continue;
+        }
+        
         var funcObj = { "functionName" : functionName, "parameters" : notifData};
-        //var includeList = mapRow[0] + "";
-        //var excludeList = mapRow[1] + "";
+        var includeList = (mapRow[0] + "").trim();
+        var excludeList = (mapRow[1] + "").trim();
+        var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.name);
+        if(!execFlag)
+        {
+          continue;
+        }
+        //else execute function
         try
         {
-          if(functionName == "")
-          {
-            continue;
-          }
           //should execute or push to queue
-          if(isTimeLimitApproaching_(tStart))
-          {           
-            writeInfo_("time limit approached in global commands, pushing-to-queue function: " + functionName);
-            quFlag = true;
-            push(new Date(), funcObj);
-            continue;              
-          }   
           writeInfo_("executing realtime function from global commands: " + functionName);
           var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
           var signatStr = createMd5String_(currStr);
@@ -598,4 +601,85 @@ function createGlobalGroupSheet_()
   globalGrpSheet.activate();
   ss.moveActiveSheet(configSheet.getIndex() + 1);  
   configSheet.activate();
+}
+//////////////////////////////////////////////////////////////////////////////
+function checkExecutionCriteria_(includeList, excludeList, boardName)
+{   
+  //case 1:
+  if(includeList == "" && excludeList == "")
+  {
+    //writeInfo_("both empty...execute=" + true);
+    return true;
+  }
+  
+  //case 2:
+  if(includeList != "") //either exclude blank or not blank but include has preferrence
+  {
+    boardName = boardName.toLowerCase();
+    var grpList = (includeList.toLowerCase()).split(",");
+    grpList = cleanList_(grpList);
+    for(var i = 0; i < grpList.length; i++)
+    {
+      var groupName = grpList[i];
+      var boardList = getBoardList4mGroup_(groupName);  
+      if(boardList.indexOf(boardName) > -1)
+      {
+        return true;
+      }
+    }//all group search loop ends
+    return false;  
+  }//include condition ends
+  
+  //case 3:
+  if(includeList == "" && excludeList != "")
+  {
+    boardName = boardName.toLowerCase();
+    var exGrpList = (excludeList.toLowerCase()).split(",");
+    exGrpList = cleanList_(exGrpList);
+    for(var i = 0; i < exGrpList.length; i++)
+    {
+      var exGrpName = exGrpList[i];
+      var boardList = getBoardList4mGroup_(exGrpName);  
+      if(boardList.indexOf(boardName) > -1)
+      {
+        return false;
+      }
+    }//all exclude group search loop ends
+    return true;  
+  }//exclude condition ends
+}
+//////////////////////////////////////////////////////////////////////////////
+//lowercase, spaces-trimmed list of boards
+function getBoardList4mGroup_(groupName)
+{
+  groupName = groupName.toLowerCase();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var grpSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+  var grpData = grpSheet.getDataRange().getValues();
+  var boardList = [];
+  for(var i = 1; i < grpData.length; i++)
+  {
+    //writeInfo_(grpData[i][0] + " vs. " + groupName);
+    if(grpData[i][0].toLowerCase() == groupName)
+    {
+      var boardStr = (grpData[i][1] + "").toLowerCase().trim();
+      boardList = boardStr.split(",");
+      boardList = cleanList_(boardList);
+      return boardList;
+    }
+  }//loop ends
+  
+  //if nothing found at all
+  writeInfo_("Group Name [" + groupName + "] not found...");
+  return boardList;
+}
+//////////////////////////////////////////////////////////////////////////////
+function cleanList_(strList)
+{
+  var cList = strList.map(function(str)
+                          { 
+                            return str.trim();
+                          });            
+  
+  return cList;
 }

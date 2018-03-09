@@ -84,6 +84,7 @@ function push(timeStamp, funcObj, signatureStr)
       var funcStr = JSON.stringify(funcObj);
       var dateFormat = qSheet.getRange("A2").getNumberFormat();
       dateFormat = (dateFormat.indexOf("MM") == -1) ? dateFormat.replace("mm","MM") : dateFormat; //1st instance only//required due to google getnumberformat bug      
+      dateFormat = (dateFormat.indexOf("HH") == -1) ? dateFormat.replace("hh","HH") : dateFormat; //otherwise will print in 12 hour time, and everything will execute 10 hours early!
       var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), dateFormat);
       qSheet.appendRow([timeStr, funcStr, "", signatureStr]);
     }

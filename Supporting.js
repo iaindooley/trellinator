@@ -161,23 +161,17 @@ function flushInfoBuffer()
       infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
       infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
     }
+   
+    if(write_info_buffer.length)
+    {
+        infoSheet.appendRow([new Date(), JSON.stringify(write_info_buffer)]);
+        var maxRow = infoSheet.getMaxRows();
 
-    var msg = null;
-
-    while(msg = write_info_buffer.pop())
-    {   
-        infoSheet.insertRows(2);
-
-        if(!msg)
-            msg = "No data";
-
-        infoSheet.getRange("A2:B2").setValues([[new Date(), msg]]);
-    }   
-
-    var maxRow = infoSheet.getMaxRows();
-
-    if(maxRow > 500)
-        infoSheet.deleteRows(501,maxRow-500);
+        if(maxRow > 500)
+            infoSheet.deleteRows(501,maxRow-500);
+      
+        infoSheet.sort(1,false);
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)

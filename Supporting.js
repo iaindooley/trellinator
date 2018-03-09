@@ -23,6 +23,7 @@
 //function checkExecutionCriteria_(includeList, excludeList, boardName)
 //function getBoardList4mGroup_(groupName)
 //function cleanList_(strList)
+//function createEditDetector_()
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -154,6 +155,9 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
+  while(checkAlreadyFlushing_("flush"))
+    Utilities.sleep(10);
+  setFlushing_("flush");
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
     if(!infoSheet)
@@ -173,6 +177,8 @@ function flushInfoBuffer()
       
         infoSheet.sort(1,false);
     }
+
+  setFlushing_("");
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)
@@ -677,4 +683,15 @@ function cleanList_(strList)
                           });            
   
   return cList;
+}
+//////////////////////////////////////////////////////////////////////////////
+function createEditDetector_()
+{
+  var funcName = FUNCTION_EDIT_DETECTION;
+  removeSchedule_(funcName);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ScriptApp.newTrigger(funcName)
+  .forSpreadsheet(ss)
+  .onEdit()
+  .create();
 }

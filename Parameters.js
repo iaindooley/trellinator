@@ -17,6 +17,7 @@ var GLOBAL_GROUP_NAME_ = "Global Command Groups";
 var MY_ID_KEY_ = "MY_ID";
 var MY_USERNAME_KEY_ = "MY_USERNAME";
 var FUNCTION_CONTINUE_INIT_ = "continueInitialization";
+var FUNCTION_EDIT_DETECTION = "onEditDetected";
 var ADD_MEM_TO_BRD_ = "addMemberToBoard";
 var CRET_BRD_ = "createBoard";
 var UPDT_BRD = "updateBoard";

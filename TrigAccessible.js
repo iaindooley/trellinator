@@ -3,6 +3,8 @@
 //function push(timeStamp, funcObj)
 //function nextMinute()
 //function clear(signatureStr)
+//function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
+//function saveFunctionName(boardStr, boardRow, funcName)
 //////////////////////////////////////////////////////////////////////////////
 function triggerInit()
 {  

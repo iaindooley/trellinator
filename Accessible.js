@@ -9,6 +9,7 @@ function init()
   try
   {
     var tStart = (new Date()).valueOf();
+    createEditDetector_();
     registerWebhook_();//for member
     createBoardDBSheet_();
     storeCurrentUserBoards_();

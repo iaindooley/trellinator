@@ -104,12 +104,19 @@ function callFunction_(qSheet, qDataRow, rowIndex)
     writeInfo_(funcObj.functionName + " executing from queue...");    
     var signat = qDataRow[QUEUE_SIGNATURE_COLUMN - 1] + "";
     var originalTime = qDataRow[0];
-    this[funcObj.functionName](funcObj.parameters, signat, originalTime);
-    qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);        
+    
+    if(typeof this[funcObj.functionName] === 'function')
+    {
+        this[funcObj.functionName](funcObj.parameters, signat, originalTime);
+        qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);        
+    }
+    
+    else
+        throw new Error(funcObj.functionName+" is not a function that exists");
   }
   catch(error)
   {
-    writeInfo_(error);
+    writeInfo_("Error executing function: "+error);
     qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).clearContent();
   }
 

@@ -24,7 +24,7 @@ function doPost(e)
   return htmlOut;
 }
 ///////////////////////////////////////////////////////////////////////////////
-function onEdit(e)
+function onEditDetected(e)
 {
   var rng = e.range;
   var ss = e.source;
@@ -34,24 +34,56 @@ function onEdit(e)
   var currSheet = rng.getSheet();
   var shName = currSheet.getName();
   var processFlag = false;
-  if(EXCLUDED_SHEET_NAMES.indexOf(shName) > -1 || row < 2 || value != CLEAR_TRIG_ACTION_LIST[0])
+  if(EXCLUDED_SHEET_NAMES.indexOf(shName) > -1 || row < 2 )
   {
     return;//ignore
   }
-  //both cases
-  if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || col == 3)
+  switch(value)
   {
-    processFlag = true;
-  }
-  else
-  {
-    return;//ignore
-  }
-  //now process
-  var dataRow = currSheet.getDataRange().getValues()[row-1];
-  var currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");//will cover both global and individual boards
-  var signatStr = createMd5String_(currStr);
-  writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
-  clear(signatStr);
+    //case 1  
+    case CLEAR_TRIG_ACTION_LIST[0]:
+      //both cases
+      if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || col == 3)
+      {
+        processFlag = true;
+      }
+      else
+      {
+        return;//ignore
+      }
+      //now process
+      var dataRow = currSheet.getDataRange().getValues()[row-1];
+      var currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");//will cover both global and individual boards
+      //non-default cases for signature
+      if(dataRow[0] == ACTION_LIST[0])//Time Trigger but it seems to be the same structure
+      {
+        currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");
+      }      
+      var signatStr = createMd5String_(currStr);
+      writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
+      clear(signatStr);      
+      break;
+  
+    //case 2
+    case ACTION_LIST[0]:
+      if(col != 1)//(shName == GLOBAL_COMMANDS_NAME_  && col == 5) || 
+      {
+        return; //ignore
+      }
+      var htmlData = HtmlService.createTemplateFromFile("trellinator/TimeTrigUI").getRawContent();
+      htmlData = htmlData.replace("{{board-Tab-Name}}",shName);
+      htmlData = htmlData.replace("{{board-Tab-Row}}",row);
+      var htmlOut = HtmlService.createTemplate(htmlData).evaluate();
+      SpreadsheetApp.getUi().showModalDialog(htmlOut, "Time Trigger Details");
+      
+      break;
+  }//switch ends
+
+}
+///////////////////////////////////////////////////////////////////////////////
+function includeFile(filename) 
+{
+  return HtmlService.createHtmlOutputFromFile(filename)
+      .getContent();
 }
 ///////////////////////////////////////////////////////////////////////////////

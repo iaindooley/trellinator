@@ -22,6 +22,7 @@
 //function createGlobalGroupSheet_()
 //function checkExecutionCriteria_(includeList, excludeList, boardName)
 //function getBoardList4mGroup_(groupName)
+//function cleanList_(strList)
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -153,10 +154,6 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
-    while(checkAlreadyFlushing_("flush"))
-      Utilities.sleep(10);
-  
-    setFlushing_("flush");
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
     if(!infoSheet)
@@ -176,8 +173,6 @@ function flushInfoBuffer()
       
         infoSheet.sort(1,false);
     }
-  
-    setFlushing_("");
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)

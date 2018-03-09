@@ -82,9 +82,9 @@ function push(timeStamp, funcObj, signatureStr)
     if(timeStamp.getDate() && funcObj.functionName && funcObj.parameters)
     {
       var funcStr = JSON.stringify(funcObj);
-      var dateFormat = qSheet.getRange("A2").getNumberFormat();
+      var dateFormat = qSheet.getRange("A2").getNumberFormat();      
       dateFormat = (dateFormat.indexOf("MM") == -1) ? dateFormat.replace("mm","MM") : dateFormat; //1st instance only//required due to google getnumberformat bug      
-      dateFormat = (dateFormat.indexOf("HH") == -1) ? dateFormat.replace("hh","HH") : dateFormat; //otherwise will print in 12 hour time, and everything will execute 10 hours early!
+      dateFormat = (dateFormat.search(/H/g) == -1) ? dateFormat.replace(/h/g,"H") : dateFormat; //pretty buggy google apps script here, has only one 'h'
       var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), dateFormat);
       qSheet.appendRow([timeStr, funcStr, "", signatureStr]);
     }
@@ -146,3 +146,26 @@ function clear(signatureStr)
   }
 }
 //////////////////////////////////////////////////////////////////////////////
+function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
+{  
+  var datePieces = dateStr.split("-");
+  var timePieces = timeStr.split(":");
+  var timeStamp = new Date(datePieces[0], datePieces[1]-1, datePieces[2], timePieces[0], timePieces[1], 0, 0);
+ 
+  var boardID = boardStr.split("[")[1].replace("]","").trim();
+  var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+  var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
+  var signat = createMd5String_(currStr);
+  
+  push(timeStamp, funcObj, signat); 
+  //if all successful  
+  saveFunctionName(boardStr, boardRow, funcName);
+  return boardRow;
+}
+//////////////////////////////////////////////////////////////////////////////
+function saveFunctionName(boardStr, boardRow, funcName)
+{
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var brdSheet = ss.getSheetByName(boardStr);
+  brdSheet.getRange("B" + boardRow).setValue(funcName);
+}

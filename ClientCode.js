@@ -32,7 +32,8 @@ function deleteTrellinatorWebhooks()
 /////////////////////////////////////////////////////////////////////////
 //function testingSohail()
 //{
-//  //push(new Date(), {functionName : "trialFun" , parameters : {} }, "some signature");
-//  //setRunning_("");
-//  
+//  var htmlData = HtmlService.createTemplateFromFile("trellinator/TimeTrigUI").getRawContent();
+//  htmlData = htmlData.replace("{{board-Tab-Name}}","name [some-board-id]");
+//  var htmlOut = HtmlService.createTemplate(htmlData).evaluate();
+//  SpreadsheetApp.getUi().showModalDialog(htmlOut, "Options for Time Trigger");
 //}

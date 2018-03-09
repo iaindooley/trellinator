@@ -1,0 +1,36 @@
+<script>
+/////////////////////////////////////////////////////////////
+function sendToQueue()
+{
+  console.log("send to queue js function called");
+  var funcName = $("#funcNamer").val();
+  var dateStr = $("#datepicker").val();
+  var timeStr = $("#timepicker").val();
+  var boardStr = $("#boardSheetName").html();
+  var boardRow = $("#boardSheetRow").html();
+  console.log("board sheet: " + boardStr);
+  //return;
+  //alert(funcName + "\n" + dateStr + "\n" + timeStr + "\n" + boardStr);
+  if(funcName == "" || dateStr == "" || timeStr == "")
+  {
+    alert("All fields must be filled.");
+    return;
+  }
+  
+  google.script.run
+  .withFailureHandler(failureFunction)
+  .withSuccessHandler(successFunction)
+  .timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow);
+  
+}
+/////////////////////////////////////////////////////////////
+function successFunction()
+{
+  google.script.host.close();
+}
+/////////////////////////////////////////////////////////////
+function failureFunction(error)
+{
+  alert("Issues while saving time trigger to queue.." + error);
+}
+</script>

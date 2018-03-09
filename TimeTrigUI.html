@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Datepicker - Default functionality</title>
+  <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
+  
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script>
+  //$( document ).ready()
+  $( function() {
+    $( "#datepicker" ).datepicker({
+    dateFormat: 'yy-mm-dd',
+    });
+    $( "#timepicker" ).html(loadTimeOptions() );
+  });
+  ///////////////////////////////////////////////////////
+  function loadTimeOptions()
+  {
+  var dropdown = $("#timepicker");
+  var options = [];
+  var currHour = new Date().getHours();
+  for (var hh=0; hh<24; hh++)
+  {
+    for (var mm = 0; mm < 59; mm+=5)
+    {
+      var hr = ("0" + hh).slice(-2);
+      var min = ("0" + mm).slice(-2);
+      var hm = hr + ":" + min;
+      var optStr = '<option value="' + hm + '"';      
+      optStr += (hh == currHour && (mm % 55) == 0 ) ? ' selected>' : '>' ;
+      optStr += hm + '</option>';
+      options.push(optStr);
+    }
+  }//options loop ends
+  return options.join('');
+  }//loadTimeOptions() ends
+  ///////////////////////////////////////////////////////
+</script>
+</head>
+
+<body> 
+<div>
+<p>Function Name: <input type="text" id="funcNamer"></p>
+<p></p>
+<p>Date: <input type="text" id="datepicker"></p>
+<p></p>
+<p>Time: <select id="timepicker"> </select></p>
+<p></p>
+<p><button type="submit" value="Submit" onclick="sendToQueue()">Submit</button></p>
+</div>
+<div id="boardSheetName" style="display:none">{{board-Tab-Name}}</div>
+<div id="boardSheetRow" style="display:none">{{board-Tab-Row}}</div>
+<?!= includeFile('trellinator/TimeTrigJS') ?>
+</body>
+
+</html>

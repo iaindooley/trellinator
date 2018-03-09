@@ -149,25 +149,6 @@ function setRunning_(funcName)
   Utilities.sleep(5);
   PropertiesService.getDocumentProperties().setProperty(KEY_RUNNING_FUNCTION, funcName);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//running the processqueue and unsafe, then yes
-function checkAlreadyFlushing_(funcName)
-{
-  //writeInfo_(arguments.callee.name);
-  Utilities.sleep(5);
-  var runningName = PropertiesService.getDocumentProperties().getProperty(KEY_RUNNING_FUNCTION+" flushinfo");
-  var runFlag = (runningName == funcName) ? true : false;
-  return runFlag;
-}
-//////////////////////////////////////////////////////////////////////////////
-function setFlushing_(funcName)
-{
-  Utilities.sleep(5);
-  PropertiesService.getDocumentProperties().setProperty(KEY_RUNNING_FUNCTION+" flushinfo", funcName);
-}
-
-
 //////////////////////////////////////////////////////////////////////////////
 function setSafetyStatus_(safetyStatus)
 {

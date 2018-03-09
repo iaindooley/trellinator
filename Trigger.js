@@ -1,8 +1,24 @@
 var Trigger = function(){}
+Trigger.fake_now = null;
+
+Trigger.now = function()
+{
+    if(Trigger.fake_now)
+        return Trigger.fake_now;
+    else
+        return new Date();
+}
 
 Trigger.xMinutesFromNow = function(x)
 {
-    return new Date(new Date().getTime() + x*60000);
+    return new Date(Trigger.now().getTime() + x*60000);
+}
+
+Trigger.xDaysFromNow = function(x)
+{
+    var now = Trigger.now();
+    now.setDate(now.getDate() + x);
+    return now;
 }
 
 // returns week of the month starting with 0

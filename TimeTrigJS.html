@@ -2,18 +2,19 @@
 /////////////////////////////////////////////////////////////
 function sendToQueue()
 {
-  console.log("send to queue js function called");
+  //console.log("send to queue js function called");
   var funcName = $("#funcNamer").val();
   var dateStr = $("#datepicker").val();
   var timeStr = $("#timepicker").val();
   var boardStr = $("#boardSheetName").html();
   var boardRow = $("#boardSheetRow").html();
-  console.log("board sheet: " + boardStr);
+  //console.log("board sheet: " + boardStr);
   //return;
   //alert(funcName + "\n" + dateStr + "\n" + timeStr + "\n" + boardStr);
   if(funcName == "" || dateStr == "" || timeStr == "")
   {
-    alert("All fields must be filled.");
+    var msg = "All fields must be filled.";
+    google.script.run.showFailure(msg);
     return;
   }
   
@@ -31,6 +32,7 @@ function successFunction()
 /////////////////////////////////////////////////////////////
 function failureFunction(error)
 {
-  alert("Issues while saving time trigger to queue.." + error);
+  error = "Issues while saving time trigger to queue.." + error;
+  google.script.run.showFailure(error);  
 }
 </script>

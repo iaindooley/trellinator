@@ -40,7 +40,7 @@ function onEditDetected(e)
   }
   switch(value)
   {
-    //case 1  
+    //case 1  "Clear Triggers"
     case CLEAR_TRIG_ACTION_LIST[0]:
       //both cases
       if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || col == 3)
@@ -61,15 +61,20 @@ function onEditDetected(e)
       }      
       var signatStr = createMd5String_(currStr);
       writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
-      clear(signatStr);      
+      clear(signatStr);            
       break;
   
-    //case 2
+    //case 2 "Time Trigger"
     case ACTION_LIST[0]:
-      if(col != 1)//(shName == GLOBAL_COMMANDS_NAME_  && col == 5) || 
+      if((shName == GLOBAL_COMMANDS_NAME_  && col == 3)  || col == 1)
+      {
+        processFlag = true;
+      }
+      else
       {
         return; //ignore
       }
+      //now process
       var htmlData = HtmlService.createTemplateFromFile("trellinator/TimeTrigUI").getRawContent();
       htmlData = htmlData.replace("{{board-Tab-Name}}",shName);
       htmlData = htmlData.replace("{{board-Tab-Row}}",row);
@@ -78,7 +83,8 @@ function onEditDetected(e)
       
       break;
   }//switch ends
-
+  
+  flushInfoBuffer();
 }
 ///////////////////////////////////////////////////////////////////////////////
 function includeFile(filename) 

@@ -132,15 +132,18 @@ function clear(signatureStr)
 
     var qData = qSheet.getDataRange().getValues();
     var total = qData.length - 1;
+    var clearCount = 0;
     for(var i = total; i >= 1; i--)//reverse to keep row positions intact
     {
       var rowSignat = "" + qData[i][3];
       if(rowSignat.search(signatureStr) == 0)//support both strings + regxp but for start-with type
       {
         qSheet.deleteRow(i + 1);
+        clearCount++;
       }
     }//loop ends
     delLock.releaseLock();
+    writeInfo_("Cleared " + clearCount + " records from execution queue.");
   }
   catch(error)
   {
@@ -154,14 +157,37 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
   var timePieces = timeStr.split(":");
   var timeStamp = new Date(datePieces[0], datePieces[1]-1, datePieces[2], timePieces[0], timePieces[1], 0, 0);
  
-  var boardID = boardStr.split("[")[1].replace("]","").trim();
-  var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
-  var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
-  var signat = createMd5String_(currStr);
+  if(boardStr != GLOBAL_COMMANDS_NAME_)
+  {//indivdual board
+    var boardID = boardStr.split("[")[1].replace("]","").trim();
+    var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+    var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
+    var signat = createMd5String_(currStr);
+    push(timeStamp, funcObj, signat); 
+  }
+  else //global commands
+  {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
+    var globDataRow = globSheet.getRange("A"+boardRow+":D"+boardRow).getValues()[0];
+    var includeList = (globDataRow[0] + "").trim();
+    var excludeList = (globDataRow[1] + "").trim();
+    var boardList = getAllBoards4Execution_(includeList, excludeList);
+    
+    for(var i = 0; i < boardList.length; i++)
+    {
+      var boardID = boardList[i].id;
+      var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+      var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
+      //var signat = GLOBAL_TIME_TRIGGER_PREFIX + createMd5String_(currStr);
+      var signat = createMd5String_(currStr);
+      push(timeStamp, funcObj, signat);       
+    }
+  }
   
-  push(timeStamp, funcObj, signat); 
-  //if all successful  
+  //if all goes successful  
   saveFunctionName(boardStr, boardRow, funcName);
+  flushInfoBuffer();
   return boardRow;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -169,5 +195,12 @@ function saveFunctionName(boardStr, boardRow, funcName)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var brdSheet = ss.getSheetByName(boardStr);
-  brdSheet.getRange("B" + boardRow).setValue(funcName);
+  if(boardStr != GLOBAL_COMMANDS_NAME_)
+  {
+    brdSheet.getRange("B" + boardRow).setValue(funcName);
+  }
+  else
+  {
+    brdSheet.getRange("D" + boardRow).setValue(funcName);
+  }
 }

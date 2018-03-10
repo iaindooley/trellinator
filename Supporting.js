@@ -21,9 +21,11 @@
 //function renameBoardSheet_(actionData)
 //function createGlobalGroupSheet_()
 //function checkExecutionCriteria_(includeList, excludeList, boardName)
-//function getBoardList4mGroup_(groupName)
+//function getBoardNames4mGroup_(groupName)
 //function cleanList_(strList)
 //function createEditDetector_()
+//function getAllBoards4Execution_(includeList, excludeList)
+//function getBoardData_(sheetList)
 ///////////////////////////////////////////////////////////////////////////////////
 function registerWebhook_(boardID) 
 {
@@ -622,7 +624,7 @@ function checkExecutionCriteria_(includeList, excludeList, boardName)
     for(var i = 0; i < grpList.length; i++)
     {
       var groupName = grpList[i];
-      var boardList = getBoardList4mGroup_(groupName);  
+      var boardList = getBoardNames4mGroup_(groupName);  
       if(boardList.indexOf(boardName) > -1)
       {
         return true;
@@ -640,7 +642,7 @@ function checkExecutionCriteria_(includeList, excludeList, boardName)
     for(var i = 0; i < exGrpList.length; i++)
     {
       var exGrpName = exGrpList[i];
-      var boardList = getBoardList4mGroup_(exGrpName);  
+      var boardList = getBoardNames4mGroup_(exGrpName);  
       if(boardList.indexOf(boardName) > -1)
       {
         return false;
@@ -651,7 +653,7 @@ function checkExecutionCriteria_(includeList, excludeList, boardName)
 }
 //////////////////////////////////////////////////////////////////////////////
 //lowercase, spaces-trimmed list of boards
-function getBoardList4mGroup_(groupName)
+function getBoardNames4mGroup_(groupName)
 {
   groupName = groupName.toLowerCase();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -695,3 +697,85 @@ function createEditDetector_()
   .onEdit()
   .create();
 }
+//////////////////////////////////////////////////////////////////////////////
+function getAllBoards4Execution_(includeList, excludeList)
+{
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var shList = ss.getSheets();
+  var boardSheetList = getBoardData_(shList);
+  var boardList = [];
+  //case 1://get all
+  if(includeList == "" && excludeList == "")
+  {
+    return boardSheetList;
+  }
+
+  //case 2: //get only included ones
+  if(includeList != "") //either exclude blank or not blank but include has preferrence
+  {    
+    var boardNames = [];
+    var grpList = (includeList.toLowerCase()).split(",");
+    grpList = cleanList_(grpList);
+    for(var i = 0; i < grpList.length; i++)
+    {
+      var groupName = grpList[i];
+      boardNames = boardNames.concat(getBoardNames4mGroup_(groupName));  
+    }//all group search loop ends
+    
+    boardList = []; //reset explicitly
+    for(var b = 0; b < boardSheetList.length; b++)
+    {
+      var shName = boardSheetList[i].name;
+      if(boardNames.indexOf(shName) > -1)//matching
+      {
+        boardList.push({name : shName, id : boardSheetList[i].id});
+      }
+    }//loop ends
+    
+    return boardList;  
+  }//include condition ends
+  
+  //case 3://skip only excluded ones
+  if(includeList == "" && excludeList != "")
+  {
+    var exGrpList = (excludeList.toLowerCase()).split(",");
+    exGrpList = cleanList_(exGrpList);
+    var exBoardNames = [];
+    for(var i = 0; i < exGrpList.length; i++)
+    {
+      var exGrpName = exGrpList[i];
+      exBoardNames = exBoardNames.concat(getBoardNames4mGroup_(exGrpName));  
+    }//all exclude group search loop ends
+
+    boardList = []; //reset explicitly
+    for(var b = 0; b < boardSheetList.length; b++)
+    {
+      var shName = boardSheetList[i].name;
+      if(exBoardNames.indexOf(shName) == -1)//not matching
+      {
+        boardList.push({name : shName, id : boardSheetList[i].id});
+      }
+    }//loop ends
+
+    return boardList;  
+  }//exclude condition ends
+}
+//////////////////////////////////////////////////////////////////////////////
+function getBoardData_(sheetList)
+{
+  var boardList = [];
+  for(var i = 0; i < sheetList.length; i++)
+  {
+    var shName = sheetList[i].getName();
+    if(shName.indexOf(" [") > -1)
+    {
+      var pieces = shName.split(" [");
+      var brdName = pieces[0].trim().toLowerCase();
+      var brdID = pieces[1].replace("]","").trim().toLowerCase();
+      boardList.push({name : brdName, id : brdID});
+    }
+  }//loop ends
+  
+  return boardList;
+}
+////////////////////////////////////////////////////////////////////////////////

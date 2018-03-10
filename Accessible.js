@@ -3,6 +3,7 @@
 //function deleteWebhooks(boardID) 
 //function doGetting(e) 
 //function doPosting(notifText) 
+//function showFailure(msg)
 ////////////////////////////////////////////////////////////////////
 function init()
 {
@@ -158,3 +159,7 @@ function doPosting(notifText)
   return postOut;
 }
 ////////////////////////////////////////////////////////////////////
+function showFailure(msg)
+{
+  SpreadsheetApp.getUi().alert(msg);
+}

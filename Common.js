@@ -34,7 +34,7 @@ function onEditDetected(e)
   var currSheet = rng.getSheet();
   var shName = currSheet.getName();
   var processFlag = false;
-  if(EXCLUDED_SHEET_NAMES.indexOf(shName) > -1 || row < 2 )
+  if(EXCLUDED_SHEET_NAMES.indexOf(shName) > -1 || row < 2 )//excluded list
   {
     return;//ignore
   }
@@ -43,7 +43,7 @@ function onEditDetected(e)
     //case 1  "Clear Triggers"
     case CLEAR_TRIG_ACTION_LIST[0]:
       //both cases
-      if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || col == 3)
+      if((shName == GLOBAL_COMMANDS_NAME_  && col == 5) || (shName != GLOBAL_GROUP_NAME_ && col == 3))
       {
         processFlag = true;
       }
@@ -61,12 +61,13 @@ function onEditDetected(e)
       }      
       var signatStr = createMd5String_(currStr);
       writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
-      clear(signatStr);            
+      clear(signatStr);     
+      
       break;
   
     //case 2 "Time Trigger"
     case ACTION_LIST[0]:
-      if((shName == GLOBAL_COMMANDS_NAME_  && col == 3)  || col == 1)
+      if((shName == GLOBAL_COMMANDS_NAME_  && col == 3)  || (shName != GLOBAL_GROUP_NAME_ && col == 1))
       {
         processFlag = true;
       }
@@ -81,6 +82,22 @@ function onEditDetected(e)
       var htmlOut = HtmlService.createTemplate(htmlData).evaluate();
       SpreadsheetApp.getUi().showModalDialog(htmlOut, "Time Trigger Details");
       
+      break;
+      
+    //case 3: "Update Triggers"
+    case UPDATE_TRIG_ACTION_LIST[0]:
+      if(shName == GLOBAL_GROUP_NAME_  && col == 3)
+      {        
+        processFlag = true;
+      }
+      else
+      {
+        return;
+      }
+      //now process
+      
+      var dataRow = currSheet.getDataRange().getValues()[row-1];
+      timeTriggerGroupUpdate(dataRow);
       break;
   }//switch ends
   

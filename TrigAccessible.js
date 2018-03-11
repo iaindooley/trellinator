@@ -172,15 +172,14 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
     var globDataRow = globSheet.getRange("A"+boardRow+":D"+boardRow).getValues()[0];
     var includeList = (globDataRow[0] + "").trim();
     var excludeList = (globDataRow[1] + "").trim();
-    var boardList = getAllBoards4Execution_(includeList, excludeList);
-    
+    var boardList = getAllBoards4Execution_(includeList, excludeList);   
     for(var i = 0; i < boardList.length; i++)
     {
       var boardID = boardList[i].id;
       var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
       var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
       //var signat = GLOBAL_TIME_TRIGGER_PREFIX + createMd5String_(currStr);
-      var signat = createMd5String_(currStr);
+      var signat = createMd5String_(currStr) + "/" + boardID;     
       push(timeStamp, funcObj, signat);       
     }
   }
@@ -204,3 +203,60 @@ function saveFunctionName(boardStr, boardRow, funcName)
     brdSheet.getRange("D" + boardRow).setValue(funcName);
   }
 }
+//////////////////////////////////////////////////////////////////////////////
+function timeTriggerGroupUpdate(groupRow)
+{   
+  var grpName = (groupRow[0] + "");
+  //var boardStr = (groupRow[1] + "");
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);  
+  var globData = globSheet.getDataRange().getValues();
+  for(var row = 1; row < globData.length; row++)
+  {
+    var funcName = globData[row][3] + "";
+    if(globData[row][2] != ACTION_LIST[0])
+    {
+      continue;
+    }
+    //now processing Time trigger rows only
+    var includeStr = (globData[row][0] + "");
+    var excludeStr = (globData[row][1] + "");
+    var grpFlag = checkGroupIncluded_(includeStr, excludeStr, grpName);
+    if(!grpFlag)
+    {
+      continue;
+    }
+    //now processing group included rows only
+    var boardList = getAllBoards4Execution_(includeStr, excludeStr);
+    var currStr = [GLOBAL_COMMANDS_NAME_ , ACTION_LIST[0], funcName].join(",");
+    var globSignat = createMd5String_(currStr);
+    var globTimeStamp = findTimeStamp_(globSignat);
+    //Phase-1: for all new boards added to group
+    var signatList = [];
+    for(var i = 0; i < boardList.length; i++)
+    {
+      var boardID = boardList[i].id;
+      var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+      var signat =  globSignat + "/" + boardID;     
+      signatList.push(signat);
+      var signatFlag = checkFullSignature_(signat);
+      if(!signatFlag)
+      {
+        push(globTimeStamp, funcObj, signat);       
+      }
+    }//loop for all new boards ends
+    //Phase-2: for all boards removed from group
+    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    var qData = qSheet.getDataRange().getValues();
+    for(var q = qData.length - 1; q >= 1; q--)
+    {
+      var qSignat = qData[q][QUEUE_SIGNATURE_COLUMN - 1] + "";
+      if(qSignat.indexOf("/") > -1 && qSignat.split("/")[0] == globSignat && signatList.indexOf(qSignat) == -1)
+      {
+        qSheet.deleteRow(q+1);
+      }
+                     
+    }//queue data loop ends
+  }//search for group name in all global commands ends
+}
+//////////////////////////////////////////////////////////////////////////////

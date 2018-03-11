@@ -324,7 +324,7 @@ function createSheetByName_(shName)
 function createGlobalSheet_()
 {
   var globalSheet = createSheetByName_(GLOBAL_COMMANDS_NAME_);
-  globalSheet.getRange("A1:E1").setValues([["Include", "Exclude", "Notification Type", "Function Call", "Clear Triggers"]])
+  globalSheet.getRange("A1:E1").setValues([["Include", "Exclude", "Notification Type", "Function Call", CLEAR_TRIG_ACTION_LIST[0] ]])
   .setFontWeight("bold");
   //globalSheet = SpreadsheetApp.getActiveSheet();
   globalSheet.setColumnWidth(1, 200)
@@ -593,12 +593,15 @@ function renameBoardSheet_(actionData)
 function createGlobalGroupSheet_()
 {
   var globalGrpSheet = createSheetByName_(GLOBAL_GROUP_NAME_);
-  globalGrpSheet.getRange("A1:B1").setValues([["Group Name", "Boards"]])
+  globalGrpSheet.getRange("A1:C1").setValues([["Group Name", "Boards", UPDATE_TRIG_ACTION_LIST[0] ]])
   .setFontWeight("bold");  
   globalGrpSheet.setColumnWidth(1, 200)
   .setColumnWidth(2, 600)
+  .setColumnWidth(3, 200)
   .getRange("A:B").setWrap(true).setVerticalAlignment("center");
-   
+  
+  createDropDown_(globalGrpSheet, "C2", UPDATE_TRIG_ACTION_LIST); 
+  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var configSheet = ss.getSheetByName(CONFIG_NAME_);  
   globalGrpSheet.activate();
@@ -666,7 +669,7 @@ function getBoardNames4mGroup_(groupName)
     if(grpData[i][0].toLowerCase() == groupName)
     {
       var boardStr = (grpData[i][1] + "").toLowerCase().trim();
-      boardList = boardStr.split(",");
+      boardList = boardStr.split(",");      
       boardList = cleanList_(boardList);
       return boardList;
     }
@@ -719,16 +722,16 @@ function getAllBoards4Execution_(includeList, excludeList)
     for(var i = 0; i < grpList.length; i++)
     {
       var groupName = grpList[i];
-      boardNames = boardNames.concat(getBoardNames4mGroup_(groupName));  
+      boardNames = boardNames.concat(getBoardNames4mGroup_(groupName));        
     }//all group search loop ends
     
     boardList = []; //reset explicitly
     for(var b = 0; b < boardSheetList.length; b++)
     {
-      var shName = boardSheetList[i].name;
+      var shName = boardSheetList[b].name;      
       if(boardNames.indexOf(shName) > -1)//matching
-      {
-        boardList.push({name : shName, id : boardSheetList[i].id});
+      {        
+        boardList.push({name : shName, id : boardSheetList[b].id});
       }
     }//loop ends
     
@@ -750,10 +753,10 @@ function getAllBoards4Execution_(includeList, excludeList)
     boardList = []; //reset explicitly
     for(var b = 0; b < boardSheetList.length; b++)
     {
-      var shName = boardSheetList[i].name;
+      var shName = boardSheetList[b].name;
       if(exBoardNames.indexOf(shName) == -1)//not matching
       {
-        boardList.push({name : shName, id : boardSheetList[i].id});
+        boardList.push({name : shName, id : boardSheetList[b].id});
       }
     }//loop ends
 

@@ -186,3 +186,67 @@ function createMd5String_(currStr)
   return hashStr;
 }
 //////////////////////////////////////////////////////////////////////////////
+function checkGroupIncluded_(includeList, excludeList, grpName)
+{
+  var groupFlag = 0;//unconcerned
+  //case 1:
+  if(includeList == "" && excludeList == "")
+  {  
+    return groupFlag;
+  }
+  
+  //case 2:
+  if(includeList != "") //either exclude blank or not blank but include has preferrence
+  {
+    grpName = grpName.toLowerCase();
+    var grpList = (includeList.toLowerCase()).split(",");
+    grpList = cleanList_(grpList);
+    groupFlag = (grpList.indexOf(grpName) > -1) ? 1 : 0;
+    return groupFlag;
+    
+  }//include condition ends
+  
+  //case 3: 
+  if(includeList == "" && excludeList != "")
+  {
+    grpName = grpName.toLowerCase();
+    var exGrpList = (excludeList.toLowerCase()).split(",");
+    exGrpList = cleanList_(exGrpList);    
+    groupFlag = (exGrpList.indexOf(grpName) > -1) ? -1 : 0;
+    return groupFlag;
+    
+  }//exclude condition ends
+}
+//////////////////////////////////////////////////////////////////////////////
+function checkFullSignature_(signat)
+{
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qData = qSheet.getDataRange().getValues();
+  for(var i = 0; i < qData.length; i++)
+  {
+    if(qData[i][QUEUE_SIGNATURE_COLUMN - 1] == signat)
+    {
+      return true;
+    }
+  }//loop ends
+  //if still not found
+  return false;
+}
+//////////////////////////////////////////////////////////////////////////////
+function findTimeStamp_(globSignat)
+{  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qData = qSheet.getDataRange().getValues();
+  for(var i = 0; i < qData.length; i++)
+  {
+    var qSignat = (qData[i][QUEUE_SIGNATURE_COLUMN - 1] + "").split("/")[0];
+    if(qSignat == globSignat)
+    {
+      return qData[i][0];
+    }
+  }//loop ends
+  //if still not found
+  return null;
+}

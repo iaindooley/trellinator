@@ -48,10 +48,10 @@ var TIME_FORMAT_ = "HH:mm";
 var EXCLUDED_SHEET_NAMES = [INFO_TAB_NAME_ ,
                             CONFIG_NAME_ ,
                             BOARD_DB_NAME_ ,
-                            QUEUE_TAB_NAME_,
-                            GLOBAL_GROUP_NAME_
+                            QUEUE_TAB_NAME_                            
                            ];
 var CLEAR_TRIG_ACTION_LIST = ["Clear Triggers"];
+var UPDATE_TRIG_ACTION_LIST = ["Update Triggers"];
 var ACTION_LIST = [ "Time Trigger",//first one is our custom defined, not Trello's
 "addAdminToBoard",
 "addAdminToOrganization",

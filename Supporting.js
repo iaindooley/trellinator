@@ -157,9 +157,10 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
-  while(checkAlreadyFlushing_("flush"))
-    Utilities.sleep(10);
-  setFlushing_("flush");
+    while(checkAlreadyFlushing_("flush"))
+        Utilities.sleep(Trigger.getRandomArbitrary(5000,10000));
+
+    setFlushing_("flush");
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
     if(!infoSheet)

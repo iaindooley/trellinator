@@ -35,5 +35,5 @@ Date.prototype.getMonthName = function()
 }
 
 Trigger.getRandomArbitrary = function(min, max) {
-    return Math.random() * (max - min) + min;
+    return Math.floor(Math.random() * (max - min) + min);
 }

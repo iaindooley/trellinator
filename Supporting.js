@@ -157,31 +157,44 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
-    while(checkAlreadyFlushing_("flush"))
+    try
+    {
+      var tries = 0;
+      
+      while(checkAlreadyFlushing_("flush") && (tries < 5))
+      {
         Utilities.sleep(Trigger.getRandomArbitrary(5000,10000));
-
-    setFlushing_("flush");
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
-    if(!infoSheet)
-    {
-      infoSheet = ss.insertSheet(INFO_TAB_NAME_);
-      infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
-      infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
-    }
-   
-    if(write_info_buffer.length)
-    {
+        tries++;
+      }
+      
+      setFlushing_("flush");
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
+      if(!infoSheet)
+      {
+        infoSheet = ss.insertSheet(INFO_TAB_NAME_);
+        infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
+        infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
+      }
+      
+      if(write_info_buffer.length)
+      {
         infoSheet.appendRow([new Date(), JSON.stringify(write_info_buffer)]);
         var maxRow = infoSheet.getMaxRows();
-
+        
         if(maxRow > 500)
-            infoSheet.deleteRows(501,maxRow-500);
-      
+          infoSheet.deleteRows(501,maxRow-500);
+        
         infoSheet.sort(1,false);
+      }
+      
+      setFlushing_("");
     }
 
-  setFlushing_("");
+    catch(e)
+    {
+        setFlushing_("");
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)

@@ -161,7 +161,7 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
   if(boardStr != GLOBAL_COMMANDS_NAME_)
   {//indivdual board
     var boardID = boardStr.split("[")[1].replace("]","").trim();
-    var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+    var funcObj = {functionName : funcName, parameters : {id : boardID} };
     var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
     var signat = createMd5String_(currStr);
     push(timeStamp, funcObj, signat); 
@@ -177,7 +177,7 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
     for(var i = 0; i < boardList.length; i++)
     {
       var boardID = boardList[i].id;
-      var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+      var funcObj = {functionName : funcName, parameters : {id : boardID} };
       var currStr = [boardStr, ACTION_LIST[0], funcName].join(",");
       //var signat = GLOBAL_TIME_TRIGGER_PREFIX + createMd5String_(currStr);
       var signat = createMd5String_(currStr) + "/" + boardID;     
@@ -237,7 +237,7 @@ function timeTriggerGroupUpdate(groupRow)
     for(var i = 0; i < boardList.length; i++)
     {
       var boardID = boardList[i].id;
-      var funcObj = {functionName : funcName, parameters : {boardId : boardID} };
+      var funcObj = {functionName : funcName, parameters : {id : boardID} };
       var signat =  globSignat + "/" + boardID;     
       signatList.push(signat);
       var signatFlag = checkFullSignature_(signat);

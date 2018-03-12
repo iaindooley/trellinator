@@ -24,6 +24,8 @@ function init()
   {
     writeInfo_("Trellinator Initialization " + error);
   }
+  
+  flushInfoBuffer();
 }
 ////////////////////////////////////////////////////////////////////
 function continueInit()
@@ -55,6 +57,7 @@ function deleteWebhooks(boardID)
     if (webhooks.length == 0)
     {
       writeInfo_("No webhooks found registered against token " + trelloData.token);  
+      flushInfoBuffer();
       return true;
     }  
     
@@ -88,11 +91,13 @@ function deleteWebhooks(boardID)
     }//parsing loop ends
     
     writeInfo_("Out of total: " + webhooks.length + " webhook(s), " + deleteCount + " successfully deleted.");  
+    flushInfoBuffer();
     return true;
   }
   catch(error)
   {
     writeInfo_("Webhook deletion " + error);
+    flushInfoBuffer();
     return false;
   }
 }  

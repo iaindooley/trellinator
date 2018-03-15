@@ -38,6 +38,7 @@ function processQueue()
       var rowTimeObj = qData[i][0];
       var rowTime = rowTimeObj.valueOf();
       var status = qData[i][QUEUE_STATUS_COLUMN - 1] + "";
+
       if(rowTime <= currTime && status == "")
       {
         //writeInfo_("Parsing row: " + (i+1));
@@ -57,13 +58,15 @@ function processQueue()
     }//loop for all queue rows ends  
     
     //all completed
-    setRunning_("");    
+    setRunning_("");
+    flushInfoBuffer();    
     return;
   }
   catch(error)
   {
     writeInfo_("Queue processing " + error);
     setRunning_("");
+    flushInfoBuffer();
     return;
   }
 }

@@ -9,6 +9,15 @@
 //function setFlushing_(funcName)
 //function setSafetyStatus_(safetyStatus)
 //function createMd5String_(currStr)
+
+var document_properties = null;
+function documentProperties()
+{
+    if(!document_properties)
+      document_properties = PropertiesService.getDocumentProperties();
+  
+    return document_properties;
+}
 //////////////////////////////////////////////////////////////////////////////
 function createQueueSheet_()
 {
@@ -106,15 +115,17 @@ function callFunction_(qSheet, qDataRow, rowIndex)
     writeInfo_(funcObj.functionName + " executing from queue...");    
     var signat = qDataRow[QUEUE_SIGNATURE_COLUMN - 1] + "";
     var originalTime = qDataRow[0];
-    
+
     if(typeof this[funcObj.functionName] === 'function')
-    {
-        this[funcObj.functionName](funcObj.parameters, signat, originalTime);
-        qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);        
+    {     
+      this[funcObj.functionName](funcObj.parameters, signat, originalTime);
+      qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).setValue(FUNC_DONE_STATUS_);  
     }
     
     else
+    {
         throw new Error(funcObj.functionName+" is not a function that exists");
+    }
   }
   catch(error)
   {
@@ -140,16 +151,16 @@ function triggerIsTimeLimitApproaching_(tStart)
 function checkAlreadyRunning_(funcName)
 {
   //writeInfo_(arguments.callee.name);
-  Utilities.sleep(5);
-  var runningName = PropertiesService.getDocumentProperties().getProperty(KEY_RUNNING_FUNCTION);
+  //Utilities.sleep(5);
+  var runningName = documentProperties().getProperty(KEY_RUNNING_FUNCTION);
   var runFlag = (runningName == funcName) ? true : false;
   return runFlag;
 }
 //////////////////////////////////////////////////////////////////////////////
 function setRunning_(funcName)
 {
-  Utilities.sleep(5);
-  PropertiesService.getDocumentProperties().setProperty(KEY_RUNNING_FUNCTION, funcName);
+  //Utilities.sleep(5);
+  documentProperties().setProperty(KEY_RUNNING_FUNCTION, funcName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,24 +168,24 @@ function setRunning_(funcName)
 function checkAlreadyFlushing_(funcName)
 {
   //writeInfo_(arguments.callee.name);
-  Utilities.sleep(5);
-  var runningName = PropertiesService.getDocumentProperties().getProperty(KEY_RUNNING_FUNCTION+" flushinfo");
+  //Utilities.sleep(5);
+  var runningName = documentProperties().getProperty(KEY_RUNNING_FUNCTION+" flushinfo");
   var runFlag = (runningName == funcName) ? true : false;
   return runFlag;
 }
 //////////////////////////////////////////////////////////////////////////////
 function setFlushing_(funcName)
 {
-  Utilities.sleep(5);
-  PropertiesService.getDocumentProperties().setProperty(KEY_RUNNING_FUNCTION+" flushinfo", funcName);
+//  Utilities.sleep(1000);
+  documentProperties().setProperty(KEY_RUNNING_FUNCTION+" flushinfo", funcName);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 function setSafetyStatus_(safetyStatus)
 {
-  Utilities.sleep(5);
-  PropertiesService.getDocumentProperties().setProperty(KEY_SAFETY_STATUS, safetyStatus);  
+  //Utilities.sleep(5);
+  documentProperties().setProperty(KEY_SAFETY_STATUS, safetyStatus);  
 }
 //////////////////////////////////////////////////////////////////////////////
 function createMd5String_(currStr)

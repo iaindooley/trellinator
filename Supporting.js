@@ -441,6 +441,8 @@ function executeNotificationCommand_(notifData)
 {
   try
   {
+    var execution_lock  = LockService.getScriptLock();
+    execution_lock.tryLock(1000);
     //writeInfo_("notification parser to find relevant functions...");
     var successFlag = false;
     var quFlag = false;
@@ -454,6 +456,8 @@ function executeNotificationCommand_(notifData)
       throw "Board sheet named [" + boardSheetName + "] not found";
     }
     var boardMap = brdSheet.getDataRange().getValues();
+    execution_lock.releaseLock();
+    
     for(var i = 1; i < boardMap.length; i++)
     {
       var mapRow = boardMap[i];
@@ -494,12 +498,16 @@ function executeNotificationCommand_(notifData)
     }//loop for all this board's rows ends
     
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
+    var execution_lock  = LockService.getScriptLock();
+    execution_lock.tryLock(1000);
     var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)
     {
       throw "Global command sheet not found";
     }
     var globalMap = globalSheet.getDataRange().getValues();
+    execution_lock.releaseLock();
+    
     for(var i = 1; i < globalMap.length; i++)
     {
       var mapRow = globalMap[i];

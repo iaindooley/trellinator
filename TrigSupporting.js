@@ -147,3 +147,16 @@ function findTimeStamp_(globSignat)
   //if still not found
   return null;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+function triggerIsTimeLimitApproaching_(tStart)
+{
+  var tEnd = new Date().valueOf();
+  var diff = (tEnd - tStart)/1000;
+  //writeInfo("exec-time:" + diff);
+  if(diff > TIME_OUT_LIMIT_TRIG_)
+  {
+    return true;
+  }
+ return false; 
+}

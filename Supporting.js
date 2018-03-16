@@ -182,10 +182,10 @@ function flushInfoBuffer()
         infoSheet.appendRow([new Date(), JSON.stringify(write_info_buffer)]);
         var maxRow = infoSheet.getMaxRows();
         
+        infoSheet.sort(1,false);
+        
         if(maxRow > 500)
           infoSheet.deleteRows(501,maxRow-500);
-        
-        infoSheet.sort(1,false);
       }
       
       setFlushing_("");

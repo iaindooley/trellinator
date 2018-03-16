@@ -130,6 +130,7 @@ function callFunction_(qSheet, qDataRow, rowIndex)
   catch(error)
   {
     writeInfo_("Error executing function: "+error);
+    flushInfoBuffer();
     qSheet.getRange(rowIndex+1, QUEUE_STATUS_COLUMN).clearContent();
   }
 
@@ -151,7 +152,7 @@ function triggerIsTimeLimitApproaching_(tStart)
 function checkAlreadyRunning_(funcName)
 {
   //writeInfo_(arguments.callee.name);
-  //Utilities.sleep(5);
+  Utilities.sleep(1000);
   var runningName = documentProperties().getProperty(KEY_RUNNING_FUNCTION);
   var runFlag = (runningName == funcName) ? true : false;
   return runFlag;
@@ -159,7 +160,7 @@ function checkAlreadyRunning_(funcName)
 //////////////////////////////////////////////////////////////////////////////
 function setRunning_(funcName)
 {
-  //Utilities.sleep(5);
+  Utilities.sleep(1000);
   documentProperties().setProperty(KEY_RUNNING_FUNCTION, funcName);
 }
 
@@ -168,7 +169,7 @@ function setRunning_(funcName)
 function checkAlreadyFlushing_(funcName)
 {
   //writeInfo_(arguments.callee.name);
-  //Utilities.sleep(5);
+  Utilities.sleep(1000);
   var runningName = documentProperties().getProperty(KEY_RUNNING_FUNCTION+" flushinfo");
   var runFlag = (runningName == funcName) ? true : false;
   return runFlag;
@@ -176,7 +177,7 @@ function checkAlreadyFlushing_(funcName)
 //////////////////////////////////////////////////////////////////////////////
 function setFlushing_(funcName)
 {
-//  Utilities.sleep(1000);
+  Utilities.sleep(1000);
   documentProperties().setProperty(KEY_RUNNING_FUNCTION+" flushinfo", funcName);
 }
 

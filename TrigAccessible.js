@@ -104,7 +104,7 @@ function push(timeStamp, funcObj, signatureStr)
     if(timeStamp.getDate() && funcObj.functionName && funcObj.parameters)
     {
       var funcStr = JSON.stringify(funcObj);
-      var dateFormat = qSheet.getRange("A2").getNumberFormat();      
+      var dateFormat = qSheet.getRange("A2").getNumberFormat().replace(new RegExp("[^:d/my h]","ig"),'');
       dateFormat = (dateFormat.indexOf("MM") == -1) ? dateFormat.replace("mm","MM") : dateFormat; //1st instance only//required due to google getnumberformat bug      
       dateFormat = (dateFormat.search(/H/g) == -1) ? dateFormat.replace(/h/g,"H") : dateFormat; //pretty buggy google apps script here, has only one 'h'
       dateFormat = (dateFormat.indexOf("HH") == -1) ? dateFormat.replace("hh","HH") : dateFormat; //otherwise will print in 12 hour time, and everything will execute 10 hours early!

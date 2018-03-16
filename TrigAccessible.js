@@ -17,58 +17,76 @@ function processQueue()
 {
   try
   {
+    var queue_lock  = LockService.getScriptLock();
+    queue_lock.waitLock(10000);
     var currTimeObj = new Date();
-    var currTime = currTimeObj.valueOf();
-    //writeInfo_(arguments.callee.name);
-    if(checkAlreadyRunning_(PROCESS_QUEUE_FUNC_NAME_))
-    {
-      return;
-    }
-    
-    setRunning_(PROCESS_QUEUE_FUNC_NAME_);
-    
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
-    removeCompleted_(qSheet);
-    
+    var currTime    = currTimeObj.valueOf();    
+    var ss          = SpreadsheetApp.getActiveSpreadsheet();
+    var qSheet      = ss.getSheetByName(QUEUE_TAB_NAME_);
+    qSheet.getRange("A2:" + LAST_QUEUE_COLUMN).sort({column: 1, ascending: true});
+    SpreadsheetApp.flush();
     var qData = qSheet.getDataRange().getValues();
-    var qLength = qData.length - 1;
-    for(var i = 1; i < qData.length; i++)
+    
+    for(var i = qData.length-1; i >= 0; i--)
     {     
       var rowTimeObj = qData[i][0];
       var rowTime = rowTimeObj.valueOf();
-      var status = qData[i][QUEUE_STATUS_COLUMN - 1] + "";
 
-      if(rowTime <= currTime && status == "")
+      if(rowTime <= currTime)
       {
-        //writeInfo_("Parsing row: " + (i+1));
-        callFunction_(qSheet, qData[i], i);
+        try
+        {
+          var funcJStr = (qData[i][1].toString()).trim();
+          
+          if(funcJStr == "")
+          {
+            qSheet.deleteRow(i+1);
+            writeInfo_("Blank JSON text in row: " + (rowIndex+1) );
+            return;
+          }
+          //continue
+          var funcObj = JSON.parse(funcJStr);
+          writeInfo_(funcObj.functionName + " executing from queue...");    
+          var signat = qData[i][QUEUE_SIGNATURE_COLUMN - 1].toString();
+          var originalTime = qData[i][0];
+          
+          if(typeof this[funcObj.functionName] === 'function')
+          {     
+            this[funcObj.functionName](funcObj.parameters, signat, originalTime);
+            Logger.log("deleting: "+i);
+            qSheet.deleteRow(i+1); 
+          }
+          
+          else
+          {
+            throw new Error(funcObj.functionName+" is not a function that exists");
+          }
+        }
+        catch(error)
+        {
+          writeInfo_("Error executing function: "+error);
+        }
       }
       //exit if exceeding time limit
       if(triggerIsTimeLimitApproaching_(currTime))
       {
         writeInfo_("Time limit approaching...for queue processing...");
-        if(i < qLength)//still remaining
+        if(i > 0)//still remaining
         {
-          nextMinute();
+            nextMinute();
+            throw new Error("Abort! Time is up");
         }
-        setRunning_("");
-        return;
       }      
     }//loop for all queue rows ends  
-    
-    //all completed
-    setRunning_("");
-    flushInfoBuffer();    
-    return;
   }
+
   catch(error)
   {
-    writeInfo_("Queue processing " + error);
-    setRunning_("");
-    flushInfoBuffer();
-    return;
+      writeInfo_("Queue processing " + error);
   }
+  
+  queue_lock.releaseLock();    
+  flushInfoBuffer();
 }
 //////////////////////////////////////////////////////////////////////////////
 function push(timeStamp, funcObj, signatureStr)

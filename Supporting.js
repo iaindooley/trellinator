@@ -159,17 +159,12 @@ function flushInfoBuffer()
 {
     try
     {
-      var tries = 0;
-      
-      while(checkAlreadyFlushing_("flush") && (tries < 5))
-      {
-        Utilities.sleep(Trigger.getRandomArbitrary(5000,10000));
-        tries++;
-      }
-      
-      setFlushing_("flush");
+      var flush_lock  = LockService.getScriptLock();
+      flush_lock.tryLock(1000);
+
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
+      
       if(!infoSheet)
       {
         infoSheet = ss.insertSheet(INFO_TAB_NAME_);
@@ -187,14 +182,14 @@ function flushInfoBuffer()
         if(maxRow > 500)
           infoSheet.deleteRows(501,maxRow-500);
       }
-      
-      setFlushing_("");
     }
 
     catch(e)
     {
-        setFlushing_("");
+      flush_lock.releaseLock();
     }
+  
+    flush_lock.releaseLock();
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)

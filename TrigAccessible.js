@@ -53,7 +53,6 @@ function processQueue()
           if(typeof this[funcObj.functionName] === 'function')
           {     
             this[funcObj.functionName](funcObj.parameters, signat, originalTime);
-            Logger.log("deleting: "+i);
             qSheet.deleteRow(i+1); 
           }
           

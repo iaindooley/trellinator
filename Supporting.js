@@ -159,7 +159,7 @@ function flushInfoBuffer()
 {
     try
     {
-      var flush_lock  = LockService.getScriptLock();
+      var flush_lock  = LockService.getUserLock();
       flush_lock.tryLock(1000);
 
       var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -190,11 +190,6 @@ function flushInfoBuffer()
     }
   
     flush_lock.releaseLock();
-}
-///////////////////////////////////////////////////////////////////////////////////
-function sampleNotification(notification)
-{
-  writeInfo_(JSON.stringify(notification));
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)
@@ -446,7 +441,7 @@ function executeNotificationCommand_(notifData)
 {
   try
   {
-    var execution_lock  = LockService.getScriptLock();
+    var execution_lock  = LockService.getUserLock();
     execution_lock.tryLock(1000);
     //writeInfo_("notification parser to find relevant functions...");
     var successFlag = false;
@@ -503,7 +498,7 @@ function executeNotificationCommand_(notifData)
     }//loop for all this board's rows ends
     
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
-    var execution_lock  = LockService.getScriptLock();
+    var execution_lock  = LockService.getUserLock();
     execution_lock.tryLock(1000);
     var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)

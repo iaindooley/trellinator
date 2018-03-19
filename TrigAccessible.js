@@ -17,7 +17,7 @@ function processQueue()
 {
   try
   {
-    var queue_lock  = LockService.getScriptLock();
+    var queue_lock  = LockService.getUserLock();
     queue_lock.waitLock(10000);
     var currTimeObj = new Date();
     var currTime    = currTimeObj.valueOf();    
@@ -145,11 +145,9 @@ function clear(signatureStr)
     }
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
-    do  
-    {
-      var delLock = LockService.getScriptLock();
-      var successLock = delLock.tryLock(10000);//10 sec
-    }while(!successLock);
+    var delLock = LockService.getUserLock();
+    var successLock = delLock.tryLock(10000);//10 sec
+
 
     var qData = qSheet.getDataRange().getValues();
     var total = qData.length - 1;

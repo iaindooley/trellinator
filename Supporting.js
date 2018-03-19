@@ -182,6 +182,8 @@ function flushInfoBuffer()
         if(maxRow > 500)
           infoSheet.deleteRows(501,maxRow-500);
       }
+
+      flush_lock.releaseLock();
     }
 
     catch(e)
@@ -189,7 +191,6 @@ function flushInfoBuffer()
       flush_lock.releaseLock();
     }
   
-    flush_lock.releaseLock();
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)
@@ -443,7 +444,6 @@ function executeNotificationCommand_(notifData)
   {
     var execution_lock  = LockService.getUserLock();
     execution_lock.tryLock(1000);
-    //writeInfo_("notification parser to find relevant functions...");
     var successFlag = false;
     var quFlag = false;
     var tStart = (new Date()).valueOf();
@@ -554,6 +554,7 @@ function executeNotificationCommand_(notifData)
   }
   catch(error)
   {
+    execution_lock.releaseLock();
     writeInfo_("Executing Notification Command " + error);
     return successFlag;
   }

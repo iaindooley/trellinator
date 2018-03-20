@@ -434,7 +434,7 @@ function createNewBoardSheet_(actionData)
   }
   catch(error)
   {
-    writeInfo_("Board webhook, time triiger and sheet creation " + error);
+    writeInfo_("Board webhook, time trigger and sheet creation " + error);
     return success;
   }
   

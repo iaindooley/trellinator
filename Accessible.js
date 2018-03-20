@@ -138,7 +138,7 @@ function doPosting(notifText)
   //"removeMemberFromBoard"
   if(actionType == REMOV_MEM_FROM_BRD_ && notifData.model.id == actionData.data.board.id)
   {
-    writeInfo_("Calling remove member from board...process");
+    //writeInfo_("Calling remove member from board...process");
     removeBoardSheet_(actionData);
   }
 

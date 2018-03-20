@@ -419,17 +419,19 @@ function createNewBoardSheet_(actionData)
 {
   try
   {
-    var success = registerWebhook_(actionData.data.board.id);    
+    var boardID = actionData.data.board.id;
+    var success = registerWebhook_(boardID);    
     if(success)
     {
       success = false;
-      var boardSheetName = actionData.data.board.name + " [" + actionData.data.board.id + "]";
+      var boardSheetName = actionData.data.board.name + " [" + boardID + "]";
       var currBSheet = createSheetByName_(boardSheetName);      
       currBSheet.getRange("A1:B1").setValues([["Notification Type", "Function Call"]])
       .setFontWeight("bold");
       currBSheet.setColumnWidth(1, 250)
       .setColumnWidth(2, 200); 
       createDropDown_(currBSheet, "A2", ACTION_LIST);    
+      timeTrigger4NewBoard_(boardID)
       getAlphabeticalOrder_(currBSheet);
       success = true;
     }
@@ -437,10 +439,45 @@ function createNewBoardSheet_(actionData)
   }
   catch(error)
   {
-    writeInfo_("Board webhook and sheet creation " + error);
+    writeInfo_("Board webhook, time trigger and sheet creation " + error);
     return success;
   }
   
+}
+//////////////////////////////////////////////////////////////////////////////
+function timeTrigger4NewBoard_(boardID)
+{  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);  
+  var globData = globSheet.getDataRange().getValues();
+  var globTrigCount = 0;
+  for(var row = 1; row < globData.length; row++)
+  {
+    var funcName = globData[row][3] + "";
+    var includeStr = (globData[row][0] + "").trim();
+    var excludeStr = (globData[row][1] + "").trim();
+
+    if(globData[row][2] != ACTION_LIST[0] || includeStr != "" || excludeStr != "")
+    {
+      continue;
+    }
+    //now processing those Time trigger rows that have no include/exclude groups
+    var currStr = [GLOBAL_COMMANDS_NAME_ , ACTION_LIST[0], funcName].join(",");
+    var globSignat = createMd5String_(currStr);
+    var globTimeStamp = findTimeStamp_(globSignat);
+
+    var signatList = [];    
+    var funcObj = {functionName : funcName, parameters : {id : boardID} };
+    var signat =  globSignat + "/" + boardID;     
+    signatList.push(signat);
+    var signatFlag = checkFullSignature_(signat);
+    if(!signatFlag)
+    {
+      push(globTimeStamp, funcObj, signat);       
+      globTrigCount++;
+    }
+  }//loop for all global commmands ends
+  writeInfo_("Total " + globTrigCount + " time-trigger(s) added for new board.");
 }
 //////////////////////////////////////////////////////////////////////////////
 function executeNotificationCommand_(notifData)
@@ -805,3 +842,51 @@ function getBoardData_(sheetList)
   return boardList;
 }
 ////////////////////////////////////////////////////////////////////////////////
+function removeBoardSheet_(actionData)
+{
+  try
+  {
+    var boardID = actionData.data.board.id;
+    var success = deleteWebhooks(boardID);
+    if(!success)
+    {
+      return success;
+    }
+    //continue
+    success = false;
+    var boardSheetName = actionData.data.board.name + " [" + boardID + "]";
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var brdSheet = ss.getSheetByName(boardSheetName);
+    if(!brdSheet)
+    {
+      throw "Board sheet named [" + boardSheetName + "] not found";
+    }
+    //continue with execution queue cleansing
+    var boardMap = brdSheet.getDataRange().getValues(); 
+    for(var i = 1; i < boardMap.length; i++)
+    {
+      var mapRow = boardMap[i] + "";
+      var functionName = mapRow[1] + "";        
+      if(functionName == "")
+      {
+        continue;
+      }
+      var currStr = [boardSheetName , actionData.type , functionName].join(",");
+      var signatStr = createMd5String_(currStr);
+      clear(signatStr);
+      
+    }//loop for all board notification commands ends
+    //remove all global time-triggers
+    clearTimeTriggers4Board_(boardID);
+    ss.deleteSheet(brdSheet);
+    
+    success = true;    
+    return success;
+  }
+  catch(error)
+  {
+    writeInfo_("Removing board webhook, time trigger and sheet " + error);
+    return success;
+  }
+
+}

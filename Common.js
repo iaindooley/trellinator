@@ -80,8 +80,7 @@ function onEditDetected(e)
       htmlData = htmlData.replace("{{board-Tab-Name}}",shName);
       htmlData = htmlData.replace("{{board-Tab-Row}}",row);
       var htmlOut = HtmlService.createTemplate(htmlData).evaluate();
-      SpreadsheetApp.getUi().showModalDialog(htmlOut, "Time Trigger Details");
-      
+      SpreadsheetApp.getUi().showModalDialog(htmlOut, "Time Trigger Details");      
       break;
       
     //case 3: "Update Triggers"

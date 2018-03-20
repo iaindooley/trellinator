@@ -160,3 +160,24 @@ function triggerIsTimeLimitApproaching_(tStart)
   }
  return false; 
 }
+//////////////////////////////////////////////////////////////////////////////
+function clearTimeTriggers4Board_(boardID)
+{
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qData = qSheet.getDataRange().getValues();
+  boardID = "/" + boardID;
+  var removalCount = 0;
+  for(var q = qData.length - 1; q >= 1; q--)
+  {
+    var qSignat = qData[q][QUEUE_SIGNATURE_COLUMN - 1] + "";
+    if(qSignat.indexOf(boardID) > -1 )
+    {
+      qSheet.deleteRow(q+1);
+      removalCount++;
+    }
+    
+  }//queue data loop ends
+  
+  writeInfo_("Total " + removalCount + " global time-triggers removed for the board.");
+}

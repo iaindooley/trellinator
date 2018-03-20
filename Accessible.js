@@ -130,11 +130,18 @@ function doPosting(notifText)
   writeInfo_("Examining Notification: [" + actionID + "-" + actionType + "]");
   
   //"addMemberToBoard"
-  if( actionType == ADD_MEM_TO_BRD_ && notifData.model.id == actionData.member.id)
+  if(actionType == ADD_MEM_TO_BRD_ && notifData.model.id == actionData.member.id)
   {
     //writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
   }
+  //"removeMemberFromBoard"
+  if(actionType == REMOV_MEM_FROM_BRD_ && notifData.model.id == actionData.data.board.id)
+  {
+    writeInfo_("Calling remove member from board...process");
+    removeBoardSheet_(actionData);
+  }
+
   //"createBoard"
   else if(actionType == CRET_BRD_ && notifData.model.id == actionData.idMemberCreator)
   {

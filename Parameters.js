@@ -28,6 +28,7 @@ var RENAME_BRD = "action_update_board_name";
 //////////////////////////////////////////////////////////////////////////
 var QUEUE_TAB_NAME_ = "ExecutionQueue";
 var PROCESS_QUEUE_FUNC_NAME_ = "processQueue";
+var PROCESS_QUEUE_INTERVAL = 10;
 //var INFO_TAB_NAME_ = "InfoLog";
 var FUNC_DONE_STATUS_ = "DONE";
 var FUNC_LOCK_STATUS_ = "LOCK";

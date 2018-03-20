@@ -9,7 +9,7 @@
 function triggerInit()
 {  
   createQueueSheet_();
-  triggerCreateSchedule_(PROCESS_QUEUE_FUNC_NAME_, 5);
+  triggerCreateSchedule_(PROCESS_QUEUE_FUNC_NAME_, PROCESS_QUEUE_INTERVAL);
 }
 //////////////////////////////////////////////////////////////////////////////
 //must be same name as PROCESS_QUEUE_FUNC_NAME_ here as well as client side script
@@ -126,7 +126,7 @@ function nextMinute()
 {
   //writeInfo_(arguments.callee.name);
   var funcName = PROCESS_QUEUE_FUNC_NAME_;
-  triggerCreateSchedule_(funcName, 5);//has embedded removal for all triggers for this function
+  triggerCreateSchedule_(funcName,PROCESS_QUEUE_INTERVAL);//has embedded removal for all triggers for this function
   
   ScriptApp.newTrigger(funcName)
   .timeBased()  

@@ -159,7 +159,7 @@ function flushInfoBuffer()
 {
     try
     {
-      var flush_lock  = LockService.getUserLock();
+      var flush_lock  = LockService.getScriptLock();
       flush_lock.tryLock(1000);
 
       var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -484,7 +484,7 @@ function executeNotificationCommand_(notifData)
 {
   try
   {
-    var execution_lock  = LockService.getUserLock();
+    var execution_lock  = LockService.getScriptLock();
     execution_lock.tryLock(1000);
     var successFlag = false;
     var quFlag = false;
@@ -540,7 +540,7 @@ function executeNotificationCommand_(notifData)
     }//loop for all this board's rows ends
     
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
-    var execution_lock  = LockService.getUserLock();
+    var execution_lock  = LockService.getScriptLock();
     execution_lock.tryLock(1000);
     var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)

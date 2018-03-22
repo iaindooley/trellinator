@@ -9,6 +9,20 @@ Trigger.now = function()
         return new Date();
 }
 
+Trigger.timeIsBetween = function(start,finish)
+{
+    var today = new Date();
+    var start = new Date(today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+start);
+    var finish = new Date(today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+finish);
+    var now = new Date();
+    return ((now.getTime() >= start.getTime()) && (now.getTime() <= finish.getTime()));
+}
+
+Trigger.xHoursFromNow = function(x)
+{
+    return Trigger.xMinutesFromNow(x*60);
+}
+
 Trigger.xMinutesFromNow = function(x)
 {
     return new Date(Trigger.now().getTime() + x*60000);

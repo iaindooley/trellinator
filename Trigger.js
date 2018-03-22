@@ -8,12 +8,15 @@ Trigger.now = function()
     else
         return new Date();
 }
-
+//time given in 24 hour time with no seconds like 14:34
 Trigger.timeIsBetween = function(start,finish)
 {
-    var today = new Date();
-    var start = new Date(today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+start);
-    var finish = new Date(today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+finish);
+    var start_parts = start.split(":");
+    var finish_parts = finish.split(":");
+    var start = new Date();
+    start.setHours(start_parts[0],start_parts[1],0,0);
+    var finish = new Date();
+    finish.setHours(finish_parts[0],finish_parts[1],0,0);
     var now = new Date();
     return ((now.getTime() >= start.getTime()) && (now.getTime() <= finish.getTime()));
 }

@@ -128,9 +128,9 @@ function doPosting(notifText)
   var actionID = actionData.id;
   //var successFlag = false;
   writeInfo_("Examining Notification: [" + actionID + "-" + actionType + "]");
-  
+
   //"addMemberToBoard"
-  if(((actionType == ADD_MEM_TO_BRD_) || (actionType == ADD_MEM_TO_ORG_BRD_)) && (notifData.model.id == actionData.member.id))
+  if((actionType == ADD_MEM_TO_BRD_) && (notifData.model.id == actionData.member.id))
   {
     writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
@@ -156,7 +156,7 @@ function doPosting(notifText)
   }
 
   //all others board level notification
-  else if(notifData.model.id == actionData.data.board.id)
+  else if((notifData.model && actionData.data.board) && (notifData.model.id == actionData.data.board.id))
   {
     writeInfo_("Yes, this is a board level notification...");
     executeNotificationCommand_(notifData);

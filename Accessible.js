@@ -130,9 +130,9 @@ function doPosting(notifText)
   writeInfo_("Examining Notification: [" + actionID + "-" + actionType + "]");
   
   //"addMemberToBoard"
-  if(actionType == ADD_MEM_TO_BRD_ && notifData.model.id == actionData.member.id)
+  if(((actionType == ADD_MEM_TO_BRD_) || (actionType == ADD_MEM_TO_ORG_BRD_)) && (notifData.model.id == actionData.member.id))
   {
-    //writeInfo_("Calling add member to board...process");
+    writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
   }
   //"removeMemberFromBoard"
@@ -143,9 +143,9 @@ function doPosting(notifText)
   }
 
   //"createBoard"
-  else if(actionType == CRET_BRD_ && notifData.model.id == actionData.idMemberCreator)
+  else if(((actionType == CRET_BRD_)||(actionType == COPY_BRD_)) && notifData.model.id == actionData.idMemberCreator)
   {
-    //writeInfo_("Calling board creation...process");
+    writeInfo_("Calling board creation...process");
     createNewBoardSheet_(actionData);
   }
   //"updateBoard" with "action_update_board_name"

@@ -20,9 +20,11 @@ var MY_USERNAME_KEY_ = "MY_USERNAME";
 var FUNCTION_CONTINUE_INIT_ = "continueInitialization";
 var FUNCTION_EDIT_DETECTION = "onEditDetected";
 var ADD_MEM_TO_BRD_ = "addMemberToBoard";
+var ADD_MEM_TO_ORG_BRD_ = "addToOrganizationBoard";
 var REMOV_MEM_FROM_BRD_ = "removeMemberFromBoard";
 var CRET_BRD_ = "createBoard";
 var UPDT_BRD = "updateBoard";
+var COPY_BRD_ = "copyBoard";
 var RENAME_BRD = "action_update_board_name";
 //-------------------------------------------------------------------
 //TriggerLib Params

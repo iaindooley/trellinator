@@ -1,6 +1,4 @@
 **/**
-!BenkoBoardExtensions.js
-!BexTensions.js
 !benko-board-trellinator/Standard.js
 !appsscript.json
 !trellinator-libs/Board.js
@@ -15,6 +13,8 @@
 !trellinator-libs/List.js
 !trellinator-libs/Label.js
 !trellinator-libs/Member.js
+!trellinator-libs/Notification.js
+!trellinator-libs/Team.js
 !trellinator-libs/TrelloApi.js
 !trellinator/Accessible.js
 !trellinator/ClientCode.js

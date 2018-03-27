@@ -445,6 +445,28 @@ function createNewBoardSheet_(actionData)
   
 }
 //////////////////////////////////////////////////////////////////////////////
+function addBoardToGlobalCommandGroup(board_name,group_name)
+{  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);  
+  var globData = globSheet.getDataRange().getValues();
+
+  for(var row = 1; row < globData.length; row++)
+  {
+    if(globData[row][0] == group_name)
+    {
+        var value = globData[row][1].trim();
+      
+         if(value)
+           value += ","
+           
+        globSheet.getRange(row+1, 2).setValue(value+board_name);
+        writeInfo_("Added "+board_name+" to "+group_name);
+    }
+  }//loop for all global commmands ends
+}
+
+//////////////////////////////////////////////////////////////////////////////
 function timeTrigger4NewBoard_(boardID)
 {  
   var ss = SpreadsheetApp.getActiveSpreadsheet();

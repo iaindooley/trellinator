@@ -8,6 +8,24 @@ Trigger.now = function()
     else
         return new Date();
 }
+
+Trigger.isWeekDay = function(date)
+{
+    return !((date.getDay() == 6) || (date.getDay() == 0));
+}
+
+//time given in 24 hour time with no seconds like 14:34
+Trigger.xOclockTomorrow = function(time24)
+{
+    var time_parts = time24.split(":");
+    var ret  = new Date();
+    ret.setDate(ret.getDate() + 1);
+    ret.setHours(time_parts[0]);
+    ret.setMinutes(time_parts[1]);
+    ret.setMilliseconds(0);
+    return ret;
+}
+
 //time given in 24 hour time with no seconds like 14:34
 Trigger.timeIsBetween = function(start,finish)
 {
@@ -49,6 +67,38 @@ Date.prototype.getMonthName = function()
 {
     var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
     return monthNames[this.getMonth()];
+}
+
+Date.prototype.next = function(day,time)
+{ 
+    var index = new Array();
+    index["Monday"]    = 7;
+    index["Sunday"]    = 6;
+    index["Saturday"]  = 5;
+    index["Friday"]    = 4;
+    index["Thursday"]  = 3;
+    index["Wednesday"] = 2;
+    index["Tuesday"]   = 1;
+
+    var ret = new Date(this);
+    var cur_day = ret.getDay();
+
+    if(index[day] < cur_day)
+        index[day] += 7;
+
+    ret.setDate(ret.getDate() + (((index[day] - cur_day)%7)+1));
+
+    if(time)
+    {
+        var time_parts = time.split(":");
+        var hours = time_parts[0];
+        var minutes = time_parts[1];
+        ret.setHours(hours);
+        ret.setMinutes(minutes);
+        ret.setMilliseconds(0);
+    }
+
+    return ret;
 }
 
 Trigger.getRandomArbitrary = function(min, max) {

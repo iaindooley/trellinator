@@ -1,5 +1,6 @@
 **/**
 !benko-board-trellinator/Standard.js
+!benko-board-trellinator/Globals.js
 !appsscript.json
 !trellinator-libs/Board.js
 !trellinator-libs/Board.js.murphy

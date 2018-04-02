@@ -138,8 +138,11 @@ function doPosting(notifText)
   //"removeMemberFromBoard"
   if(actionType == REMOV_MEM_FROM_BRD_ && notifData.model.id == actionData.data.board.id)
   {
+    creds = TrelloApi.checkControlValues();
+    //Only operate if the member removed was the same member that owns our token
+    if(TrelloApi.get("tokens/"+creds.token+"/member").id == actionData.data.idMember)
     //writeInfo_("Calling remove member from board...process");
-    removeBoardSheet_(actionData);
+        removeBoardSheet_(actionData);
   }
 
   //"createBoard"

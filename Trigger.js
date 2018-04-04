@@ -49,10 +49,17 @@ Trigger.xMinutesFromNow = function(x)
     return new Date(Trigger.now().getTime() + x*60000);
 }
 
-Trigger.xDaysFromNow = function(x)
+Trigger.xDaysFromNow = function(x,time)
 {
     var now = Trigger.now();
     now.setDate(now.getDate() + x);
+
+    if(time)
+    {
+        var time_parts = time.split(":");
+        now.setHours(time_parts[0],time_parts[1],0,0);
+    }
+
     return now;
 }
 

@@ -54,6 +54,12 @@ Trigger.xDaysFromNow = function(x,time)
     return Trigger.now().addDays(x).at(time);
 }
 
+Date.prototype.onDate = function(date)
+{
+    this.setDate(date);
+    return this;
+}
+
 //format 24 hours HH:MM seconds not supported
 Date.prototype.at = function(time)
 {

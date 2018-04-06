@@ -41,26 +41,55 @@ Trigger.timeIsBetween = function(start,finish)
 
 Trigger.xHoursFromNow = function(x)
 {
-    return Trigger.xMinutesFromNow(x*60);
+    return Trigger.now().addHours(x);
 }
 
 Trigger.xMinutesFromNow = function(x)
 {
-    return new Date(Trigger.now().getTime() + x*60000);
+    return Trigger.now().addMinutes(x);
 }
 
 Trigger.xDaysFromNow = function(x,time)
 {
+    return Trigger.now().addDays(x).at(time);
+}
+
+//format 24 hours HH:MM seconds not supported
+Date.prototype.at = function(time)
+{
+    var time_parts = time.split(":");
+    this.setHours(time_parts[0],time_parts[1],0,0);
+    return this;
+}
+
+Date.prototype.addMinutes = function(minutes)
+{
+    this.setMinutes(this.getMinutes() + minutes);
+    return this;
+}
+
+Date.prototype.addHours = function(hours)
+{
+    return this.addMinutes(hours*60);
+}
+
+Date.prototype.addDays = function(days)
+{
     var now = Trigger.now();
     now.setDate(now.getDate() + x);
+    return this;
+}
 
-    if(time)
-    {
-        var time_parts = time.split(":");
-        now.setHours(time_parts[0],time_parts[1],0,0);
-    }
+Date.prototype.addWeeks = function(weeks)
+{
+    this.addDays(weeks*7);
+    return this;
+}
 
-    return now;
+Date.prototype.addMonths = function(months)
+{
+    this.setMonth(this.getMonth() + months);
+    return this;
 }
 
 // returns week of the month starting with 0
@@ -124,6 +153,17 @@ Date.prototype.next = function(day,time)
     }
 
     return ret;
+}
+
+Date.prototype.lastDayOfMonth = function()
+{
+    return new Date(this.getFullYear(), this.getMonth()+1, 0);
+}
+
+Date.prototype.minusDays = function(days)
+{
+    this.setDate(this.getDate()-days);
+    return this;
 }
 
 Trigger.getRandomArbitrary = function(min, max) {

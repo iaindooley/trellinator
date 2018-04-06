@@ -525,11 +525,10 @@ function executeNotificationCommand_(notifData)
     for(var i = 1; i < boardMap.length; i++)
     {
       var mapRow = boardMap[i];
-      if(mapRow[0] == notifData.action.type)
+
+      var functionName = mapRow[0] + "";        
+      try
       {
-        var functionName = mapRow[1] + "";        
-        try
-        {
           if(functionName == "")
           {
             continue;
@@ -550,15 +549,14 @@ function executeNotificationCommand_(notifData)
           writeInfo_(currStr + "\n" + signatStr);
           this[functionName](notifData, signatStr);
           
-        }
-        catch(err)
-        {
-          writeInfo_("function: " + functionName + " " + err);
-          quFlag = true;
-          var funcObj = { "functionName" : functionName, "parameters" : notifData};
-          push(new Date(), funcObj);
-        }
-      }//if condition ends
+      }
+      catch(err)
+      {
+        writeInfo_("function: " + functionName + " " + err);
+        quFlag = true;
+        var funcObj = { "functionName" : functionName, "parameters" : notifData};
+        push(new Date(), funcObj);
+      }
     }//loop for all this board's rows ends
     
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
@@ -575,39 +573,38 @@ function executeNotificationCommand_(notifData)
     for(var i = 1; i < globalMap.length; i++)
     {
       var mapRow = globalMap[i];
-      if(mapRow[2] == notifData.action.type)
+
+      var functionName = mapRow[2] + "";
+      if(functionName == "")
       {
-        var functionName = mapRow[3] + "";
-        if(functionName == "")
-        {
-          continue;
-        }
-        
-        var funcObj = { "functionName" : functionName, "parameters" : notifData};
-        var includeList = (mapRow[0] + "").trim();
-        var excludeList = (mapRow[1] + "").trim();
-        var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.name);
-        if(!execFlag)
-        {
-          continue;
-        }
-        //else execute function
-        try
-        {
-          //should execute or push to queue
-          writeInfo_("executing realtime function from global commands: " + functionName);
-          var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
-          var signatStr = createMd5String_(currStr);
-          writeInfo_(currStr + "\n" + signatStr);
-          this[functionName](notifData, signatStr);          
-        }
-        catch(err)
-        {          
-          writeInfo_("function: " + functionName + " " + err);
-          quFlag = true;
-          push(new Date(), funcObj);
-        }
+        continue;
       }
+      
+      var funcObj = { "functionName" : functionName, "parameters" : notifData};
+      var includeList = (mapRow[0] + "").trim();
+      var excludeList = (mapRow[1] + "").trim();
+      var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.name);
+      if(!execFlag)
+      {
+        continue;
+      }
+      //else execute function
+      try
+      {
+        //should execute or push to queue
+        writeInfo_("executing realtime function from global commands: " + functionName);
+        var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
+        var signatStr = createMd5String_(currStr);
+        writeInfo_(currStr + "\n" + signatStr);
+        this[functionName](notifData, signatStr);          
+      }
+      catch(err)
+      {          
+        writeInfo_("function: " + functionName + " " + err);
+        quFlag = true;
+        push(new Date(), funcObj);
+      }
+
     }//loop for all this board's rows ends
     if(quFlag)
     {

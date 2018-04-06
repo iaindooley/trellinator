@@ -215,11 +215,11 @@ function saveFunctionName(boardStr, boardRow, funcName)
   var brdSheet = ss.getSheetByName(boardStr);
   if(boardStr != GLOBAL_COMMANDS_NAME_)
   {
-    brdSheet.getRange("B" + boardRow).setValue(funcName);
+    brdSheet.getRange("A" + boardRow).setValue(funcName);
   }
   else
   {
-    brdSheet.getRange("D" + boardRow).setValue(funcName);
+    brdSheet.getRange("C" + boardRow).setValue(funcName);
   }
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -232,8 +232,8 @@ function timeTriggerGroupUpdate(groupRow)
   var globData = globSheet.getDataRange().getValues();
   for(var row = 1; row < globData.length; row++)
   {
-    var funcName = globData[row][3] + "";
-    if(globData[row][2] != ACTION_LIST[0])
+    var funcName = globData[row][2] + "";
+    if(globData[row][3] != ACTION_LIST[0])
     {
       continue;
     }

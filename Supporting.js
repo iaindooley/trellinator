@@ -290,11 +290,11 @@ function registerAllBoards_(tStart)
       {
         var boardSheetName = boardList[i][0] + " [" + boardList[i][1] + "]";
         var currBSheet = createSheetByName_(boardSheetName);      
-        currBSheet.getRange("A1:C1").setValues([["Notification Type", "Function Call", "Clear Triggers"]])
+        currBSheet.getRange("A1:C1").setValues([["Function Call", "Time Trigger", "Clear Triggers"]])
         .setFontWeight("bold");
         currBSheet.setColumnWidth(1, 250)
         .setColumnWidth(2, 200); 
-        createDropDown_(currBSheet, "A2", ACTION_LIST);
+        createDropDown_(currBSheet, "B2", ACTION_LIST);
         createDropDown_(currBSheet, "C2", CLEAR_TRIG_ACTION_LIST);
         brdSheet.deleteRow(i+1);
       }
@@ -339,7 +339,7 @@ function createSheetByName_(shName)
 function createGlobalSheet_()
 {
   var globalSheet = createSheetByName_(GLOBAL_COMMANDS_NAME_);
-  globalSheet.getRange("A1:E1").setValues([["Include", "Exclude", "Notification Type", "Function Call", CLEAR_TRIG_ACTION_LIST[0] ]])
+  globalSheet.getRange("A1:E1").setValues([["Include", "Exclude", "Function Call", "Time Trigger", CLEAR_TRIG_ACTION_LIST[0] ]])
   .setFontWeight("bold");
   //globalSheet = SpreadsheetApp.getActiveSheet();
   globalSheet.setColumnWidth(1, 200)
@@ -348,7 +348,7 @@ function createGlobalSheet_()
   .setColumnWidth(4, 150)
   .getRange("A:B").setWrap(true);
   
-  createDropDown_(globalSheet, "C2", ACTION_LIST);
+  createDropDown_(globalSheet, "D2", ACTION_LIST);
   createDropDown_(globalSheet, "E2", CLEAR_TRIG_ACTION_LIST);
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -426,7 +426,7 @@ function createNewBoardSheet_(actionData)
       success = false;
       var boardSheetName = actionData.data.board.name + " [" + boardID + "]";
       var currBSheet = createSheetByName_(boardSheetName);      
-      currBSheet.getRange("A1:B1").setValues([["Notification Type", "Function Call"]])
+      currBSheet.getRange("A1:B1").setValues([["Function Call","Time Trigger"]])
       .setFontWeight("bold");
       currBSheet.setColumnWidth(1, 250)
       .setColumnWidth(2, 200); 
@@ -445,7 +445,7 @@ function createNewBoardSheet_(actionData)
   
 }
 //////////////////////////////////////////////////////////////////////////////
-function addBoardToGlobalCommandGroup(board_name,group_name)
+function addBoardToGlobalCommandGroup(board,group_name)
 {  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);  
@@ -460,7 +460,8 @@ function addBoardToGlobalCommandGroup(board_name,group_name)
          if(value)
            value += ","
            
-        globSheet.getRange(row+1, 2).setValue(value+board_name);
+        globSheet.getRange(row+1, 2).setValue(value+board.name());
+        timeTrigger4NewBoard_(board.data.id)
         writeInfo_("Added "+board_name+" to "+group_name);
     }
   }//loop for all global commmands ends
@@ -475,11 +476,11 @@ function timeTrigger4NewBoard_(boardID)
   var globTrigCount = 0;
   for(var row = 1; row < globData.length; row++)
   {
-    var funcName = globData[row][3] + "";
+    var funcName = globData[row][2] + "";
     var includeStr = (globData[row][0] + "").trim();
     var excludeStr = (globData[row][1] + "").trim();
 
-    if(globData[row][2] != ACTION_LIST[0] || includeStr != "" || excludeStr != "")
+    if(globData[row][3] != ACTION_LIST[0] || includeStr != "" || excludeStr != "")
     {
       continue;
     }
@@ -544,7 +545,7 @@ function executeNotificationCommand_(notifData)
           }     
           //else
           writeInfo_("executing realtime function: " + functionName);
-          var currStr = [boardSheetName , notifData.action.type , functionName].join(",");
+          var currStr = boardSheetName+functionName;
           var signatStr = createMd5String_(currStr);
           writeInfo_(currStr + "\n" + signatStr);
           this[functionName](notifData, signatStr);

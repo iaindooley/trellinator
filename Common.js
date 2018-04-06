@@ -53,12 +53,8 @@ function onEditDetected(e)
       }
       //now process
       var dataRow = currSheet.getDataRange().getValues()[row-1];
-      var currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");//will cover both global and individual boards
-      //non-default cases for signature
-      if(dataRow[0] == ACTION_LIST[0])//Time Trigger but it seems to be the same structure
-      {
-        currStr = [shName , dataRow[col-3], dataRow[col-2] ].join(",");
-      }      
+      var currStr = shName+dataRow[col-3]+dataRow[col-2];//will cover both global and individual boards
+
       var signatStr = createMd5String_(currStr);
       writeInfo_("For clearing execution queue: " + currStr + "\n" + signatStr);
       clear(signatStr);     
@@ -67,7 +63,7 @@ function onEditDetected(e)
   
     //case 2 "Time Trigger"
     case ACTION_LIST[0]:
-      if((shName == GLOBAL_COMMANDS_NAME_  && col == 3)  || (shName != GLOBAL_GROUP_NAME_ && col == 1))
+      if((shName == GLOBAL_COMMANDS_NAME_  && col == 4)  || (shName != GLOBAL_GROUP_NAME_ && col == 2))
       {
         processFlag = true;
       }

@@ -81,15 +81,13 @@ Date.prototype.addHours = function(hours)
 
 Date.prototype.addDays = function(days)
 {
-    var now = Trigger.now();
-    now.setDate(now.getDate() + x);
+    this.setDate(this.getDate() + days);
     return this;
 }
 
 Date.prototype.addWeeks = function(weeks)
 {
-    this.addDays(weeks*7);
-    return this;
+    return this.addDays(weeks*7);
 }
 
 Date.prototype.addMonths = function(months)

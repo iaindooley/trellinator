@@ -528,11 +528,17 @@ function executeNotificationCommand_(notifData)
       var mapRow = boardMap[i];
 
       var functionName = mapRow[0] + "";        
+      var timeTrigger  = mapRow[1] + "";        
       try
       {
           if(functionName == "")
           {
-            continue;
+              continue;
+          }
+          
+          if(timeTrigger != "")
+          {
+              continue;
           }
           //should execute or push to queue
           if(isTimeLimitApproaching_(tStart))
@@ -576,9 +582,16 @@ function executeNotificationCommand_(notifData)
       var mapRow = globalMap[i];
 
       var functionName = mapRow[2] + "";
+      var timeTrigger  = mapRow[3] + "";
+      
       if(functionName == "")
       {
-        continue;
+          continue;
+      }
+
+      if(timeTrigger != "")
+      {
+          continue;
       }
       
       var funcObj = { "functionName" : functionName, "parameters" : notifData};

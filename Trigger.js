@@ -159,6 +159,12 @@ Date.prototype.next = function(day,time)
     return ret;
 }
 
+Date.prototype.butlerDefaultDate = function()
+{
+    //May 8, 2018
+    return this.monthName()+" "+this.getDate()+", "+this.getFullYear();
+}
+
 Date.prototype.lastDayOfMonth = function()
 {
     return new Date(this.getFullYear(), this.getMonth()+1, 0);

@@ -127,36 +127,50 @@ Date.prototype.getMonthName = function()
     return monthNames[this.getMonth()];
 }
 
-Date.prototype.next = function(day,time)
+Date.prototype.previous = function(day)
+{
+    index = new Array();
+    index["Sunday"]    = 0;
+    index["Monday"]    = 1;
+    index["Tuesday"]   = 2;
+    index["Wednesday"] = 3;
+    index["Thursday"]  = 4;
+    index["Friday"]    = 5;
+    index["Saturday"]  = 6;
+    var target = index[day];
+    var daynum = this.getDay();
+    var diff = ((target - daynum)-7);
+    
+    if(diff != -7)
+        var offset = diff % 7;
+    else
+        var offset = diff;
+
+    this.setDate(this.getDate() + offset);
+    return this;
+}
+
+Date.prototype.next = function(day)
 { 
     var index = new Array();
-    index["Monday"]    = 7;
-    index["Sunday"]    = 6;
-    index["Saturday"]  = 5;
-    index["Friday"]    = 4;
-    index["Thursday"]  = 3;
-    index["Wednesday"] = 2;
-    index["Tuesday"]   = 1;
+    index["Sunday"]    = 0;
+    index["Monday"]    = 1;
+    index["Tuesday"]   = 2;
+    index["Wednesday"] = 3;
+    index["Thursday"]  = 4;
+    index["Friday"]    = 5;
+    index["Saturday"]  = 6;
 
-    var ret = new Date(this);
-    var cur_day = ret.getDay();
+    var day_to_find = index[day];
+    var diff = (day_to_find + 7) - this.getDay();
+    
+    if(diff != 7)
+        var offset = diff % 7;
+    else
+        var offset = diff;
 
-    if(index[day] < cur_day)
-        index[day] += 7;
-
-    ret.setDate(ret.getDate() + (((index[day] - cur_day)%7)+1));
-
-    if(time)
-    {
-        var time_parts = time.split(":");
-        var hours = time_parts[0];
-        var minutes = time_parts[1];
-        ret.setHours(hours);
-        ret.setMinutes(minutes);
-        ret.setMilliseconds(0);
-    }
-
-    return ret;
+    this.setDate(this.getDate() + offset);
+    return this;
 }
 
 Date.prototype.butlerDefaultDate = function()

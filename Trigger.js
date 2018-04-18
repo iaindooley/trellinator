@@ -51,7 +51,7 @@ Trigger.xMinutesFromNow = function(x)
 
 Trigger.xDaysFromNow = function(x,time)
 {
-    var date = Trigger.now().addDays(x).at(time);
+    var date = Trigger.now().addDays(x);
     
     if(time)
         date.at(time);

@@ -51,7 +51,12 @@ Trigger.xMinutesFromNow = function(x)
 
 Trigger.xDaysFromNow = function(x,time)
 {
-    return Trigger.now().addDays(x).at(time);
+    var date = Trigger.now().addDays(x);
+    
+    if(time)
+        date.at(time);
+
+    return date;
 }
 
 Date.prototype.onDate = function(date)

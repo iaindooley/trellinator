@@ -33,6 +33,7 @@ function registerWebhook_(boardID)
   {
     //boardID is optional here
     var url = ScriptApp.getService().getUrl();             
+
     if (url == null || url == "") 
     {    
       Browser.msgBox("Please follow instructions on how to publish the script as a web-app");
@@ -462,7 +463,7 @@ function addBoardToGlobalCommandGroup(board,group_name)
            
         globSheet.getRange(row+1, 2).setValue(value+board.name());
         timeTrigger4NewBoard_(board.data.id)
-        writeInfo_("Added "+board_name+" to "+group_name);
+        writeInfo_("Added "+board.name()+" to "+group_name);
     }
   }//loop for all global commmands ends
 }

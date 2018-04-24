@@ -7,7 +7,7 @@
 !trellinator-libs/Board.js.murphy
 !trellinator-libs/IterableCollection.js
 !trellinator-libs/TrelloApi.js
-!trellinator-libs/TrelloApi.js.murphy
+!trellinator-libs/HttpApi.js
 !trellinator-libs/Board.js
 !trellinator-libs/Card.js
 !trellinator-libs/Comment.js

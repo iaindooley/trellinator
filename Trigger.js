@@ -65,6 +65,11 @@ Date.prototype.onDate = function(date)
     return this;
 }
 
+Date.prototype.on = function(date)
+{
+  this.setDate(date);
+  return this;
+}
 //format 24 hours HH:MM seconds not supported
 Date.prototype.at = function(time)
 {
@@ -95,9 +100,20 @@ Date.prototype.addWeeks = function(weeks)
     return this.addDays(weeks*7);
 }
 
+Date.prototype.minusWeeks = function(weeks)
+{
+    return this.minusDays(weeks*7);
+}
+
 Date.prototype.addMonths = function(months)
 {
     this.setMonth(this.getMonth() + months);
+    return this;
+}
+
+Date.prototype.minusMonths = function(months)
+{
+    this.setMonth(this.getMonth() - months);
     return this;
 }
 

@@ -13,6 +13,7 @@
 !trellinator-libs/Comment.js
 !trellinator-libs/Checklist.js
 !trellinator-libs/CheckItem.js
+!trellinator-libs/InvalidDataException.js
 !trellinator-libs/IterableCollection.js
 !trellinator-libs/List.js
 !trellinator-libs/Label.js

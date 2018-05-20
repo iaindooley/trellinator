@@ -560,10 +560,18 @@ function executeNotificationCommand_(notifData)
       }
       catch(err)
       {
-        writeInfo_("function: " + functionName + " " + err);
-        quFlag = true;
-        var funcObj = { "functionName" : functionName, "parameters" : notifData};
-        push(new Date(), funcObj);
+        try
+        {
+            Notification.logException(err);
+        }
+
+        catch(e2)
+        {
+            writeInfo_("function: " + functionName + " " + err);
+            quFlag = true;
+            var funcObj = { "functionName" : functionName, "parameters" : notifData};
+            push(new Date(), funcObj);
+        }
       }
     }//loop for all this board's rows ends
     
@@ -615,9 +623,17 @@ function executeNotificationCommand_(notifData)
       }
       catch(err)
       {          
-        writeInfo_("function: " + functionName + " " + err);
-        quFlag = true;
-        push(new Date(), funcObj);
+        try
+        {
+            Notification.logException(err);
+        }
+        
+        catch(e2)
+        {
+            writeInfo_("function: " + functionName + " " + err);
+            quFlag = true;
+            push(new Date(), funcObj);
+        }
       }
 
     }//loop for all this board's rows ends

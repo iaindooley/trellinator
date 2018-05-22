@@ -1,4 +1,4 @@
-const Trellinator = function()
+var Trellinator = function()
 {
     if(!Trellinator.data)
     {

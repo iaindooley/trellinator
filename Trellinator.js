@@ -20,3 +20,8 @@ const Trellinator = function()
 }
 
 Trellinator.data = null;
+
+Trellinator.now = function()
+{
+    return new Date();
+}

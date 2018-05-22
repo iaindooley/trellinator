@@ -52,8 +52,17 @@ function processQueue()
           
           if(typeof this[funcObj.functionName] === 'function')
           {     
-            this[funcObj.functionName](funcObj.parameters, signat, originalTime);
-            qSheet.deleteRow(i+1); 
+            try
+            {
+                this[funcObj.functionName](funcObj.parameters, signat, originalTime);
+                qSheet.deleteRow(i+1); 
+            }
+            
+            catch(exc)
+            {
+                Notification.logException(exc.constructor.name+" calling: "+funcObj.functionName+" from the queue: "+exc);
+                qSheet.deleteRow(i+1); 
+            }
           }
           
           else

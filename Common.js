@@ -72,7 +72,7 @@ function onEditDetected(e)
         return; //ignore
       }
       //now process
-      var htmlData = HtmlService.createTemplateFromFile("trellinator/TimeTrigUI").getRawContent();
+      var htmlData = HtmlService.createTemplateFromFile("apps/trellinator/TimeTrigUI").getRawContent();
       htmlData = htmlData.replace("{{board-Tab-Name}}",shName);
       htmlData = htmlData.replace("{{board-Tab-Row}}",row);
       var htmlOut = HtmlService.createTemplate(htmlData).evaluate();

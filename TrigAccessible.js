@@ -60,7 +60,7 @@ function processQueue()
             
             catch(exc)
             {
-                Notification.logException(exc.constructor.name+" calling: "+funcObj.functionName+" from the queue: "+exc);
+                Notification.logException(exc.constructor.name+" calling: "+funcObj.functionName+" from the queue: ",exc);
                 qSheet.deleteRow(i+1); 
             }
           }

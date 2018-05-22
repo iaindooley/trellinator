@@ -562,7 +562,7 @@ function executeNotificationCommand_(notifData)
       {
         try
         {
-            Notification.logException(err);
+          Notification.logException("Caught expected exception executing: "+functionName,err);
         }
 
         catch(e2)
@@ -625,7 +625,7 @@ function executeNotificationCommand_(notifData)
       {          
         try
         {
-            Notification.logException(err);
+          Notification.logException("Caught expected exception executing: "+functionName+": ",err);
         }
         
         catch(e2)

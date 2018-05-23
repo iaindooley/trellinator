@@ -2,6 +2,7 @@
 !apps/trellinator/BenkoBoardExtensions.js
 !apps/trellinator/ClientCode.js
 !apps/trellinator/Common.js
+!apps/trellinator/ExecutionQueue.js
 !apps/trellinator/Parameters.js
 !apps/trellinator/Supporting.js
 !apps/trellinator/TimeTrigJS.html

@@ -1,0 +1,2 @@
+const murphy = require("murphytest");
+murphy.run(__dirname);

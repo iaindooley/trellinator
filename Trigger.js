@@ -1,12 +1,8 @@
 var Trigger = function(){}
-Trigger.fake_now = null;
 
 Trigger.now = function()
 {
-    if(Trigger.fake_now)
-        return Trigger.fake_now;
-    else
-        return new Date();
+    return Trellinator.now();
 }
 
 Trigger.isWeekDay = function(date)

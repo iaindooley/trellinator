@@ -27,11 +27,11 @@ Trigger.timeIsBetween = function(start,finish)
 {
     var start_parts = start.split(":");
     var finish_parts = finish.split(":");
-    var start = new Date();
+    var start = Trellinator.now();
     start.setHours(start_parts[0],start_parts[1],0,0);
-    var finish = new Date();
+    var finish = Trellinator.now();
     finish.setHours(finish_parts[0],finish_parts[1],0,0);
-    var now = new Date();
+    var now = Trellinator.now();
     return ((now.getTime() >= start.getTime()) && (now.getTime() <= finish.getTime()));
 }
 

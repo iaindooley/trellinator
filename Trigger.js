@@ -207,6 +207,45 @@ Date.prototype.minusDays = function(days)
     return this;
 }
 
+Date.prototype.stringFormat = function(format)
+{
+    if(format == "YYYY-MM-DD")
+    {
+        var year = this.getFullYear();
+        var month = this.getMonth()+1;
+        var day = this.getDate();
+        
+        if (day < 10) {
+          day = '0' + day;
+        }
+        if (month < 10) {
+          month = '0' + month;
+        }
+        
+        var ret = format.replace("YYYY",year).replace("MM",month).replace("DD",day);
+    }
+    
+    else if(format == "HH:MM")
+    {
+        var hours = this.getHours();
+        var minutes = this.getMinutes();
+        
+        if (hours < 10) {
+          day = '0' + day;
+        }
+        if (minutes < 10) {
+          month = '0' + month;
+        }
+        
+        var ret = format.replace("HH",hours).replace("MM",minutes);
+    }
+
+    else
+        throw new Error("Unsupported format passed to Date.stringFormat: "+format+" add more formats!");
+
+    return ret;
+}
+
 Trigger.getRandomArbitrary = function(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }

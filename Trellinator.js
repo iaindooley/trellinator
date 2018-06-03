@@ -25,3 +25,19 @@ Trellinator.now = function()
 {
     return new Date();
 }
+
+Trellinator.getStack = function()
+{
+  var stack = "";
+  
+  try 
+  {
+    throw new Error("Whoops!");
+  } 
+  catch (e) 
+  {
+    stack = e.stack;
+  }
+  
+  return stack;
+}

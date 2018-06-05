@@ -1,5 +1,0 @@
-#!/bin/bash
-git submodule update --remote
-git add .
-git commit -m "New submodule commits"
-git push

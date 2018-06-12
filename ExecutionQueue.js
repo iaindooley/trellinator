@@ -17,6 +17,12 @@ var ExecutionQueue = function(){}
 * you can test the value that will be pushed to
 * the queue during automated testing
 * @memberof ExecutionQueue
+* @example
+* ExecutionQueue.fake_push = function(function_name,params,signature,dateobj)
+* {
+*     if(dateobj.toLocaleString() != expected)
+*         throw new Error("Wrong datetime pushed");
+* }
 */
 ExecutionQueue.fake_push = null;
 

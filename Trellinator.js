@@ -1,5 +1,6 @@
 /**
 * @class Trellinator
+* @memberof module:TrellinatorCore
 * @constructor
 * @classdesc The Trellinator object is a special
 * instance of Member, which gets it's username
@@ -84,7 +85,7 @@ Trellinator.data = null;
 * Apps Script environment, false if not 
 * (for example when executing via node 
 * on the command line)
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 */
 Trellinator.isGoogleAppsScript = function()
 {
@@ -96,7 +97,7 @@ Trellinator.isGoogleAppsScript = function()
 * when running in Google Apps Script
 * or console.log when running in
 * node
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param msg {string} the log entry
 * @example
 * Trellinator.log("Oops, what went wrong?");
@@ -153,7 +154,7 @@ Trellinator.fakeNow = function()
 * consistency when writing tests 
 * by setting Trellinator.fake_now to
 * fixed date and time
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 */
 Trellinator.now = function()
 {
@@ -165,7 +166,7 @@ Trellinator.fake_now = null;
 
 /**
 * Get a random number between 2 numbers
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 */
 Trellinator.getRandomArbitrary = function(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
@@ -176,7 +177,7 @@ Trellinator.getRandomArbitrary = function(min, max) {
 * you to tell if the time is between 2 values
 * @param start {string} A time in 24 hour format eg. 17:00
 * @param finish {string} A time in 24 hour format eg. 13:00
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * if(Trellinator.now().timeIsBetween("9:00","17:00"))
 */
@@ -193,7 +194,7 @@ Date.prototype.timeIsBetween = function(start,finish)
 
 /**
 * Returns true if this is monday - friday
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * if(Trellinator.now().isWeekDay())
 */
@@ -212,7 +213,7 @@ Date.prototype.onDate = function(date)
 /**
 * Set the day component of this date
 * to the given day, eg. 27 
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param date {int} the day to set this date to, eg. 27
 * @example
 * //1st day of next month
@@ -228,7 +229,7 @@ Date.prototype.on = function(date)
 * Set the time component of this date
 * to the given time in 24 format, HH:MM
 * seconds are not supportd
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param time {string} format HH:MM in 24 hour time
 * @example
 * //9am tomorrow
@@ -243,7 +244,7 @@ Date.prototype.at = function(time)
 
 /**
 * Add X minutes to the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param minutes {int} number of minutes to add
 * @example
 * Trellinator.now().addMinutes(20);
@@ -256,7 +257,7 @@ Date.prototype.addMinutes = function(minutes)
 
 /**
 * Add X hours to the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param hours {int} number of hours to add
 * @example
 * Trellinator.now().addHours(1);
@@ -268,7 +269,7 @@ Date.prototype.addHours = function(hours)
 
 /**
 * Add X days to the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param days {int} number of days to add
 * @example
 * //Tomorrow
@@ -282,7 +283,7 @@ Date.prototype.addDays = function(days)
 
 /**
 * Add X weeks to the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param weeks {int} number of weeks to add
 * @example
 * Trellinator.now().addWeeks(1);
@@ -294,7 +295,7 @@ Date.prototype.addWeeks = function(weeks)
 
 /**
 * Subtract X weeks from the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param weeks {int} number of weeks to subtract
 * @example
 * Trellinator.now().minusWeeks(1);
@@ -306,7 +307,7 @@ Date.prototype.minusWeeks = function(weeks)
 
 /**
 * Add X months to the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param months {int} number of months to add
 * @example
 * Trellinator.now().addMonths(1);
@@ -319,7 +320,7 @@ Date.prototype.addMonths = function(months)
 
 /**
 * Subtract X months from the date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param months {int} number of months to subtract
 * @example
 * Trellinator.now().minusMonths(1);
@@ -335,7 +336,7 @@ Date.prototype.minusMonths = function(months)
 * with 0. Useful if you want to say that
 * you are in the 3rd week of August, for
 * example
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * Trellinator.now().weekOfMonth()
 */
@@ -354,7 +355,7 @@ Date.prototype.getWeekOfMonth = function() {
 /**
 * Find out the name of the day, returned
 * as the full day name eg. Monday
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * Trellinator.now().dayName();
 */
@@ -374,7 +375,7 @@ Date.prototype.dayName = function()
 /**
 * Find out the name of the month, returned
 * as the full month name eg. August
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * Trellinator.now().monthName();
 */
@@ -393,7 +394,7 @@ Date.prototype.getMonthName = function()
 /**
 * Find the previous instance of the given
 * day of the week, before the current date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param day {string} the name of the day of the
 * week you wish to find the previous instance of
 * @example
@@ -425,7 +426,7 @@ Date.prototype.previous = function(day)
 /**
 * Find the next instance of the given
 * day of the week, after the current date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param day {string} the name of the day of the
 * week you wish to find the next instance of
 * @example
@@ -464,7 +465,7 @@ Date.prototype.next = function(day)
 * This method is created to return the date
 * in the same format that Butler for Trello
 * stores in the {date} variable
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * Trellinator.now().butlerDefaultDate();
 */
@@ -476,7 +477,7 @@ Date.prototype.butlerDefaultDate = function()
 
 /**
 * Find the last day of the current month
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @example
 * Trellinator.now().lastDayOfMonth();
 */
@@ -487,7 +488,7 @@ Date.prototype.lastDayOfMonth = function()
 
 /**
 * Subtract X days from the current date
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param days {int} number of days to subtract
 * @example
 * //3 days ago
@@ -501,7 +502,7 @@ Date.prototype.minusDays = function(days)
 
 /**
 * Return a string formatted date from an object
-* @memberof Trellinator
+* @memberof module:TrellinatorCore.Trellinator
 * @param format {string} the desired format. Currently supports
 * only 2 formats: YYYY-MM-DD and HH:MM
 * @example

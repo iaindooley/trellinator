@@ -122,7 +122,8 @@ Trellinator.log = function(msg)
 */
 Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
 {
-    addBoardToGlobalCommandGroup(board,group_name);
+    if(Trellinator.isGoogleAppsScript())
+        addBoardToGlobalCommandGroup(board,group_name);
 }
 
 //USED INTERNALLY

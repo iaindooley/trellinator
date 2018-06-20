@@ -4,12 +4,9 @@ const murphy = require("murphytest");
 eval(murphy.load(__dirname,"../Trellinator.js"));
 
 //May 8, 2018 - Auckland
-var date = new Date().minusDays(365);
-var actual = "";
-actual += date.butlerDefaultDate();
-
 var date = "2018-04-02";
-
+var actual = "";
+actual += new Date(date).butlerDefaultDate();
 actual += "\n"+new Date(date).next("Monday").toLocaleString();
 actual += "\n"+new Date(date).next("Tuesday").toLocaleString();
 actual += "\n"+new Date(date).next("Wednesday").toLocaleString();
@@ -25,7 +22,7 @@ actual += "\n"+new Date(date).previous("Friday").toLocaleString();
 actual += "\n"+new Date(date).previous("Saturday").toLocaleString();
 actual += "\n"+new Date(date).previous("Sunday").toLocaleString();
 
-var expected = "June 18, 2017\n"+
+var expected = "April 2, 2018\n"+
 "2018-4-9 10:00:00\n"+
 "2018-4-3 10:00:00\n"+
 "2018-4-4 10:00:00\n"+

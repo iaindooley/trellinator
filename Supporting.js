@@ -776,7 +776,15 @@ function cleanList_(strList)
   var cList = strList.map(function(str)
                           { 
                             //return str.trim();
-                            return new RegExp("^[^]+ \\[(.+)\\]]$").exec(str.trim())[1].trim();
+                            try
+                            {
+                            return new RegExp("^[^]+ \\[(.+)\\]$").exec(str.trim())[1].trim();
+                            }
+                            
+                            catch(e)
+                            {
+                              return str.trim();
+                            }
                           });            
   
   return cList;

@@ -155,7 +155,7 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
       
       if(!added)
       {
-        globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]");
+        globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]"]);
         timeTrigger4NewBoard_(board.id());
         writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
       }

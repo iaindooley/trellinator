@@ -113,6 +113,7 @@ Trellinator.log = function(msg)
 * using Trellinator and need that board to
 * inherit a bunch of functionality from a
 * global command group.
+* @memberof module:TrellinatorCore.Trellinator
 * @param board {Board} a Board object to add to the global command group
 * @param group_name {string} the name of the group to add this board to
 * @example

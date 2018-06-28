@@ -14,6 +14,7 @@ var CONFIG_NAME_ = "Configuration";
 var BOARD_DB_NAME_ = "BoardsDB";
 var GLOBAL_COMMANDS_NAME_ = "Global Commands";
 var GLOBAL_GROUP_NAME_ = "Global Command Groups";
+var GLOBAL_GROUP_SEPARATOR_ = ";;;";
 var GLOBAL_TIME_TRIGGER_PREFIX = "GlobalTimeTrigger_";
 var MY_ID_KEY_ = "MY_ID";
 var MY_USERNAME_KEY_ = "MY_USERNAME";

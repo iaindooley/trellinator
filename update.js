@@ -9,16 +9,23 @@ function fixGlobalCommandGroups()
     for(var row = 1; row < globData.length; row++)
     {
         var value   = globData[row][1].trim();
+      
         globSheet.getRange(row+1, 2).setValue(
 
-        new IterableCollection(boardStr.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+        new IterableCollection(value.split(",")).find(function(elem)
         {
+            try
+            {
             var board = trellinator.board(elem);
             return board.name()+" ["+board.id()+"]";
-        }).asArray().push(to_add).join(GLOBAL_GROUP_SEPARATOR_)
+            }
+          
+          catch(e)
+          {
+            Logger.log("not found: "+elem);
+            return false;
+          }
+        }).asArray().join(GLOBAL_GROUP_SEPARATOR_)
         );
-
-        timeTrigger4NewBoard_(board.id());
-        writeInfo_("Added "+board.name()+" to "+group_name);
     }
 }

@@ -137,16 +137,15 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
             var value   = globData[row][1].trim();
             var to_add  = board.name()+" ["+board.id()+"]";
             var to_test = board.id();
-            globSheet.getRange(row+1, 2).setValue(
-            new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            var arr = new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
             {
                 if(elem && (new RegExp("^[^]+ \\[(.+)\\]$").exec(elem.trim())[1].trim() == to_test))
                     return false;
                 else
                     return elem;
-            }).asArray().push(to_add).join(GLOBAL_GROUP_SEPARATOR_)
-            );
-            
+            }).asArray();
+            arr.push(to_add);
+            globSheet.getRange(row+1, 2).setValue(arr.join(GLOBAL_GROUP_SEPARATOR_));
             timeTrigger4NewBoard_(board.id());
             writeInfo_("Added "+board.name()+" to "+group_name);
             added = true;

@@ -138,7 +138,7 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
             var to_add  = board.name()+" ["+board.id()+"]";
             var to_test = board.id();
             globSheet.getRange(row+1, 2).setValue(
-            new IterableCollection(boardStr.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
             {
                 if(new RegExp("^[^]+ \\[(.+)\\]]$").exec(elem.trim())[1].trim() == to_test)
                     return false;
@@ -187,7 +187,7 @@ Trellinator.removeBoardFromGlobalCommandGroup = function(board,group_name)
             
             var to_remove = board.id();
             globSheet.getRange(row+1, 2).setValue(
-            new IterableCollection(boardStr.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
             {
                 if(new RegExp("^[^]+ \\[(.+)\\]]$").exec(elem.trim())[1].trim() == to_remove)
                     return false;

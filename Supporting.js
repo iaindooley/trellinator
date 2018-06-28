@@ -448,33 +448,7 @@ function createNewBoardSheet_(actionData)
 //////////////////////////////////////////////////////////////////////////////
 function addBoardToGlobalCommandGroup(board,group_name)
 {  
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);  
-  var globData = globSheet.getDataRange().getValues();
-  var added = false;
-
-  for(var row = 1; row < globData.length; row++)
-  {
-    if(globData[row][0] == group_name)
-    {
-        var value = globData[row][1].trim();
-      
-         if(value)
-           value += ","
-           
-        globSheet.getRange(row+1, 2).setValue(value+board.name());
-        timeTrigger4NewBoard_(board.data.id)
-        writeInfo_("Added "+board.name()+" to "+group_name);
-        added = true;
-    }
-  }//loop for all global commmands ends
-  
-  if(!added)
-  {
-    globSheet.appendRow([group_name,board.name()]);
-    timeTrigger4NewBoard_(board.data.id)
-    writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
-  }
+    Trellinator.addBoardToGlobalCommandGroup(board,group_name);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -615,7 +589,7 @@ function executeNotificationCommand_(notifData)
       var funcObj = { "functionName" : functionName, "parameters" : notifData};
       var includeList = (mapRow[0] + "").trim();
       var excludeList = (mapRow[1] + "").trim();
-      var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.name);
+      var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.id);
       if(!execFlag)
       {
         continue;
@@ -728,7 +702,7 @@ function createGlobalGroupSheet_()
   configSheet.activate();
 }
 //////////////////////////////////////////////////////////////////////////////
-function checkExecutionCriteria_(includeList, excludeList, boardName)
+function checkExecutionCriteria_(includeList, excludeList, boardId)
 {   
   //case 1:
   if(includeList == "" && excludeList == "")
@@ -740,14 +714,13 @@ function checkExecutionCriteria_(includeList, excludeList, boardName)
   //case 2:
   if(includeList != "") //either exclude blank or not blank but include has preferrence
   {
-    boardName = boardName.toLowerCase();
     var grpList = (includeList.toLowerCase()).split(",");
     grpList = cleanList_(grpList);
     for(var i = 0; i < grpList.length; i++)
     {
       var groupName = grpList[i];
       var boardList = getBoardNames4mGroup_(groupName);  
-      if(boardList.indexOf(boardName) > -1)
+      if(boardList.indexOf(boardId) > -1)
       {
         return true;
       }
@@ -758,14 +731,13 @@ function checkExecutionCriteria_(includeList, excludeList, boardName)
   //case 3:
   if(includeList == "" && excludeList != "")
   {
-    boardName = boardName.toLowerCase();
     var exGrpList = (excludeList.toLowerCase()).split(",");
     exGrpList = cleanList_(exGrpList);
     for(var i = 0; i < exGrpList.length; i++)
     {
       var exGrpName = exGrpList[i];
       var boardList = getBoardNames4mGroup_(exGrpName);  
-      if(boardList.indexOf(boardName) > -1)
+      if(boardList.indexOf(boardId) > -1)
       {
         return false;
       }
@@ -788,7 +760,7 @@ function getBoardNames4mGroup_(groupName)
     if(grpData[i][0].toLowerCase() == groupName)
     {
       var boardStr = (grpData[i][1] + "").toLowerCase().trim();
-      boardList = boardStr.split(",");      
+      boardList = boardStr.split(GLOBAL_GROUP_SEPARATOR_);
       boardList = cleanList_(boardList);
       return boardList;
     }
@@ -803,7 +775,8 @@ function cleanList_(strList)
 {
   var cList = strList.map(function(str)
                           { 
-                            return str.trim();
+                            //return str.trim();
+                            return new RegExp("^[^]+ \\[(.+)\\]]$").exec(str.trim())[1].trim();
                           });            
   
   return cList;

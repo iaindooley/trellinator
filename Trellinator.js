@@ -124,7 +124,88 @@ Trellinator.log = function(msg)
 Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
 {
     if(Trellinator.isGoogleAppsScript())
-        addBoardToGlobalCommandGroup(board,group_name);
+    {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+      var globData = globSheet.getDataRange().getValues();
+      var added = false;
+      
+      for(var row = 1; row < globData.length; row++)
+      {
+        if(globData[row][0] == group_name)
+        {
+            var value   = globData[row][1].trim();
+            var to_add  = board.name()+" ["+board.id()+"]";
+            var to_test = board.id();
+            globSheet.getRange(row+1, 2).setValue(
+            new IterableCollection(boardStr.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            {
+                if(new RegExp("^[^]+ \\[(.+)\\]]$").exec(elem.trim())[1].trim() == to_test)
+                    return false;
+                else
+                    return elem;
+            }).asArray().push(to_add).join(GLOBAL_GROUP_SEPARATOR_)
+            );
+            
+            timeTrigger4NewBoard_(board.id());
+            writeInfo_("Added "+board.name()+" to "+group_name);
+            added = true;
+        }
+      }//loop for all global commmands ends
+      
+      if(!added)
+      {
+        globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]");
+        timeTrigger4NewBoard_(board.id());
+        writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
+      }
+    }
+}
+
+/**
+* Remove a board name from a global command group. 
+* @memberof module:TrellinatorCore.Trellinator
+* @param board {Board} a Board object to remove from the global command group
+* @param group_name {string} the name of the group to remove this board from
+* @example
+* Trellinator.removeBoardFromGlobalCommandGroup(new Notification(posted).board(),"Project Boards");
+*/
+Trellinator.removeBoardFromGlobalCommandGroup = function(board,group_name)
+{
+    if(Trellinator.isGoogleAppsScript())
+    {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+      var globData = globSheet.getDataRange().getValues();
+      var added = false;
+      
+      for(var row = 1; row < globData.length; row++)
+      {
+        if(globData[row][0] == group_name)
+        {
+            var value = globData[row][1].trim();
+            
+            var to_remove = board.id();
+            globSheet.getRange(row+1, 2).setValue(
+            new IterableCollection(boardStr.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            {
+                if(new RegExp("^[^]+ \\[(.+)\\]]$").exec(elem.trim())[1].trim() == to_remove)
+                    return false;
+                else
+                    return elem;
+            }).asArray().join(GLOBAL_GROUP_SEPARATOR_)
+            );
+            
+           //We need to do this, but calling this now will
+           //also clear all triggers for the board that are
+           //not from this global command group, so put this
+           //back in when the Trigger system is more consistent
+           //and better refactored
+           //clearTimeTriggers4Board_(board.id());
+            writeInfo_("Removed "+board.name()+" from "+group_name);
+        }
+      }//loop for all global commmands ends
+   }
 }
 
 //USED INTERNALLY

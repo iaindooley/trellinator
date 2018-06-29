@@ -829,7 +829,8 @@ function getAllBoards4Execution_(includeList, excludeList)
     for(var b = 0; b < boardSheetList.length; b++)
     {
       var shName = boardSheetList[b].name;      
-      if(boardNames.indexOf(shName) > -1)//matching
+      var shId = boardSheetList[b].id;
+      if(boardNames.indexOf(shId) > -1)//matching
       {        
         boardList.push({name : shName, id : boardSheetList[b].id});
       }
@@ -854,7 +855,8 @@ function getAllBoards4Execution_(includeList, excludeList)
     for(var b = 0; b < boardSheetList.length; b++)
     {
       var shName = boardSheetList[b].name;
-      if(exBoardNames.indexOf(shName) == -1)//not matching
+      var shId = boardSheetList[b].id;
+      if(exBoardNames.indexOf(shId) == -1)//not matching
       {
         boardList.push({name : shName, id : boardSheetList[b].id});
       }

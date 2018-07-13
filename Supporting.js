@@ -870,7 +870,7 @@ function getAllBoards4Execution_(includeList, excludeList)
       var shName = boardSheetList[b].name;
       var shId = boardSheetList[b].id;
       if(exBoardNames.indexOf(shId) == -1)//not matching
-      { 
+      {
         boardList.push({name : shName, id : boardSheetList[b].id});
       }
     }//loop ends

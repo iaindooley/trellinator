@@ -463,11 +463,24 @@ function timeTrigger4NewBoard_(boardID)
     var funcName = globData[row][2] + "";
     var includeStr = (globData[row][0] + "").trim();
     var excludeStr = (globData[row][1] + "").trim();
-
-    if(globData[row][3] != ACTION_LIST[0] || includeStr != "" || excludeStr != "")
+    var boardList = getAllBoards4Execution_(includeStr, excludeStr);
+    
+    if(globData[row][3] != ACTION_LIST[0])
     {
       continue;
     }
+    
+    var incflag = false;
+    
+    for(var i = 0;i < boardList.length;i++)
+    {
+      if(boardList[i].id == boardID)
+        incflag = true;
+    }
+        
+    if(!incflag)
+      continue;
+    
     //now processing those Time trigger rows that have no include/exclude groups
     var currStr = [GLOBAL_COMMANDS_NAME_ , ACTION_LIST[0], funcName].join(",");
     var globSignat = createMd5String_(currStr);
@@ -815,29 +828,30 @@ function getAllBoards4Execution_(includeList, excludeList)
 
   //case 2: //get only included ones
   if(includeList != "") //either exclude blank or not blank but include has preferrence
-  {    
+  {
     var boardNames = [];
     var grpList = (includeList.toLowerCase()).split(",");
     grpList = cleanList_(grpList);
     for(var i = 0; i < grpList.length; i++)
     {
       var groupName = grpList[i];
-      boardNames = boardNames.concat(getBoardNames4mGroup_(groupName));        
+      boardNames = boardNames.concat(getBoardNames4mGroup_(groupName));
     }//all group search loop ends
-    
+
     boardList = []; //reset explicitly
     for(var b = 0; b < boardSheetList.length; b++)
     {
-      var shName = boardSheetList[b].name;      
-      if(boardNames.indexOf(shName) > -1)//matching
-      {        
+      var shName = boardSheetList[b].name;
+      var shId = boardSheetList[b].id;
+      if(boardNames.indexOf(shId) > -1)//matching
+      {
         boardList.push({name : shName, id : boardSheetList[b].id});
       }
     }//loop ends
-    
-    return boardList;  
+
+    return boardList;
   }//include condition ends
-  
+
   //case 3://skip only excluded ones
   if(includeList == "" && excludeList != "")
   {
@@ -847,20 +861,21 @@ function getAllBoards4Execution_(includeList, excludeList)
     for(var i = 0; i < exGrpList.length; i++)
     {
       var exGrpName = exGrpList[i];
-      exBoardNames = exBoardNames.concat(getBoardNames4mGroup_(exGrpName));  
+      exBoardNames = exBoardNames.concat(getBoardNames4mGroup_(exGrpName));
     }//all exclude group search loop ends
 
     boardList = []; //reset explicitly
     for(var b = 0; b < boardSheetList.length; b++)
     {
       var shName = boardSheetList[b].name;
-      if(exBoardNames.indexOf(shName) == -1)//not matching
-      {
+      var shId = boardSheetList[b].id;
+      if(exBoardNames.indexOf(shId) == -1)//not matching
+      { 
         boardList.push({name : shName, id : boardSheetList[b].id});
       }
     }//loop ends
 
-    return boardList;  
+    return boardList;
   }//exclude condition ends
 }
 //////////////////////////////////////////////////////////////////////////////

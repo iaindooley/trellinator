@@ -337,6 +337,19 @@ Date.prototype.addMinutes = function(minutes)
 }
 
 /**
+* Minus X minutes from the date
+* @memberof module:TrellinatorCore.Trellinator
+* @param minutes {int} number of minutes to minus
+* @example
+* Trellinator.now().minusMinutes(20);
+*/
+Date.prototype.minusMinutes = function(minutes)
+{
+    this.setMinutes(this.getMinutes() - minutes);
+    return this;
+}
+
+/**
 * Add X hours to the date
 * @memberof module:TrellinatorCore.Trellinator
 * @param hours {int} number of hours to add
@@ -346,6 +359,18 @@ Date.prototype.addMinutes = function(minutes)
 Date.prototype.addHours = function(hours)
 {
     return this.addMinutes(hours*60);
+}
+
+/**
+* Minus X hours from the date
+* @memberof module:TrellinatorCore.Trellinator
+* @param hours {int} number of hours to minus
+* @example
+* Trellinator.now().minusHours(1);
+*/
+Date.prototype.minusHours = function(hours)
+{
+    return this.minusMinutes(hours*60);
 }
 
 /**

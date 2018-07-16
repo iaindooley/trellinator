@@ -131,8 +131,11 @@ function push(timeStamp, funcObj, signatureStr)
   }
 }
 //////////////////////////////////////////////////////////////////////////////
-function nextMinute()
+function nextMinute(after)
 {
+  if(!after)
+    after = 60000;
+  
   //writeInfo_(arguments.callee.name);
   var funcName = PROCESS_QUEUE_FUNC_NAME_;
   triggerCreateSchedule_(funcName,PROCESS_QUEUE_INTERVAL);//has embedded removal for all triggers for this function
@@ -140,7 +143,7 @@ function nextMinute()
   ScriptApp.newTrigger(funcName)
   .timeBased()  
   .inTimezone(SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone())  
-  .after(15000)//15 sec but may be working in 1 minute
+  .after(after)
   .create();
 }
 //////////////////////////////////////////////////////////////////////////////

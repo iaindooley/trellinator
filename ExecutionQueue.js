@@ -99,7 +99,7 @@ ExecutionQueue.clear = function(signature)
 * Force the queue to run again in 1 minute
 * @memberof module:TrellinatorCore.ExecutionQueue
 */
-ExecutionQueue.nextMinute = function()
+ExecutionQueue.nextMinute = function(after)
 {
-    nextMinute();
+    nextMinute(after);
 }

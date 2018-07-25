@@ -652,3 +652,12 @@ Date.prototype.stringFormat = function(format)
 
     return ret;
 }
+
+/**
+* Static method to escape user input to be
+* used as part of a regular expression
+* @memberof module:TrellinatorCore.Trellinator
+*/
+RegExp.escape= function(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+};

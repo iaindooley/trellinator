@@ -61,6 +61,11 @@ var Trellinator = function()
                                            });
       }
       
+      else if(Trellinator.override_token)
+      {
+          trello_token = Trellinator.override_token;
+      }
+
       else
       {
         trello_token = process.argv[3];
@@ -79,6 +84,7 @@ var Trellinator = function()
 }
 
 Trellinator.data = null;
+Trellinator.override_token = null;
 
 /**
 * Return true if we are running in Google 

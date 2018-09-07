@@ -167,7 +167,7 @@ function clear(signatureStr)
     for(var i = total; i >= 1; i--)//reverse to keep row positions intact
     {
       var rowSignat = "" + qData[i][3];
-      if(rowSignat.search(signatureStr) == 0)//support both strings + regxp but for start-with type
+      if(rowSignat.indexOf(signatureStr) == 0)//support both strings + regxp but for start-with type
       {
         qSheet.deleteRow(i + 1);
         clearCount++;

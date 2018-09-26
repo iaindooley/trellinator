@@ -474,7 +474,7 @@ Date.prototype.getWeekOfMonth = function() {
 Date.prototype.dayName = function()
 {
     var weekday = new Array(7);
-    weekday[0] =  "Sunday";
+    weekday[0] = "Sunday";
     weekday[1] = "Monday";
     weekday[2] = "Tuesday";
     weekday[3] = "Wednesday";
@@ -515,14 +515,14 @@ Date.prototype.getMonthName = function()
 Date.prototype.previous = function(day)
 {
     index = new Array();
-    index["Sunday"]    = 0;
-    index["Monday"]    = 1;
-    index["Tuesday"]   = 2;
-    index["Wednesday"] = 3;
-    index["Thursday"]  = 4;
-    index["Friday"]    = 5;
-    index["Saturday"]  = 6;
-    var target = index[day];
+    index["sunday"]    = 0;
+    index["monday"]    = 1;
+    index["tuesday"]   = 2;
+    index["wednesday"] = 3;
+    index["thursday"]  = 4;
+    index["friday"]    = 5;
+    index["saturday"]  = 6;
+    var target = index[day.toLowerCase()];
     var daynum = this.getDay();
     var diff = ((target - daynum)-7);
     
@@ -547,15 +547,15 @@ Date.prototype.previous = function(day)
 Date.prototype.next = function(day)
 { 
     var index = new Array();
-    index["Sunday"]    = 0;
-    index["Monday"]    = 1;
-    index["Tuesday"]   = 2;
-    index["Wednesday"] = 3;
-    index["Thursday"]  = 4;
-    index["Friday"]    = 5;
-    index["Saturday"]  = 6;
+    index["sunday"]    = 0;
+    index["monday"]    = 1;
+    index["tuesday"]   = 2;
+    index["wednesday"] = 3;
+    index["thursday"]  = 4;
+    index["friday"]    = 5;
+    index["saturday"]  = 6;
 
-    var day_to_find = index[day];
+    var day_to_find = index[day.toLowerCase()];
     var diff = (day_to_find + 7) - this.getDay();
     
     if(diff != 7)

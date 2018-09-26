@@ -715,7 +715,7 @@ Trellinator.parseDate = function(text)
       ret.next(day);
     }   
     
-    else if(parts[1].trim() == "month")
+    else if(parts[2].trim() == "month")
     {   
       if(parts[9])
         var day = parseInt(parts[9].trim());

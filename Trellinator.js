@@ -667,3 +667,217 @@ Date.prototype.stringFormat = function(format)
 RegExp.escape= function(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
+
+
+//SOME EXPERIMENTAL DATE PARSING FUNCTIONS
+Trellinator.isMonthFirstDate = function()
+{
+  var ret = false;
+  var loc = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetLocale();
+  if((loc.indexOf("_CA") > -1) || (loc.indexOf("_US") > -1))
+      ret = true;
+  
+  return ret;
+}
+
+Trellinator.parseDate = function(text)
+{
+  var ret = Trellinator.now();
+  var replace = null;
+  text = text.toLowerCase();
+  var at_index = 0;
+  //deal with tomorrow at a given time or not, default to 9am
+  if(parts = new RegExp("(.+) (tomorrow|today)(.*)","i").exec(text))
+  {
+    replace = parts[1];
+    
+    if(parts[2] == "tommorrow")
+      ret.addDays(1);
+    
+    ret.at(optionalAt(parts[3]));
+  }
+  
+  if(parts = new RegExp("(.+) next( week| month| (.+)day)?( (on)? ((.+)day|(the ([0-9]+)(st|rd|th))))?( at .+)?","i").exec(text))
+  { 
+    replace = parts[1];
+    //Specific day next wek 
+    if(parts[3])
+      ret.next(parts[3]+"day");
+    
+    //Sometime next week optionally on a day optionally at a time
+    else if(parts[2].trim() == "week")
+    {   
+      if(parts[7])
+        var day = parts[7]+"day";
+      else
+        var day = "monday";
+      
+      ret.next(day);
+    }   
+    
+    else if(parts[1].trim() == "month")
+    {   
+      if(parts[9])
+        var day = parseInt(parts[9].trim());
+      else
+        var day = 1;
+      
+      ret.addMonths(1).on(day);
+    }
+    
+    ret.at(optionalAt(parts[11]));
+  }
+  
+  else if(parts = new RegExp("(.+) on ((.+)day|(([0-9]+)(st|th|rd)?( of)? (jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*),?( ([0-9]+))?)|((jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*) ([0-9]+)(th|st|rd)?),?( ([0-9]+))?|(([0-9]+)(/|-)([0-9]+)((/|-)([0-9]+))?))( at .+)?","i").exec(text))
+  {   
+    replace = parts[1];
+    //on a day 
+    if(parts[3])
+    {   
+      var day = parts[3]+"day";
+      ret.next(day);
+    }   
+    
+    //on a date with month name first
+    else if(parts[13])
+    {   
+      var month = fullMonth(parts[12]);
+      var day = parts[13];      
+      ret = new Date(day+" "+month+" "+optionalYear(parts[15]));
+    }   
+    //on a date in numeric format with separators
+    else if(parts[17])
+    {   
+      var day = isMonthFirstDate() ? parts[20]:parts[18];
+      var month = isMonthFirstDate() ? parts[18]:parts[20];
+      
+      if(month.length == 1)
+        month = "0"+month;
+      if(day.length == 1)
+        day = "0"+day;
+      
+      ret = new Date(optionalYear(parts[23])+"-"+month+"-"+day);
+    }   
+    
+    //on a date with date first followed by month name
+    else if(parts[5])
+    {   
+      var month = fullMonth(parts[8]);
+      var day = parseInt(parts[5]);
+      ret = new Date(day+" "+month+" "+optionalYear(parts[10]));
+    }   
+    
+    ret.at(optionalAt(parts[24]));
+  }
+  
+  return {date: ret,comment: text.replace(text.replace(replace,""),"")};
+}
+
+Trellinator.fullMonth = function(month)
+{
+    var map = {"jan":"january",
+               "feb":"february",
+               "mar":"march",
+               "apr":"april",
+               "may":"may",
+               "jun":"june",
+               "jul":"july",
+               "aug":"august",
+               "sept":"september",
+               "oct":"october",
+               "nov":"november",
+               "dec":"december"};
+
+    return map[month] ? map[month]:month;
+}
+
+Trellinator.optionalYear = function(str)
+{
+    return str ? parseInt(str):Trellinator.now().getFullYear();
+}
+
+Trellinator.optionalAt = function(str)
+{
+    //at time included
+    if(str)
+        ret = atString(str);
+    //default to 9am 
+    else
+        ret = "9:00";
+    
+    return ret;
+}
+
+Trellinator.atString = function(str)
+{
+  var ampm = new RegExp("(at )?([0-9]+):?([0-9]*)(am|pm)?","i").exec(str.trim());
+  var hours = (ampm[4] != "pm") ? ampm[2]:(parseInt(ampm[2])+12);
+  var minutes = ampm[3] ? ampm[3]:"00";
+  return hours+":"+minutes;
+}
+
+Trellinator.oppoIdFromCard = function(card)
+{
+  var ret = 0;
+  notif.card().attachments().each(function(attachment)
+                                  {
+                                    if(parts = new RegExp(".+Opportunity/(.+)/view$").exec(attachment.url))
+                                    {
+                                      ret = parts[1];
+                                    }
+                                  });
+  
+  return ret;
+}
+
+Trellinator.testDateParsing = function()
+{
+  var cmts = [
+    "do this thing on Thursday",
+    "do this thing on Thursday at 10am",
+    "do this thing on September 23",
+    "do this thing on Sept 23",
+    "do this thing on September 23rd",
+    "do this thing on Sept 23rd",
+    "do this thing on September 23 at 10am",
+    "do this thing on Sept 23 at 10am",
+    "do this thing on September 23rd at 10am",
+    "do this thing on September 23, 2019",
+    "do this thing on September 23rd, 2019",
+    "do this thing on September 23, 2019 at 10am",
+    "do this thing on September 23rd, 2019 at 10am",
+    "do this thing on 9/23/2019 at 10am",
+    "do this thing on 9/23 at 10am",
+    "do this thing on 23 September",
+    "do this thing on 23rd September",
+    "do this thing on 23rd of September",
+    "do this thing on 23 September at 10am",
+    "do this thing on 23rd September at 10am",
+    "do this thing on 23rd of September at 10am",
+    "do this thing on 23 September, 2019",
+    "do this thing on 23rd September, 2019",
+    "do this thing on 23rd of September, 2019",
+    "do this thing on 23 September, 2019 at 10am",
+    "do this thing on 23rd September, 2019 at 10am",
+    "do this thing on 23rd of September, 2019 at 10am",
+    "do this thing on 23 September 2019",
+    "do this thing on 23rd September 2019",
+    "do this thing on 23rd of September 2019",
+    "do this thing on 23 September 2019 at 10am",
+    "do this thing on 23rd September 2019 at 10am",
+    "do this thing on 23rd of September 2019 at 10am",
+    "do this thing next Monday at 9am",
+    "do this thing next Monday",
+    "do this thing next week on Monday at 9am",
+    "do this thing next Monday at 9am",
+    "do this thing next week",
+    "do this thing next month", 
+    "do this thing next month on the 1st at 9am"]; 
+  
+  for(var i = 0;i < cmts.length;i++)
+  {
+    Logger.log("from: "+cmts[i]);
+    Logger.log(parseDate(cmts[i]).date.toLocaleString());
+    Logger.log(parseDate(cmts[i]).comment);
+  }
+}

@@ -318,16 +318,19 @@ function registerAllBoards_(tStart)
 ///////////////////////////////////////////////////////////////////////////////////
 function createSheetByName_(shName)
 {
+  var shName = truncateBoardNameTo100Characters(shName);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var nuSheet = ss.getSheetByName(shName);
   //remove existing or clear data
   if(nuSheet)
   {
-    nuSheet.clear();        
+//If the board already exists just leave it alone, useful for reinit
+//    nuSheet.clear();        
   }
   else
   {//create fresh
     var totalSheets = ss.getSheets().length;
+    
     nuSheet = ss.insertSheet(shName, totalSheets);
     //remove extra default columns and rows
     nuSheet.deleteColumns(6, 21);
@@ -336,6 +339,27 @@ function createSheetByName_(shName)
   
   return nuSheet;  
 }
+
+function truncateBoardNameTo100Characters(name)
+{
+    var ret = name;
+    var SHEET_NAME_MAX = 100;
+
+    if(name.length > SHEET_NAME_MAX)
+    {
+        if(parts = new RegExp("(.+) \\[(.+)\\]").exec(name))
+        {
+            var allowed_length = SHEET_NAME_MAX - (parts[2].length+3);//the length of the board ID, one space and 2 square brackets
+            ret = parts[1].substring(0,allowed_length)+" ["+parts[2]+"]";
+        }
+
+        else
+            ret = name.substring(0,SHEET_NAME_MAX);
+    }
+
+    return ret;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////
 function createGlobalSheet_()
 {

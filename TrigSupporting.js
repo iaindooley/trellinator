@@ -26,7 +26,7 @@ function createQueueSheet_()
   if(qSheet)
   {
     //ss.deleteSheet(qSheet);
-    qSheet.clear();
+//    qSheet.clear();
   }
   else
   {//create fresh

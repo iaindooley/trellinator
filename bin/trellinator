@@ -38,7 +38,7 @@ TestConnector.test_base_dir = __dirname;
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
 /*OPTIONAL
-TestConnector.fake_now = new Date("2001-01-01");
+Trellinator.fake_now = new Date("2001-01-01");
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
 {
@@ -90,7 +90,7 @@ TestConnector.test_base_dir = __dirname;
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
 
 /*OPTIONAL
-TestConnector.fake_now = new Date("2001-01-01");
+Trellinator.fake_now = new Date("2001-01-01");
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
 {

@@ -30,7 +30,8 @@ var RENAME_BRD = "action_update_board_name";
 //-------------------------------------------------------------------
 //TriggerLib Params
 //////////////////////////////////////////////////////////////////////////
-var QUEUE_TAB_NAME_ = "ExecutionQueue";
+var QUEUE_TAB_NAME2_ = "ExecutionQueue";
+var QUEUE_DATE_FORMAT = "yyyy-MM-dd HH:mm";
 var PROCESS_QUEUE_FUNC_NAME_ = "processQueue";
 var PROCESS_QUEUE_INTERVAL = 10;
 //var INFO_TAB_NAME_ = "InfoLog";
@@ -53,7 +54,7 @@ var TIME_FORMAT_ = "HH:mm";
 var EXCLUDED_SHEET_NAMES = [INFO_TAB_NAME_ ,
                             CONFIG_NAME_ ,
                             BOARD_DB_NAME_ ,
-                            QUEUE_TAB_NAME_                            
+                            QUEUE_TAB_NAME2_                            
                            ];
 var CLEAR_TRIG_ACTION_LIST = ["Clear Triggers"];
 var UPDATE_TRIG_ACTION_LIST = ["Update Triggers"];

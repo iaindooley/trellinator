@@ -22,7 +22,7 @@ function documentProperties()
 function createQueueSheet_()
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
   if(qSheet)
   {
     //ss.deleteSheet(qSheet);
@@ -30,7 +30,7 @@ function createQueueSheet_()
   }
   else
   {//create fresh
-    qSheet = ss.insertSheet(QUEUE_TAB_NAME_);
+    qSheet = ss.insertSheet(QUEUE_TAB_NAME2_);
     //remove extra columns and rows
     qSheet.deleteColumns(6, 21);
     qSheet.deleteRows(101, 900);
@@ -45,11 +45,7 @@ function createQueueSheet_()
   //date time format show upto minute only, 
   //but keep different date formats due to different locals esp. US and AU locales
   //example case me and Iain
-  var dateStr = qSheet.getRange("A2").clear().setValue(new Date(2017,11,23)).getDisplayValue();
-  var datePiece = dateStr.split(" ")[0];
-  datePiece = datePiece.replace("2017","yyyy").replace("12","MM").replace("23","dd");  
-  var formatA = datePiece + " " + TIME_FORMAT_;  
-  qSheet.getRange("A2:A").setNumberFormat(formatA).clearContent(); 
+  qSheet.getRange("A2:A").setNumberFormat(QUEUE_DATE_FORMAT);
   //colA.setValue(formatA).clearContent();
   //wrap text column B
   qSheet.getRange("B:B").setWrap(true);
@@ -118,7 +114,7 @@ function checkGroupIncluded_(includeList, excludeList, grpName)
 function checkFullSignature_(signat)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   for(var i = 0; i < qData.length; i++)
   {
@@ -134,7 +130,7 @@ function checkFullSignature_(signat)
 function findTimeStamp_(globSignat)
 {  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   for(var i = 0; i < qData.length; i++)
   {
@@ -151,8 +147,7 @@ function findTimeStamp_(globSignat)
 //////////////////////////////////////////////////////////////////////////////
 function triggerIsTimeLimitApproaching_(tStart)
 {
-  var tEnd = new Date().valueOf();
-  var diff = (tEnd - tStart)/1000;
+  var diff = (Trellinator.now().getTime() - tStart.getTime())/1000;
   //writeInfo("exec-time:" + diff);
   if(diff > TIME_OUT_LIMIT_TRIG_)
   {
@@ -164,7 +159,7 @@ function triggerIsTimeLimitApproaching_(tStart)
 function clearTimeTriggers4Board_(boardID)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   boardID = "/" + boardID;
   var removalCount = 0;

@@ -19,18 +19,16 @@ function processQueue()
   {
     var queue_lock  = LockService.getScriptLock();
     queue_lock.waitLock(10000);
-    var currTimeObj = new Date();
-    var currTime    = currTimeObj.valueOf();    
+    var currTime = Trellinator.now();
     var ss          = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet      = ss.getSheetByName(QUEUE_TAB_NAME_);
+    var qSheet      = ss.getSheetByName(QUEUE_TAB_NAME2_);
     qSheet.getRange("A2:" + LAST_QUEUE_COLUMN).sort({column: 1, ascending: true});
     SpreadsheetApp.flush();
     var qData = qSheet.getDataRange().getValues();
     
     for(var i = qData.length-1; i >= 0; i--)
     {     
-      var rowTimeObj = qData[i][0];
-      var rowTime = rowTimeObj.valueOf();
+      var rowTime = qData[i][0];
 
       if(rowTime <= currTime)
       {
@@ -102,23 +100,17 @@ function push(timeStamp, funcObj, signatureStr)
   try
   {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+    
     if(!signatureStr)
-    {
-      var currTime = (new Date()).valueOf();
-      var timeStr = currTime.toString();
-      signatureStr = createMd5String_(timeStr);
-    }
+      signatureStr = createMd5String_(Trellinator.now().getTime());
+    
     //simple checks
     if(timeStamp.getDate() && funcObj.functionName && funcObj.parameters)
     {
       var funcStr = JSON.stringify(funcObj);
-      var dateFormat = qSheet.getRange("A2").getNumberFormat().replace(new RegExp("[^:d/my hs]","ig"),'');
-      dateFormat = (dateFormat.indexOf("MM") == -1) ? dateFormat.replace("mm","MM") : dateFormat; //1st instance only//required due to google getnumberformat bug      
-      dateFormat = (dateFormat.search(/H/g) == -1) ? dateFormat.replace(/h/g,"H") : dateFormat; //pretty buggy google apps script here, has only one 'h'
-      dateFormat = (dateFormat.indexOf("HH") == -1) ? dateFormat.replace("hh","HH") : dateFormat; //otherwise will print in 12 hour time, and everything will execute 10 hours early!
-      var timeStr = Utilities.formatDate(timeStamp, ss.getSpreadsheetTimeZone(), dateFormat);
-      qSheet.appendRow([timeStr, funcStr, "", signatureStr]);
+      qSheet.appendRow([timeStamp, funcStr, "", signatureStr]);
+      qSheet.getRange("A2:A").setNumberFormat(QUEUE_DATE_FORMAT);
     }
     else
     {
@@ -156,7 +148,7 @@ function clear(signatureStr)
       throw "No signature available";
     }
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
     var delLock = LockService.getScriptLock();
     var successLock = delLock.tryLock(10000);//10 sec
 
@@ -277,7 +269,7 @@ function timeTriggerGroupUpdate(groupRow)
       }
     }//loop for all new boards ends
     //Phase-2: for all boards removed from group
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME_);
+    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
     var qData = qSheet.getDataRange().getValues();
     for(var q = qData.length - 1; q >= 1; q--)
     {

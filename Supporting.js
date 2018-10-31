@@ -705,17 +705,20 @@ function renameBoardSheet_(actionData)
   {
     var success = false;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var oldSheetName = truncateBoardNameTo100Characters(actionData.data.old.name) + " [" + actionData.data.board.id + "]";
+    var oldSheetName = truncateBoardNameTo100Characters(actionData.data.old.name + " [" + actionData.data.board.id + "]");
+    var nuSheetName = truncateBoardNameTo100Characters(actionData.data.board.name + " [" + actionData.data.board.id + "]");
+    writeInfo_("Attempting to rename: "+oldSheetName+" to "+nuSheetName);
     var brdSheet = ss.getSheetByName(oldSheetName);
-    var nuSheetName = truncateBoardNameTo100Characters(actionData.data.board.name) + " [" + actionData.data.board.id + "]";
     brdSheet.setName(nuSheetName);
     writeInfo_("Board sheet renamed from: " + oldSheetName + "\nto: " + nuSheetName);
+    flushInfoBuffer();
     success = true;
     return success;
   }
   catch(error)
   {
     writeInfo_("Renaming Board sheet " + error);
+    flushInfoBuffer();
     return success;
   }
 }
@@ -933,7 +936,7 @@ function removeBoardSheet_(actionData)
     }
     //continue
     success = false;
-    var boardSheetName = actionData.data.board.name + " [" + boardID + "]";
+    var boardSheetName = truncateBoardNameTo100Characters(actionData.data.board.name + " [" + boardID + "]");
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var brdSheet = ss.getSheetByName(boardSheetName);
     if(!brdSheet)

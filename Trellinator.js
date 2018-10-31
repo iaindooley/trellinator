@@ -688,6 +688,7 @@ Trellinator.isMonthFirstDate = function()
 Trellinator.parseDate = function(text)
 {
   var ret = Trellinator.now();
+  var start = new Date(ret);
   var replace = null;
   text = text.toLowerCase();
   var at_index = 0;
@@ -775,6 +776,9 @@ Trellinator.parseDate = function(text)
     ret.at(Trellinator.optionalAt(parts[24]));
   }
   
+  if(start.getTime() == ret.getTime())
+      throw new Error("No date parseable strings found");
+
   return {date: ret,comment: text.replace(text.replace(replace,""),"")};
 }
 

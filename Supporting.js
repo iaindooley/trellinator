@@ -705,9 +705,9 @@ function renameBoardSheet_(actionData)
   {
     var success = false;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var oldSheetName = actionData.data.old.name + " [" + actionData.data.board.id + "]";
+    var oldSheetName = truncateBoardNameTo100Characters(actionData.data.old.name) + " [" + actionData.data.board.id + "]";
     var brdSheet = ss.getSheetByName(oldSheetName);
-    var nuSheetName = actionData.data.board.name + " [" + actionData.data.board.id + "]";
+    var nuSheetName = truncateBoardNameTo100Characters(actionData.data.board.name) + " [" + actionData.data.board.id + "]";
     brdSheet.setName(nuSheetName);
     writeInfo_("Board sheet renamed from: " + oldSheetName + "\nto: " + nuSheetName);
     success = true;

@@ -664,6 +664,61 @@ Date.prototype.stringFormat = function(format)
 * used as part of a regular expression
 * @memberof module:TrellinatorCore.Trellinator
 */
+Trellinator.downloadFileToGoogleDrive = function(fileURL)
+{
+  if(Trellinator.isGoogleAppsScript())
+  {
+    try
+    {
+      var folder = DriveApp.getFoldersByName("Trellinator Downloads").next();
+    }
+    
+    catch(e)
+    {
+      var folder = DriveApp.createFolder("Trellinator Downloads");
+    }
+    
+    var response = UrlFetchApp.fetch(fileURL, {muteHttpExceptions: true});
+    var rc = response.getResponseCode();
+
+    if (rc == 200) {
+      var fileBlob = response.getBlob()
+      var file = folder.createFile(fileBlob);
+    }
+
+    else
+      throw new Error("Unable to get file: "+rc);
+  }
+
+  else
+  {
+   var file = new MockDriveFile(fileURL);
+  }
+
+  return file;
+}
+
+var MockDriveFile = function(url)
+{
+  this.url = url;
+  this.name = name;
+
+  this.getUrl = function()
+  {
+    return this.url;
+  }
+
+  this.getName = function()
+  {
+    return "Mock Drive File";
+  }
+}
+
+/**
+* Static method to escape user input to be
+* used as part of a regular expression
+* @memberof module:TrellinatorCore.Trellinator
+*/
 RegExp.escape= function(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };

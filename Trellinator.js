@@ -831,8 +831,13 @@ Trellinator.parseDate = function(text)
     ret.at(Trellinator.optionalAt(parts[24]));
   }
   
-  if(start.getTime() == ret.getTime())
+  //Check if the date changed since the start, if not, then
+  //no parseable date strings were found. We have to floor/1000
+  //because new Date(other_date) creates a new date with 000
+  //for the milliseconds part
+  if(floor(start.getTime()/1000) == floor(ret.getTime()/1000))
       throw new Error("No date parseable strings found");
+
 
   return {date: ret,comment: text.replace(text.replace(replace,""),"")};
 }

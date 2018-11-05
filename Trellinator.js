@@ -747,6 +747,7 @@ Trellinator.parseDate = function(text)
   var replace = null;
   text = text.toLowerCase();
   var at_index = 0;
+
   //deal with tomorrow at a given time or not, default to 9am
   if(parts = new RegExp("(.*)\\b(tomorrow|today)(.*)","i").exec(text))
   {
@@ -835,7 +836,7 @@ Trellinator.parseDate = function(text)
   //no parseable date strings were found. We have to floor/1000
   //because new Date(other_date) creates a new date with 000
   //for the milliseconds part
-  if(floor(start.getTime()/1000) == floor(ret.getTime()/1000))
+  if(Math.floor(start.getTime()/1000) == Math.floor(ret.getTime()/1000))
       throw new Error("No date parseable strings found");
 
 

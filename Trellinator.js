@@ -880,7 +880,7 @@ Trellinator.optionalAt = function(str)
 
 Trellinator.atString = function(str)
 {
-  var ampm = new RegExp("(at )?([0-9]+):?([0-9]*)(am|pm)?","i").exec(str.trim());
+  var ampm = new RegExp("(at )?([0-9]+):?([0-9]*) ?(am|pm)?","i").exec(str.trim());
   var hours = (ampm[4] != "pm") ? ampm[2]:(parseInt(ampm[2])+12);
   var minutes = ampm[3] ? ampm[3]:"00";
   return hours+":"+minutes;

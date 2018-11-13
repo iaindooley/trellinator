@@ -37,7 +37,7 @@ TestConnector.test_base_dir = __dirname;
 //object instead of using your cached api fixtures
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
-Trellinator.fake_now = new Date("2018-01-01 09:00");
+Trellinator.fake_now = new Date("2018-02-28T05:00:00.000Z");
 /*OPTIONAL
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
@@ -88,7 +88,7 @@ TestConnector.test_base_dir = __dirname;
 //object instead of using your cached api fixtures
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
-Trellinator.fake_now = new Date("2018-01-01 09:00");
+Trellinator.fake_now = new Date("2018-02-28T05:00:00.000Z");
 /*OPTIONAL
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)

@@ -659,12 +659,23 @@ Date.prototype.stringFormat = function(format)
     return ret;
 }
 
+Trellinator.googleDriveIdRegExp = function()
+{
+  return /.*[^-\w]([-\w]{25,})[^-\w]?.*/;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+function getFolderByURL_(folderUrl)
+{
+  var folderID = folderUrl.match(Trellinator.googleDriveIdRegExp())[1];
+  var folder = DriveApp.getFolderById(folderID);
+  return folder;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 Trellinator.getFileByURL = function(fileUrl)
 {
-  var fileID = fileUrl.match(/.*[^-\w]([-\w]{25,})[^-\w]?.*/);
+  var fileID = fileUrl.match(Trellinator.googleDriveIdRegExp());
   var file = DriveApp.getFileById(fileID);
-
   return file;
 }
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -659,6 +659,22 @@ Date.prototype.stringFormat = function(format)
     return ret;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+Trellinator.getFileByURL = function(fileUrl)
+{
+  var fileID = fileUrl.match(/.*[^-\w]([-\w]{25,})[^-\w]?.*/);
+  var file = DriveApp.getFileById(fileID);
+
+  return file;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+Trellinator.getFolderByURL = function(folderUrl)
+{
+  var folderID = folderUrl.match(/.*[^-\w]([-\w]{25,})[^-\w]?.*/);
+  var folder = DriveApp.getFolderById(folderID);
+  return folder;
+}
+
 /**
 * Static method to escape user input to be
 * used as part of a regular expression

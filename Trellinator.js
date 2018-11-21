@@ -338,7 +338,7 @@ Date.prototype.at = function(time)
 */
 Date.prototype.addMinutes = function(minutes)
 {
-    this.setMinutes(this.getMinutes() + minutes);
+    this.setMinutes(this.getMinutes() + parseInt(minutes));
     return this;
 }
 
@@ -351,7 +351,7 @@ Date.prototype.addMinutes = function(minutes)
 */
 Date.prototype.minusMinutes = function(minutes)
 {
-    this.setMinutes(this.getMinutes() - minutes);
+    this.setMinutes(this.getMinutes() - parseInt(minutes));
     return this;
 }
 
@@ -364,7 +364,7 @@ Date.prototype.minusMinutes = function(minutes)
 */
 Date.prototype.addHours = function(hours)
 {
-    return this.addMinutes(hours*60);
+    return this.addMinutes(parseInt(hours)*60);
 }
 
 /**
@@ -376,7 +376,7 @@ Date.prototype.addHours = function(hours)
 */
 Date.prototype.minusHours = function(hours)
 {
-    return this.minusMinutes(hours*60);
+    return this.minusMinutes(parseInt(hours)*60);
 }
 
 /**
@@ -389,7 +389,7 @@ Date.prototype.minusHours = function(hours)
 */
 Date.prototype.addDays = function(days)
 {
-    this.setDate(this.getDate() + days);
+    this.setDate(this.getDate() + parseInt(days));
     return this;
 }
 
@@ -402,7 +402,7 @@ Date.prototype.addDays = function(days)
 */
 Date.prototype.addWeeks = function(weeks)
 {
-    return this.addDays(weeks*7);
+    return this.addDays(parseInt(weeks)*7);
 }
 
 /**
@@ -414,7 +414,7 @@ Date.prototype.addWeeks = function(weeks)
 */
 Date.prototype.minusWeeks = function(weeks)
 {
-    return this.minusDays(weeks*7);
+    return this.minusDays(parseInt(weeks)*7);
 }
 
 /**
@@ -426,7 +426,7 @@ Date.prototype.minusWeeks = function(weeks)
 */
 Date.prototype.addMonths = function(months)
 {
-    this.setMonth(this.getMonth() + months);
+    this.setMonth(this.getMonth() + parseInt(months));
     return this;
 }
 
@@ -439,7 +439,7 @@ Date.prototype.addMonths = function(months)
 */
 Date.prototype.minusMonths = function(months)
 {
-    this.setMonth(this.getMonth() - months);
+    this.setMonth(this.getMonth() - parseInt(months));
     return this;
 }
 
@@ -608,7 +608,7 @@ Date.prototype.lastDayOfMonth = function()
 */
 Date.prototype.minusDays = function(days)
 {
-    this.setDate(this.getDate()-days);
+    this.setDate(this.getDate()-parseInt(days));
     return this;
 }
 

@@ -338,7 +338,7 @@ Date.prototype.at = function(time)
 */
 Date.prototype.addMinutes = function(minutes)
 {
-    this.setMinutes(this.getMinutes() + minutes);
+    this.setMinutes(this.getMinutes() + parseInt(minutes));
     return this;
 }
 
@@ -351,7 +351,7 @@ Date.prototype.addMinutes = function(minutes)
 */
 Date.prototype.minusMinutes = function(minutes)
 {
-    this.setMinutes(this.getMinutes() - minutes);
+    this.setMinutes(this.getMinutes() - parseInt(minutes));
     return this;
 }
 
@@ -364,7 +364,7 @@ Date.prototype.minusMinutes = function(minutes)
 */
 Date.prototype.addHours = function(hours)
 {
-    return this.addMinutes(hours*60);
+    return this.addMinutes(parseInt(hours)*60);
 }
 
 /**
@@ -376,7 +376,7 @@ Date.prototype.addHours = function(hours)
 */
 Date.prototype.minusHours = function(hours)
 {
-    return this.minusMinutes(hours*60);
+    return this.minusMinutes(parseInt(hours)*60);
 }
 
 /**
@@ -389,7 +389,7 @@ Date.prototype.minusHours = function(hours)
 */
 Date.prototype.addDays = function(days)
 {
-    this.setDate(this.getDate() + days);
+    this.setDate(this.getDate() + parseInt(days));
     return this;
 }
 
@@ -402,7 +402,7 @@ Date.prototype.addDays = function(days)
 */
 Date.prototype.addWeeks = function(weeks)
 {
-    return this.addDays(weeks*7);
+    return this.addDays(parseInt(weeks)*7);
 }
 
 /**
@@ -414,7 +414,7 @@ Date.prototype.addWeeks = function(weeks)
 */
 Date.prototype.minusWeeks = function(weeks)
 {
-    return this.minusDays(weeks*7);
+    return this.minusDays(parseInt(weeks)*7);
 }
 
 /**
@@ -426,7 +426,7 @@ Date.prototype.minusWeeks = function(weeks)
 */
 Date.prototype.addMonths = function(months)
 {
-    this.setMonth(this.getMonth() + months);
+    this.setMonth(this.getMonth() + parseInt(months));
     return this;
 }
 
@@ -439,7 +439,7 @@ Date.prototype.addMonths = function(months)
 */
 Date.prototype.minusMonths = function(months)
 {
-    this.setMonth(this.getMonth() - months);
+    this.setMonth(this.getMonth() - parseInt(months));
     return this;
 }
 
@@ -608,7 +608,7 @@ Date.prototype.lastDayOfMonth = function()
 */
 Date.prototype.minusDays = function(days)
 {
-    this.setDate(this.getDate()-days);
+    this.setDate(this.getDate()-parseInt(days));
     return this;
 }
 
@@ -659,6 +659,88 @@ Date.prototype.stringFormat = function(format)
     return ret;
 }
 
+Trellinator.googleDriveIdRegExp = function()
+{
+  return /.*[^-\w]([-\w]{25,})[^-\w]?.*/;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+function getFolderByURL_(folderUrl)
+{
+  var folderID = folderUrl.match(Trellinator.googleDriveIdRegExp())[1];
+  var folder = DriveApp.getFolderById(folderID);
+  return folder;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+Trellinator.getFileByURL = function(fileUrl)
+{
+  var fileID = fileUrl.match(Trellinator.googleDriveIdRegExp());
+  var file = DriveApp.getFileById(fileID);
+  return file;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+Trellinator.getFolderByURL = function(folderUrl)
+{
+  var folderID = folderUrl.match(/.*[^-\w]([-\w]{25,})[^-\w]?.*/);
+  var folder = DriveApp.getFolderById(folderID);
+  return folder;
+}
+
+/**
+* Static method to escape user input to be
+* used as part of a regular expression
+* @memberof module:TrellinatorCore.Trellinator
+*/
+Trellinator.downloadFileToGoogleDrive = function(fileURL)
+{
+  if(Trellinator.isGoogleAppsScript())
+  {
+    try
+    {
+      var folder = DriveApp.getFoldersByName("Trellinator Downloads").next();
+    }
+    
+    catch(e)
+    {
+      var folder = DriveApp.createFolder("Trellinator Downloads");
+    }
+    
+    var response = UrlFetchApp.fetch(fileURL, {muteHttpExceptions: true});
+    var rc = response.getResponseCode();
+
+    if (rc == 200) {
+      var fileBlob = response.getBlob()
+      var file = folder.createFile(fileBlob);
+    }
+
+    else
+      throw new Error("Unable to get file: "+rc);
+  }
+
+  else
+  {
+   var file = new MockDriveFile(fileURL);
+  }
+
+  return file;
+}
+
+var MockDriveFile = function(url)
+{
+  this.url = url;
+  this.name = name;
+
+  this.getUrl = function()
+  {
+    return this.url;
+  }
+
+  this.getName = function()
+  {
+    return "Mock Drive File";
+  }
+}
+
 /**
 * Static method to escape user input to be
 * used as part of a regular expression
@@ -673,9 +755,14 @@ RegExp.escape= function(s) {
 Trellinator.isMonthFirstDate = function()
 {
   var ret = false;
-  var loc = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetLocale();
-  if((loc.indexOf("_CA") > -1) || (loc.indexOf("_US") > -1))
-      ret = true;
+
+  if(Trellinator.isGoogleAppsScript())
+  {
+      var loc = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetLocale();
+      
+      if((loc.indexOf("_CA") > -1) || (loc.indexOf("_US") > -1))
+          ret = true;
+  }
   
   return ret;
 }
@@ -683,21 +770,23 @@ Trellinator.isMonthFirstDate = function()
 Trellinator.parseDate = function(text)
 {
   var ret = Trellinator.now();
+  var start = new Date(ret);
   var replace = null;
   text = text.toLowerCase();
   var at_index = 0;
+
   //deal with tomorrow at a given time or not, default to 9am
-  if(parts = new RegExp("(.+) (tomorrow|today)(.*)","i").exec(text))
+  if(parts = new RegExp("(.*)\\b(tomorrow|today)(.*)","i").exec(text))
   {
     replace = parts[1];
     
-    if(parts[2] == "tommorrow")
+    if(parts[2] == "tomorrow")
       ret.addDays(1);
     
-    ret.at(optionalAt(parts[3]));
+    ret.at(Trellinator.optionalAt(parts[3]));
   }
   
-  if(parts = new RegExp("(.+) next( week| month| (.+)day)?( (on)? ((.+)day|(the ([0-9]+)(st|rd|th))))?( at .+)?","i").exec(text))
+  else if(parts = new RegExp("(.*)\\bnext( week| month| (.+)day)?( (on)? ((.+)day|(the ([0-9]+)(st|rd|th))))?( at .+)?","i").exec(text))
   { 
     replace = parts[1];
     //Specific day next wek 
@@ -725,10 +814,10 @@ Trellinator.parseDate = function(text)
       ret.addMonths(1).on(day);
     }
     
-    ret.at(optionalAt(parts[11]));
+    ret.at(Trellinator.optionalAt(parts[11]));
   }
   
-  else if(parts = new RegExp("(.+) on ((.+)day|(([0-9]+)(st|th|rd)?( of)? (jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*),?( ([0-9]+))?)|((jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*) ([0-9]+)(th|st|rd)?),?( ([0-9]+))?|(([0-9]+)(/|-)([0-9]+)((/|-)([0-9]+))?))( at .+)?","i").exec(text))
+  else if(parts = new RegExp("(.*)\\bon ((.+)day|(([0-9]+)(st|th|rd)?( of)? (jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*),?( ([0-9]+))?)|((jan[A-Za-z]*|feb[A-Za-z]*|mar[A-Za-z]*|apr[A-Za-z]*|may|jun[A-Za-z]*|jul[A-Za-z]*|aug[A-Za-z]*|sept[A-Za-z]*|oct[A-Za-z]*|nov[A-Za-z]*|dec[A-Za-z]*) ([0-9]+)(th|st|rd)?),?( ([0-9]+))?|(([0-9]+)(/|-)([0-9]+)((/|-)([0-9]+))?))( at .+)?","i").exec(text))
   {   
     replace = parts[1];
     //on a day 
@@ -741,35 +830,43 @@ Trellinator.parseDate = function(text)
     //on a date with month name first
     else if(parts[13])
     {   
-      var month = fullMonth(parts[12]);
+      var month = Trellinator.fullMonth(parts[12]);
       var day = parts[13];      
-      ret = new Date(day+" "+month+" "+optionalYear(parts[15]));
+      ret = new Date(day+" "+month+" "+Trellinator.optionalYear(parts[15]));
     }   
     //on a date in numeric format with separators
     else if(parts[17])
     {   
-      var day = isMonthFirstDate() ? parts[20]:parts[18];
-      var month = isMonthFirstDate() ? parts[18]:parts[20];
+      var day = Trellinator.isMonthFirstDate() ? parts[20]:parts[18];
+      var month = Trellinator.isMonthFirstDate() ? parts[18]:parts[20];
       
       if(month.length == 1)
         month = "0"+month;
       if(day.length == 1)
         day = "0"+day;
       
-      ret = new Date(optionalYear(parts[23])+"-"+month+"-"+day);
+      ret = new Date(Trellinator.optionalYear(parts[23])+"-"+month+"-"+day);
     }   
     
     //on a date with date first followed by month name
     else if(parts[5])
     {   
-      var month = fullMonth(parts[8]);
+      var month = Trellinator.fullMonth(parts[8]);
       var day = parseInt(parts[5]);
-      ret = new Date(day+" "+month+" "+optionalYear(parts[10]));
+      ret = new Date(day+" "+month+" "+Trellinator.optionalYear(parts[10]));
     }   
     
-    ret.at(optionalAt(parts[24]));
+    ret.at(Trellinator.optionalAt(parts[24]));
   }
   
+  //Check if the date changed since the start, if not, then
+  //no parseable date strings were found. We have to floor/1000
+  //because new Date(other_date) creates a new date with 000
+  //for the milliseconds part
+  if(Math.floor(start.getTime()/1000) == Math.floor(ret.getTime()/1000))
+      throw new Error("No date parseable strings found");
+
+
   return {date: ret,comment: text.replace(text.replace(replace,""),"")};
 }
 
@@ -800,7 +897,7 @@ Trellinator.optionalAt = function(str)
 {
     //at time included
     if(str)
-        ret = atString(str);
+        ret = Trellinator.atString(str);
     //default to 9am 
     else
         ret = "9:00";
@@ -810,7 +907,7 @@ Trellinator.optionalAt = function(str)
 
 Trellinator.atString = function(str)
 {
-  var ampm = new RegExp("(at )?([0-9]+):?([0-9]*)(am|pm)?","i").exec(str.trim());
+  var ampm = new RegExp("(at )?([0-9]+):?([0-9]*) ?(am|pm)?","i").exec(str.trim());
   var hours = (ampm[4] != "pm") ? ampm[2]:(parseInt(ampm[2])+12);
   var minutes = ampm[3] ? ampm[3]:"00";
   return hours+":"+minutes;
@@ -876,8 +973,8 @@ Trellinator.testDateParsing = function()
   
   for(var i = 0;i < cmts.length;i++)
   {
-    Logger.log("from: "+cmts[i]);
-    Logger.log(parseDate(cmts[i]).date.toLocaleString());
-    Logger.log(parseDate(cmts[i]).comment);
+    console.log("from: "+cmts[i]);
+    console.log(Trellinator.parseDate(cmts[i]).date.toLocaleString());
+    console.log(Trellinator.parseDate(cmts[i]).comment);
   }
 }

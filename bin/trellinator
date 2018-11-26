@@ -37,8 +37,8 @@ TestConnector.test_base_dir = __dirname;
 //object instead of using your cached api fixtures
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
+Trellinator.fake_now = new Date("2018-02-28T05:00:00.000Z");
 /*OPTIONAL
-Trellinator.fake_now = new Date("2001-01-01");
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
 {
@@ -63,7 +63,7 @@ eval(murphy.load(__dirname,"../../../apps/trellinator/Trellinator.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator/Trigger.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator/TrigTest.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Board.js"));
-eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Card"));
+eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Card.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Attachment.js")); 
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/CheckItem.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Checklist.js"));
@@ -88,9 +88,8 @@ TestConnector.test_base_dir = __dirname;
 //object instead of using your cached api fixtures
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
-
+Trellinator.fake_now = new Date("2018-02-28T05:00:00.000Z");
 /*OPTIONAL
-Trellinator.fake_now = new Date("2001-01-01");
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
 {

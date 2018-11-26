@@ -79,7 +79,7 @@ function processQueue()
         writeInfo_("Time limit approaching...for queue processing...");
         if(i > 0)//still remaining
         {
-            nextMinute();
+//            nextMinute();
             throw new Error("Abort! Time is up");
         }
       }      

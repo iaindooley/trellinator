@@ -32,6 +32,10 @@ eval(murphy.load(__dirname,"../SystemUnderTest.js"));
 eval(murphy.load(__dirname,"notifications/default.run.js/some_event.js"));
 //SET SOME MOCKING VARIABLES
 TestConnector.test_base_dir = __dirname;
+TestConnector.use_sequencer = true;//where multiple URLs need to be cached depending on when they are called
+                                   //this is configured by default but not turned on by default
+                                   //because otherwise all previously existing tests would need to 
+                                   //be refixtured
 //the override_token needs to be set so that when others run your tests
 //the new Trellinator() method doesn't fetch their member
 //object instead of using your cached api fixtures
@@ -89,6 +93,10 @@ TestConnector.test_base_dir = __dirname;
 //DO NOT INCLUDE YOUR API KEY HERE -- TOKEN ONLY!!!
 Trellinator.override_token = "YOUR TRELLO DEV TOKEN";
 Trellinator.fake_now = new Date("2018-02-28T05:00:00.000Z");
+TestConnector.use_sequencer = true;//where multiple URLs need to be cached depending on when they are called
+                                   //this is configured by default but not turned on by default
+                                   //because otherwise all previously existing tests would need to 
+                                   //be refixtured
 /*OPTIONAL
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)

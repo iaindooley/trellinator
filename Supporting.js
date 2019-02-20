@@ -472,7 +472,7 @@ function createNewBoardSheet_(actionData)
 //////////////////////////////////////////////////////////////////////////////
 function addBoardToGlobalCommandGroup(board,group_name)
 {  
-    Trellinator.addBoardToGlobalCommandGroup(board,group_name);
+    return Trellinator.addBoardToGlobalCommandGroup(board,group_name);
 }
 
 //////////////////////////////////////////////////////////////////////////////

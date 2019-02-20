@@ -165,6 +165,8 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
         writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
       }
     }
+    
+    return board;
 }
 
 /**

@@ -115,6 +115,13 @@ function doGetting(e)
   //writeInfo_("doGet running....");                          
   return out;
 }  
+
+function thisIsMyToken(id)
+{
+    creds = TrelloApi.checkControlValues();
+    //Only operate if the member removed was the same member that owns our token
+    return (TrelloApi.get("tokens/"+creds.token+"/member").id == id);
+}
 ////////////////////////////////////////////////////////////////////////////////////  
 // This POST is what does all the hard work
 function doPosting(notifText) 
@@ -136,13 +143,10 @@ function doPosting(notifText)
     createNewBoardSheet_(actionData);
   }
   //"removeMemberFromBoard"
-  if(actionType == REMOV_MEM_FROM_BRD_ && notifData.model.id == actionData.data.board.id)
+  //Only operate if the member removed was the same member that owns our token
+  if((actionType == REMOV_MEM_FROM_BRD_) && (notifData.model.id == actionData.data.board.id) && thisIsMyToken(actionData.data.idMember))
   {
-    creds = TrelloApi.checkControlValues();
-    //Only operate if the member removed was the same member that owns our token
-    if(TrelloApi.get("tokens/"+creds.token+"/member").id == actionData.data.idMember)
-    //writeInfo_("Calling remove member from board...process");
-        removeBoardSheet_(actionData);
+      removeBoardSheet_(actionData);
   }
 
   //"createBoard"

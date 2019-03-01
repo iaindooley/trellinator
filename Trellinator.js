@@ -382,6 +382,30 @@ Date.prototype.minusHours = function(hours)
 }
 
 /**
+* Add X weekdays to the date
+* @memberof module:TrellinatorCore.Trellinator
+* @param days {int} number of days to add
+* @example
+* //Tomorrow
+* Trellinator.now().addWeekDays(1);
+*/
+Date.prototype.addWeekDays = function(days)
+{
+    var days = parseInt(days);
+    var cur_day = 1;
+
+    while(days > 0)
+    {
+        this.setDate(this.getDate() + cur_day);
+        
+        if(this.isWeekDay())
+            days--;
+    }
+
+    return this;
+}
+
+/**
 * Add X days to the date
 * @memberof module:TrellinatorCore.Trellinator
 * @param days {int} number of days to add
@@ -598,6 +622,30 @@ Date.prototype.butlerDefaultDate = function()
 Date.prototype.lastDayOfMonth = function()
 {
     return new Date(this.getFullYear(), this.getMonth()+1, 0);
+}
+
+/**
+* Subtract X weekdays from the current date
+* @memberof module:TrellinatorCore.Trellinator
+* @param days {int} number of days to subtract
+* @example
+* //3 days ago
+* Trellinator.now().minusWeekDays(3);
+*/
+Date.prototype.minusWeekDays = function(days)
+{
+    var days = parseInt(days);
+    var cur_day = 1;
+
+    while(days > 0)
+    {
+        this.setDate(this.getDate()-cur_day);
+        
+        if(this.isWeekDay())
+            days--;
+    }
+
+    return this;
 }
 
 /**

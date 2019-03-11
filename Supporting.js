@@ -45,7 +45,6 @@ function registerWebhook_(boardID)
     var scriptID = urlParts[urlParts.length - 2];
     var proxyURL = PROXY_URL_.replace("{script-id}", scriptID);
     var modelID = (!boardID) ? getMyMemberID_() : boardID;//either member id or board id
-    //var modelSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(MODEL_DB_NAME);
     //var error = getTrelloKeys_();
     var trelloUrl = constructTrelloURL_("webhooks/?callbackURL=" + encodeURIComponent(proxyURL) + "&idModel=" + modelID);
     var params = getFetchParameters_("post");
@@ -58,7 +57,6 @@ function registerWebhook_(boardID)
     if (respCode == 200) 
     {
       writeInfo_("Webhook successfully registered" + entityMsg);// + "\n" + respText);
-      //SpreadsheetApp.getActiveSpreadsheet().getSheetByName(MODEL_DB_NAME).appendRow([modelID]);//it will add member id as well
       if(boardID)//don't write member id
       {        
         //appendToModelDB_(modelSheet, modelID);
@@ -124,7 +122,7 @@ function getMyMemberID_()
 ///////////////////////////////////////////////////////////////////////////////////
 function getTrelloKeys_()
 {  
-  var trelloData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG_NAME_).getRange("B2:B3").getValues();
+  var trelloData = Trellinator.fastGetSheetByName(CONFIG_NAME_).getRange("B2:B3").getValues();
   
   var appKey = (trelloData[0][0] + "").trim();
   
@@ -164,11 +162,12 @@ function flushInfoBuffer()
       flush_lock.tryLock(1000);
 
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var infoSheet = ss.getSheetByName(INFO_TAB_NAME_);
+      var infoSheet = Trellinator.fastGetSheetByName(INFO_TAB_NAME_);
       
       if(!infoSheet)
       {
         infoSheet = ss.insertSheet(INFO_TAB_NAME_);
+        Trellinator.fastGetSheetByName.sheets = null;
         infoSheet.appendRow(["Date" , "Description"]).setColumnWidth(2, 600).setFrozenRows(1);
         infoSheet.appendRow([ new Date(), INFO_TAB_NAME_ + " Created"]);
       }
@@ -226,7 +225,6 @@ function listCurrentUserBoards_()
 {    
   //var tStart = new Date().valueOf();
   //var sheet = SpreadsheetApp.getActiveSheet();
-  //var msgList = sheet.getParent().getSheetByName(QUOTE_NAME).getRange("A1:A10").getValues();
   
 //  var error = checkControlValues_(false,false);
 //  if (error.err != "") {
@@ -255,7 +253,7 @@ function storeCurrentUserBoards_()
     boardData.push([boards[i].name, boards[i].id])
   }//loop ends  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var brdSheet = ss.getSheetByName(BOARD_DB_NAME_);
+  var brdSheet = Trellinator.fastGetSheetByName(BOARD_DB_NAME_);
   brdSheet.getRange(2, 1, boardData.length, 2)
   .setValues(boardData)
   .sort({column: 1, ascending: false});
@@ -267,13 +265,14 @@ function registerAllBoards_(tStart)
   {    
     var completeFlag = false;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var brdSheet = ss.getSheetByName(BOARD_DB_NAME_); 
+    var brdSheet = Trellinator.fastGetSheetByName(BOARD_DB_NAME_); 
     var boardList = brdSheet.getDataRange().getValues();
     //var singleList = getSingleColumn_(modelList, 1);
     if(boardList.length < 2)
     {
       writeInfo_("No more boards remaining to register");
       ss.deleteSheet(brdSheet);
+      Trellinator.fastGetSheetByName.sheets = null;
       return;
     }
     //continue
@@ -306,6 +305,7 @@ function registerAllBoards_(tStart)
     createGlobalGroupSheet_();
     //remove board sheet
     ss.deleteSheet(brdSheet);
+    Trellinator.fastGetSheetByName.sheets = null;
     completeFlag = true;
     return completeFlag;
   }
@@ -320,7 +320,7 @@ function createSheetByName_(shName)
 {
   var shName = truncateBoardNameTo100Characters(shName);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var nuSheet = ss.getSheetByName(shName);
+  var nuSheet = Trellinator.fastGetSheetByName(shName);
   //remove existing or clear data
   if(nuSheet)
   {
@@ -332,6 +332,7 @@ function createSheetByName_(shName)
     var totalSheets = ss.getSheets().length;
     
     nuSheet = ss.insertSheet(shName, totalSheets);
+    Trellinator.fastGetSheetByName.sheets = null;
     //remove extra default columns and rows
     nuSheet.deleteColumns(6, 21);
     nuSheet.deleteRows(101, 900);
@@ -377,7 +378,7 @@ function createGlobalSheet_()
   createDropDown_(globalSheet, "E2", CLEAR_TRIG_ACTION_LIST);
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var configSheet = ss.getSheetByName(CONFIG_NAME_);  
+  var configSheet = Trellinator.fastGetSheetByName(CONFIG_NAME_);  
   globalSheet.activate();
   ss.moveActiveSheet(configSheet.getIndex() + 1);
   configSheet.activate();
@@ -479,7 +480,7 @@ function addBoardToGlobalCommandGroup(board,group_name)
 function timeTrigger4NewBoard_(boardID)
 {  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);  
+  var globSheet = Trellinator.fastGetSheetByName(GLOBAL_COMMANDS_NAME_);  
   var globData = globSheet.getDataRange().getValues();
   var globTrigCount = 0;
   for(var row = 1; row < globData.length; row++)
@@ -536,7 +537,7 @@ function executeNotificationCommand_(notifData)
     var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
     writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var brdSheet = ss.getSheetByName(boardSheetName);
+    var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
     if(!brdSheet)
     {
       throw "Board sheet named [" + boardSheetName + "] not found";
@@ -576,7 +577,6 @@ function executeNotificationCommand_(notifData)
           var signatStr = createMd5String_(currStr);
           writeInfo_(currStr + "\n" + signatStr);
           this[functionName](notifData, signatStr);
-          
       }
       catch(err)
       {
@@ -594,18 +594,16 @@ function executeNotificationCommand_(notifData)
         }
       }
     }//loop for all this board's rows ends
-    
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
     var execution_lock  = LockService.getScriptLock();
     execution_lock.tryLock(1000);
-    var globalSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
+    var globalSheet = Trellinator.fastGetSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)
     {
       throw "Global command sheet not found";
     }
     var globalMap = globalSheet.getDataRange().getValues();
     execution_lock.releaseLock();
-    
     for(var i = 1; i < globalMap.length; i++)
     {
       var mapRow = globalMap[i];
@@ -693,7 +691,7 @@ function getAlphabeticalOrder_(currSheet)
   var currBName = currSheet.getName();
   var index = sheetNames.indexOf(currBName.toLowerCase()) - 1;  
   var prvsBName = sheetNames[index];
-  var destIndex = ss.getSheetByName(prvsBName).getIndex() + 1;
+  var destIndex = Trellinator.fastGetSheetByName(prvsBName).getIndex() + 1;
   //writeInfo_("prvs tab: " + prvsBName + "\nprvs item's index in array: " + index + "\n" + "index in tabs: " + destIndex);
   currSheet.activate();
   ss.moveActiveSheet(destIndex);
@@ -708,7 +706,7 @@ function renameBoardSheet_(actionData)
     var oldSheetName = truncateBoardNameTo100Characters(actionData.data.old.name + " [" + actionData.data.board.id + "]");
     var nuSheetName = truncateBoardNameTo100Characters(actionData.data.board.name + " [" + actionData.data.board.id + "]");
     writeInfo_("Attempting to rename: "+oldSheetName+" to "+nuSheetName);
-    var brdSheet = ss.getSheetByName(oldSheetName);
+    var brdSheet = Trellinator.fastGetSheetByName(oldSheetName);
     brdSheet.setName(nuSheetName);
     writeInfo_("Board sheet renamed from: " + oldSheetName + "\nto: " + nuSheetName);
     flushInfoBuffer();
@@ -736,7 +734,7 @@ function createGlobalGroupSheet_()
   createDropDown_(globalGrpSheet, "C2", UPDATE_TRIG_ACTION_LIST); 
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var configSheet = ss.getSheetByName(CONFIG_NAME_);  
+  var configSheet = Trellinator.fastGetSheetByName(CONFIG_NAME_);  
   globalGrpSheet.activate();
   ss.moveActiveSheet(configSheet.getIndex() + 1);  
   configSheet.activate();
@@ -791,7 +789,7 @@ function getBoardNames4mGroup_(groupName)
 {
   groupName = groupName.toLowerCase();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var grpSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+  var grpSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
   var grpData = grpSheet.getDataRange().getValues();
   var boardList = [];
   for(var i = 1; i < grpData.length; i++)
@@ -938,7 +936,7 @@ function removeBoardSheet_(actionData)
     success = false;
     var boardSheetName = truncateBoardNameTo100Characters(actionData.data.board.name + " [" + boardID + "]");
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var brdSheet = ss.getSheetByName(boardSheetName);
+    var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
     if(!brdSheet)
     {
       throw "Board sheet named [" + boardSheetName + "] not found";
@@ -961,6 +959,7 @@ function removeBoardSheet_(actionData)
     //remove all global time-triggers
     clearTimeTriggers4Board_(boardID);
     ss.deleteSheet(brdSheet);
+    Trellinator.fastGetSheetByName.sheets = null;
     
     success = true;    
     return success;
@@ -972,3 +971,4 @@ function removeBoardSheet_(actionData)
   }
 
 }
+

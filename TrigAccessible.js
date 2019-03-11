@@ -21,7 +21,7 @@ function processQueue()
     queue_lock.waitLock(10000);
     var currTime = Trellinator.now();
     var ss          = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet      = ss.getSheetByName(QUEUE_TAB_NAME2_);
+    var qSheet      = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
     qSheet.getRange("A2:" + LAST_QUEUE_COLUMN).sort({column: 1, ascending: true});
     SpreadsheetApp.flush();
     var qData = qSheet.getDataRange().getValues();
@@ -100,7 +100,7 @@ function push(timeStamp, funcObj, signatureStr)
   try
   {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+    var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
     
     if(!signatureStr)
       signatureStr = createMd5String_(Trellinator.now().getTime());
@@ -148,7 +148,7 @@ function clear(signatureStr)
       throw "No signature available";
     }
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+    var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
     var delLock = LockService.getScriptLock();
     var successLock = delLock.tryLock(10000);//10 sec
 
@@ -191,7 +191,7 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
   else //global commands
   {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);
+    var globSheet = Trellinator.fastGetSheetByName(GLOBAL_COMMANDS_NAME_);
     var globDataRow = globSheet.getRange("A"+boardRow+":D"+boardRow).getValues()[0];
     var includeList = (globDataRow[0] + "").trim();
     var excludeList = (globDataRow[1] + "").trim();
@@ -216,7 +216,7 @@ function timeTriggerPush(funcName, dateStr, timeStr, boardStr, boardRow)
 function saveFunctionName(boardStr, boardRow, funcName)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var brdSheet = ss.getSheetByName(boardStr);
+  var brdSheet = Trellinator.fastGetSheetByName(boardStr);
   if(boardStr != GLOBAL_COMMANDS_NAME_)
   {
     brdSheet.getRange("A" + boardRow).setValue(funcName);
@@ -232,7 +232,7 @@ function timeTriggerGroupUpdate(groupRow)
   var grpName = (groupRow[0] + "");
   //var boardStr = (groupRow[1] + "");
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var globSheet = ss.getSheetByName(GLOBAL_COMMANDS_NAME_);  
+  var globSheet = Trellinator.fastGetSheetByName(GLOBAL_COMMANDS_NAME_);  
   var globData = globSheet.getDataRange().getValues();
   for(var row = 1; row < globData.length; row++)
   {
@@ -269,7 +269,7 @@ function timeTriggerGroupUpdate(groupRow)
       }
     }//loop for all new boards ends
     //Phase-2: for all boards removed from group
-    var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+    var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
     var qData = qSheet.getDataRange().getValues();
     for(var q = qData.length - 1; q >= 1; q--)
     {

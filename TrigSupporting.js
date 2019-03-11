@@ -22,7 +22,7 @@ function documentProperties()
 function createQueueSheet_()
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+  var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
   if(qSheet)
   {
     //ss.deleteSheet(qSheet);
@@ -31,6 +31,7 @@ function createQueueSheet_()
   else
   {//create fresh
     qSheet = ss.insertSheet(QUEUE_TAB_NAME2_);
+    Trellinator.fastGetSheetByName.sheets = null;
     //remove extra columns and rows
     qSheet.deleteColumns(6, 21);
     qSheet.deleteRows(101, 900);
@@ -114,7 +115,7 @@ function checkGroupIncluded_(includeList, excludeList, grpName)
 function checkFullSignature_(signat)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+  var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   for(var i = 0; i < qData.length; i++)
   {
@@ -130,7 +131,7 @@ function checkFullSignature_(signat)
 function findTimeStamp_(globSignat)
 {  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+  var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   for(var i = 0; i < qData.length; i++)
   {
@@ -159,7 +160,7 @@ function triggerIsTimeLimitApproaching_(tStart)
 function clearTimeTriggers4Board_(boardID)
 {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var qSheet = ss.getSheetByName(QUEUE_TAB_NAME2_);
+  var qSheet = Trellinator.fastGetSheetByName(QUEUE_TAB_NAME2_);
   var qData = qSheet.getDataRange().getValues();
   boardID = "/" + boardID;
   var removalCount = 0;

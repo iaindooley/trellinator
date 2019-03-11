@@ -51,7 +51,7 @@ var Trellinator = function()
 
       if(Trellinator.isGoogleAppsScript())
       {
-          var col = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG_NAME_).getDataRange().getValues();
+          var col = Trellinator.fastGetSheetByName(CONFIG_NAME_).getDataRange().getValues();
           new IterableCollection(col).each(function(row)
                                            { 
                                              if(row[0] == "Trello Token")
@@ -82,6 +82,31 @@ var Trellinator = function()
     for(var key in this.member)
       this[key] = this.member[key];
 }
+
+/**
+* Cache active spreadsheet sheets in an 
+* object referenced by name to reduce time to call
+* (for example when executing via node 
+* on the command line)
+* @memberof module:TrellinatorCore.Trellinator
+*/
+Trellinator.fastGetSheetByName = function(name)
+{
+  if(!Trellinator.fastGetSheetByName.sheets)
+  {
+    Trellinator.fastGetSheetByName.sheets = {};
+    var all = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+    
+    for(var i = 0;i < all.length;i++)
+    {
+      Trellinator.fastGetSheetByName.sheets[all[i].getName()] = all[i];
+    }
+  }
+
+  return Trellinator.fastGetSheetByName.sheets[name];
+}
+
+Trellinator.fastGetSheetByName.sheets = null;
 
 Trellinator.data = null;
 Trellinator.override_token = null;
@@ -132,7 +157,7 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
     if(Trellinator.isGoogleAppsScript())
     {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+      var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
       var globData = globSheet.getDataRange().getValues();
       var added = false;
       
@@ -182,7 +207,7 @@ Trellinator.removeBoardFromGlobalCommandGroup = function(board,group_name)
     if(Trellinator.isGoogleAppsScript())
     {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var globSheet = ss.getSheetByName(GLOBAL_GROUP_NAME_);
+      var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
       var globData = globSheet.getDataRange().getValues();
       var added = false;
       
@@ -1028,3 +1053,4 @@ Trellinator.testDateParsing = function()
     console.log(Trellinator.parseDate(cmts[i]).comment);
   }
 }
+

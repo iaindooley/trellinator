@@ -825,6 +825,11 @@ RegExp.escape= function(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
 
 //SOME EXPERIMENTAL DATE PARSING FUNCTIONS
 Trellinator.isMonthFirstDate = function()

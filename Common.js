@@ -26,7 +26,7 @@ function doPost(e)
   {
     new IterableCollection(hooks.getDataRange().getValues()).each(function(row)
                                      { 
-                                       if(this[row[0].trim()])
+                                       if(this[row[0].trim()] &&(htmlOut === false))
                                        {
                                          htmlOut = this[row[0].trim()](e);
                                        }

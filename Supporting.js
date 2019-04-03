@@ -655,7 +655,7 @@ function executeNotificationCommand_(notifData)
       }
 
     }//loop for all this board's rows ends
-    if(quFlag)
+    if(0)//quFlag)
     {
       nextMinute();
     }

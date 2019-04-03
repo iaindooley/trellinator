@@ -39,6 +39,12 @@ function doPost(e)
     var htmlOut = doPosting(notifText);
   }
   
+  else
+  {
+    var htmlOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>");
+    flushInfoBuffer();
+  }
+  
   return htmlOut;
 }
 ///////////////////////////////////////////////////////////////////////////////

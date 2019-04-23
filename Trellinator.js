@@ -750,6 +750,12 @@ function getFolderByURL_(folderUrl)
 Trellinator.getFileByURL = function(fileUrl)
 {
   var fileID = fileUrl.match(Trellinator.googleDriveIdRegExp());
+
+  if(fileID)
+    fileID = fileID[1];
+  else
+    throw new InvalidDataException("Could not get file by URL: "+fileUrl);
+  
   var file = DriveApp.getFileById(fileID);
   return file;
 }

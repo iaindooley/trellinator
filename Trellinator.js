@@ -780,12 +780,12 @@ Trellinator.downloadFileToGoogleDrive = function(fileURL)
     {
       var folder = DriveApp.getFoldersByName("Trellinator Downloads").next();
     }
-    
+
     catch(e)
     {
       var folder = DriveApp.createFolder("Trellinator Downloads");
     }
-    
+
     var response = UrlFetchApp.fetch(fileURL, {muteHttpExceptions: true});
     var rc = response.getResponseCode();
 
@@ -800,13 +800,13 @@ Trellinator.downloadFileToGoogleDrive = function(fileURL)
 
   else
   {
-   var file = new MockDriveFile(fileURL);
+   var file = new MockDriveFile(fileURL, "Mock Drive File");
   }
 
   return file;
 }
 
-var MockDriveFile = function(url)
+var MockDriveFile = function(url,name)
 {
   this.url = url;
   this.name = name;
@@ -818,7 +818,7 @@ var MockDriveFile = function(url)
 
   this.getName = function()
   {
-    return "Mock Drive File";
+    return this.name;
   }
 }
 

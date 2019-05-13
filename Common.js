@@ -43,24 +43,33 @@ function doGet(e)
 ///////////////////////////////////////////////////////////////////////////////
 function doPost(e)
 {
+
   var hooks = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Custom Webhooks");
   var htmlOut = false;
   
   if(hooks)
   {
     new IterableCollection(hooks.getDataRange().getValues()).each(function(row)
-                                     { 
-                                       if(this[row[0].trim()] &&(htmlOut === false))
-                                       {
-                                         htmlOut = this[row[0].trim()](e);
-                                       }
-                                     });
+                                                                  { 
+                                                                    if(this[row[0].trim()] &&(htmlOut === false))
+                                                                    {
+                                                                      htmlOut = this[row[0].trim()](e);
+                                                                    }
+                                                                  });
   }
   
   if(htmlOut === false)
   {
-    var notifText = e.postData.contents;  
-    var htmlOut = doPosting(notifText);
+    if(e.postData)
+    {
+      var notifText = e.postData.contents;  
+      var htmlOut = doPosting(notifText);
+    }
+    
+    else
+    {
+      var htmlOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>");
+    }
   }
   
   else

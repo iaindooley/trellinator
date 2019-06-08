@@ -125,9 +125,19 @@ function thisIsMyToken(id)
 ////////////////////////////////////////////////////////////////////////////////////  
 // This POST is what does all the hard work
 function doPosting(notifText) 
-{   
-  //var notifText = e.postData.contents;    
-  var notifData = JSON.parse(notifText);
+{
+  try
+  {
+    //var notifText = e.postData.contents;    
+    var notifData = JSON.parse(notifText);
+  }
+  
+  catch(e)
+  {
+    var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")
+    return postOut;
+  }
+  
   var actionData = notifData.action;
 //----------------------------------------------
   //var parseFlag = false;
@@ -174,6 +184,7 @@ function doPosting(notifText)
     //ignore    
     writeInfo_("Notification: [" + actionType + "-" + actionID + "] ignored (being not at the board level).");
   }
+  
   var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")
   return postOut;
 }

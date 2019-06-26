@@ -537,65 +537,68 @@ function executeNotificationCommand_(notifData)
     var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
     writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-/*
-    var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
-    if(!brdSheet)
+
+    if(SKIP_BOARD_LEVEL_COMMANDS)
     {
-      throw "Board sheet named [" + boardSheetName + "] not found";
-    }
-    var boardMap = brdSheet.getDataRange().getValues();
-    execution_lock.releaseLock();
+        var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
+        if(!brdSheet)
+        {
+          throw "Board sheet named [" + boardSheetName + "] not found";
+        }
+        var boardMap = brdSheet.getDataRange().getValues();
+        execution_lock.releaseLock();
+        
+        for(var i = 1; i < boardMap.length; i++)
+        {
+          var mapRow = boardMap[i];
     
-    for(var i = 1; i < boardMap.length; i++)
-    {
-      var mapRow = boardMap[i];
-
-      var functionName = mapRow[0] + "";        
-      var timeTrigger  = mapRow[1] + "";        
-      try
-      {
-          if(functionName == "")
+          var functionName = mapRow[0] + "";        
+          var timeTrigger  = mapRow[1] + "";        
+          try
           {
-              continue;
+              if(functionName == "")
+              {
+                  continue;
+              }
+              
+              if(timeTrigger != "")
+              {
+                  continue;
+              }
+              //should execute or push to queue
+              if(isTimeLimitApproaching_(tStart))
+              {
+                writeInfo_("time limit approached...can't execute function: " + functionName);
+                quFlag = true;
+                var funcObj = { "functionName" : functionName, "parameters" : notifData};
+                push(new Date(), funcObj);
+                continue;              
+              }     
+              //else
+              writeInfo_("executing realtime function: " + functionName);
+              var currStr = boardSheetName+functionName;
+              var signatStr = createMd5String_(currStr);
+              writeInfo_(currStr + "\n" + signatStr);
+              this[functionName](notifData, signatStr);
           }
-          
-          if(timeTrigger != "")
+          catch(err)
           {
-              continue;
+            try
+            {
+              Notification.logException("Caught expected exception executing: "+functionName,err);
+            }
+    
+            catch(e2)
+            {
+                writeInfo_("function: " + functionName + " " + err);
+                quFlag = true;
+                var funcObj = { "functionName" : functionName, "parameters" : notifData};
+                push(new Date(), funcObj);
+            }
           }
-          //should execute or push to queue
-          if(isTimeLimitApproaching_(tStart))
-          {
-            writeInfo_("time limit approached...can't execute function: " + functionName);
-            quFlag = true;
-            var funcObj = { "functionName" : functionName, "parameters" : notifData};
-            push(new Date(), funcObj);
-            continue;              
-          }     
-          //else
-          writeInfo_("executing realtime function: " + functionName);
-          var currStr = boardSheetName+functionName;
-          var signatStr = createMd5String_(currStr);
-          writeInfo_(currStr + "\n" + signatStr);
-          this[functionName](notifData, signatStr);
-      }
-      catch(err)
-      {
-        try
-        {
-          Notification.logException("Caught expected exception executing: "+functionName,err);
-        }
+        }//loop for all this board's rows ends
+    }
 
-        catch(e2)
-        {
-            writeInfo_("function: " + functionName + " " + err);
-            quFlag = true;
-            var funcObj = { "functionName" : functionName, "parameters" : notifData};
-            push(new Date(), funcObj);
-        }
-      }
-    }//loop for all this board's rows ends
-*/
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
     var execution_lock  = LockService.getScriptLock();
     execution_lock.tryLock(1000);

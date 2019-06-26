@@ -538,7 +538,7 @@ function executeNotificationCommand_(notifData)
     writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-    if(SKIP_BOARD_LEVEL_COMMANDS)
+    if(!SKIP_BOARD_LEVEL_COMMANDS)
     {
         var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
         if(!brdSheet)

@@ -537,6 +537,7 @@ function executeNotificationCommand_(notifData)
     var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
     writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+/*
     var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
     if(!brdSheet)
     {
@@ -594,6 +595,7 @@ function executeNotificationCommand_(notifData)
         }
       }
     }//loop for all this board's rows ends
+*/
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
     var execution_lock  = LockService.getScriptLock();
     execution_lock.tryLock(1000);
@@ -604,6 +606,7 @@ function executeNotificationCommand_(notifData)
     }
     var globalMap = globalSheet.getDataRange().getValues();
     execution_lock.releaseLock();
+
     for(var i = 1; i < globalMap.length; i++)
     {
       var mapRow = globalMap[i];
@@ -625,6 +628,7 @@ function executeNotificationCommand_(notifData)
       var includeList = (mapRow[0] + "").trim();
       var excludeList = (mapRow[1] + "").trim();
       var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.id);
+
       if(!execFlag)
       {
         continue;
@@ -637,7 +641,7 @@ function executeNotificationCommand_(notifData)
         var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
         var signatStr = createMd5String_(currStr);
         writeInfo_(currStr + "\n" + signatStr);
-        this[functionName](notifData, signatStr);          
+        this[functionName](notifData, signatStr);
       }
       catch(err)
       {          
@@ -787,27 +791,38 @@ function checkExecutionCriteria_(includeList, excludeList, boardId)
 //lowercase, spaces-trimmed list of boards
 function getBoardNames4mGroup_(groupName)
 {
-  groupName = groupName.toLowerCase();
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var grpSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
-  var grpData = grpSheet.getDataRange().getValues();
-  var boardList = [];
-  for(var i = 1; i < grpData.length; i++)
+  if(!getBoardNames4mGroup_.board_names_by_group[groupName])
   {
-    //writeInfo_(grpData[i][0] + " vs. " + groupName);
-    if(grpData[i][0].toLowerCase() == groupName)
+    groupName = groupName.toLowerCase();
+    
+    if(!getBoardNames4mGroup_.grpData)
     {
-      var boardStr = (grpData[i][1] + "").toLowerCase().trim();
-      boardList = boardStr.split(GLOBAL_GROUP_SEPARATOR_);
-      boardList = cleanList_(boardList);
-      return boardList;
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var grpSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
+      getBoardNames4mGroup_.grpData = grpSheet.getDataRange().getValues();
     }
-  }//loop ends
+    
+    var grpData = getBoardNames4mGroup_.grpData;
+    var boardList = [];
+    for(var i = 1; i < grpData.length; i++)
+    {
+      //writeInfo_(grpData[i][0] + " vs. " + groupName);
+      if(grpData[i][0].toLowerCase() == groupName)
+      {
+        var boardStr = (grpData[i][1] + "").toLowerCase().trim();
+        boardList = boardStr.split(GLOBAL_GROUP_SEPARATOR_);
+        boardList = cleanList_(boardList);
+        getBoardNames4mGroup_.board_names_by_group[groupName] = boardList;
+      }
+    }//loop ends
+  }
   
-  //if nothing found at all
-  writeInfo_("Group Name [" + groupName + "] not found...");
-  return boardList;
+  return getBoardNames4mGroup_.board_names_by_group[groupName];
 }
+
+getBoardNames4mGroup_.grpData = null;
+getBoardNames4mGroup_.board_names_by_group = {};
+
 //////////////////////////////////////////////////////////////////////////////
 function cleanList_(strList)
 {

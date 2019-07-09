@@ -204,19 +204,19 @@ Trellinator.boardIsInGlobalCommandGroup = function(board,group_name)
       var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
       var globData = globSheet.getDataRange().getValues();
       var added = false;
-      
+
       for(var row = 1; row < globData.length; row++)
-      {
+      { 
         if(globData[row][0] == group_name)
         {
             var value = globData[row][1].trim();
-            
+
             if(value.indexOf(board.id()) > -1)
                 ret = true;
         }
       }//loop for all global commmands ends
    }
-   
+
    return ret;
 }
 

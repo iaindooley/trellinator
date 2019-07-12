@@ -924,21 +924,57 @@ function getAllBoards4Execution_(includeList, excludeList)
 //////////////////////////////////////////////////////////////////////////////
 function getBoardData_(sheetList)
 {
-  var boardList = [];
-  for(var i = 0; i < sheetList.length; i++)
+  if(!getBoardData_.cache)
   {
-    var shName = sheetList[i].getName();
-    if(shName.indexOf(" [") > -1)
+    var boardList = [];
+    for(var i = 0; i < sheetList.length; i++)
     {
-      var pieces = shName.split(" [");
-      var brdName = pieces[0].trim().toLowerCase();
-      var brdID = pieces[1].replace("]","").trim().toLowerCase();
-      boardList.push({name : brdName, id : brdID});
-    }
-  }//loop ends
+      var shName = sheetList[i].getName();
+      if(shName.indexOf(" [") > -1)
+      {
+        var pieces = shName.split(" [");
+        var brdName = pieces[0].trim().toLowerCase();
+        var brdID = pieces[1].replace("]","").trim().toLowerCase();
+        boardList.push({name : brdName, id : brdID});
+      }
+    }//loop ends
+    
+    boardList = boardList.concat(getBoardNamesFromGlobalCommandGroups());
+    getBoardData_.cache = boardList;
+  }
   
-  return boardList;
+  return getBoardData_.cache;
 }
+
+getBoardData_.cache = null;
+
+function getBoardNamesFromGlobalCommandGroups()
+{
+  if(!getBoardNamesFromGlobalCommandGroups.cache)
+  {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var grpSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
+    var grpSheetValues = grpSheet.getDataRange().getValues();
+    var boardList = [];
+    
+    for(var i = 1; i < grpSheetValues.length; i++)
+    {
+      if(parts = /^BOARD (.+) ([a-z0-9]+)$/.exec(grpSheetValues[i][0]))
+      {
+        boardList.push({name: parts[1],id: parts[2]});
+      }
+    }//loop ends
+    
+    getBoardNamesFromGlobalCommandGroups.cache = boardList;
+  }
+  
+  return getBoardNamesFromGlobalCommandGroups.cache;
+}
+
+getBoardNamesFromGlobalCommandGroups.cache = null;
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 function removeBoardSheet_(actionData)
 {

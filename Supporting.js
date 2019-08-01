@@ -673,6 +673,7 @@ function executeNotificationCommand_(notifData)
   {
     execution_lock.releaseLock();
     writeInfo_("Executing Notification Command " + error);
+    writeInfo_("Executing Notification Command Stack " + error["stack"]);
     return successFlag;
   }
   

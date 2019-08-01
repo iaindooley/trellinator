@@ -821,7 +821,7 @@ function getBoardNames4mGroup_(groupName)
     }//loop ends
   }
   
-  return getBoardNames4mGroup_.board_names_by_group[groupName];
+  return getBoardNames4mGroup_.board_names_by_group[groupName] ? getBoardNames4mGroup_.board_names_by_group[groupName]:[];
 }
 
 getBoardNames4mGroup_.grpData = null;

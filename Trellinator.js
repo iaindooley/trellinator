@@ -194,6 +194,42 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
     return board;
 }
 
+Trellinator.boardsInGlobalCommandGroup = function(group_name)
+{
+    var ret = false;
+
+    if(Trellinator.isGoogleAppsScript())
+    {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
+      var globData = globSheet.getDataRange().getValues();
+      var added = false;
+
+      for(var row = 1; row < globData.length; row++)
+      { 
+        if(globData[row][0] == group_name)
+        {
+            ret = new IterableCollection(globData[row][1].trim().split(";;;")).find(function(id)
+                                                                              {
+                                                                                try
+                                                                                {
+                                                                                  return new Board({id: /.+\[([A-Za-z0-9]+)\]/.exec(id)[1]}).load();
+                                                                                }
+                                                                                                    
+                                                                                catch(e)
+                                                                                {
+                                                                                  return false;
+                                                                                }
+                                                                              });
+
+
+        }
+      }//loop for all global commmands ends
+   }
+
+   return ret;
+}
+
 Trellinator.boardIsInGlobalCommandGroup = function(board,group_name)
 {
     var ret = false;

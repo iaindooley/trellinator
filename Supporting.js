@@ -760,12 +760,15 @@ function checkExecutionCriteria_(includeList, excludeList, boardId)
   //case 2:
   if(includeList != "") //either exclude blank or not blank but include has preferrence
   {
+
+
     var grpList = (includeList.toLowerCase()).split(",");
     grpList = cleanList_(grpList);
     for(var i = 0; i < grpList.length; i++)
     {
       var groupName = grpList[i];
       var boardList = getBoardNames4mGroup_(groupName);  
+
       if(boardList.indexOf(boardId) > -1)
       {
         return true;
@@ -795,8 +798,9 @@ function checkExecutionCriteria_(includeList, excludeList, boardId)
 //lowercase, spaces-trimmed list of boards
 function getBoardNames4mGroup_(groupName)
 {
-  if(!getBoardNames4mGroup_.board_names_by_group[groupName])
+  if(!(groupName in getBoardNames4mGroup_.board_names_by_group))
   {
+    writeInfo_("CACHE MISS: "+groupName);
     groupName = groupName.toLowerCase();
     
     if(!getBoardNames4mGroup_.grpData)
@@ -819,6 +823,9 @@ function getBoardNames4mGroup_(groupName)
         getBoardNames4mGroup_.board_names_by_group[groupName] = boardList;
       }
     }//loop ends
+    
+    if(!getBoardNames4mGroup_.board_names_by_group[groupName])
+      getBoardNames4mGroup_.board_names_by_group[groupName] = "";
   }
   
   return getBoardNames4mGroup_.board_names_by_group[groupName] ? getBoardNames4mGroup_.board_names_by_group[groupName]:[];
@@ -842,7 +849,7 @@ function cleanList_(strList)
                             {
                               return str.trim();
                             }
-                          });            
+                          });
   
   return cList;
 }

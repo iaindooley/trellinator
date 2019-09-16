@@ -821,7 +821,6 @@ function getBoardNames4mGroup_(groupName)
 {
   if(!(groupName in getBoardNames4mGroup_.board_names_by_group))
   {
-    writeInfo_("CACHE MISS: "+groupName);
     groupName = groupName.toLowerCase();
     
     if(!getBoardNames4mGroup_.grpData)

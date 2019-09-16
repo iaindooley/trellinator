@@ -151,6 +151,9 @@ function doPosting(notifText)
   {
     writeInfo_("Calling add member to board...process");
     createNewBoardSheet_(actionData);
+    writeInfo_("Execute notification command for Trellinator user added to board as a member");
+    executeNotificationCommand_(notifData);
+    flushInfoBuffer();
   }
   //"removeMemberFromBoard"
   //Only operate if the member removed was the same member that owns our token

@@ -11,6 +11,7 @@ function init()
   {
     var tStart = (new Date()).valueOf();
     createEditDetector_();
+    SheetHooks.initSheetHooks();
     registerWebhook_();//for member
     createBoardDBSheet_();
     storeCurrentUserBoards_();
@@ -22,7 +23,7 @@ function init()
   }
   catch(error)
   {
-    writeInfo_("Trellinator Initialization " + error);
+    writeInfo_("Trellinator Initialization " + error +"\n\n"+error["stack"]);
   }
   
   flushInfoBuffer();
@@ -122,6 +123,12 @@ function thisIsMyToken(id)
     //Only operate if the member removed was the same member that owns our token
     return (TrelloApi.get("tokens/"+creds.token+"/member").id == id);
 }
+
+function handleSheetHookNotification(notifText)
+{
+  doPosting(notifText);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////  
 // This POST is what does all the hard work
 function doPosting(notifText) 
@@ -186,6 +193,7 @@ function doPosting(notifText)
   {
     //ignore    
     writeInfo_("Notification: [" + actionType + "-" + actionID + "] ignored (being not at the board level).");
+    flushInfoBuffer();
   }
   
   var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")

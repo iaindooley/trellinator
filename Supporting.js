@@ -43,7 +43,7 @@ function registerWebhook_(boardID)
     //https://script.google.com/a/macros/workingsoftware.com.au/s/AKfycbxJAzKDhm2EJbtqigVHt7SJfdVTxa2F3h82Wl8MRdPT3IzoyLI/exec
     var urlParts = url.split("/");
     var scriptID = urlParts[urlParts.length - 2];
-    var proxyURL = PROXY_URL_.replace("{script-id}", scriptID);
+    var proxyURL = SheetHooks.proxyUrl();//PROXY_URL_.replace("{script-id}", scriptID);
     var modelID = (!boardID) ? getMyMemberID_() : boardID;//either member id or board id
     //var error = getTrelloKeys_();
     var trelloUrl = constructTrelloURL_("webhooks/?callbackURL=" + encodeURIComponent(proxyURL) + "&idModel=" + modelID);
@@ -200,7 +200,7 @@ function sampleNotification(notification)
 ///////////////////////////////////////////////////////////////////////////////////
 function writeInfo_(msg)
 {
-    write_info_buffer.push(msg);
+  write_info_buffer.push(msg);
 }
 ///////////////////////////////////////////////////////////////////////////////////
 function getWebhooksForToken_(trelloData) 
@@ -545,8 +545,6 @@ function executeNotificationCommand_(notifData)
 {
   try
   {
-    var execution_lock  = LockService.getScriptLock();
-    execution_lock.tryLock(1000);
     var successFlag = false;
     var quFlag = false;
     var tStart = (new Date()).valueOf();
@@ -562,7 +560,6 @@ function executeNotificationCommand_(notifData)
           throw "Board sheet named [" + boardSheetName + "] not found";
         }
         var boardMap = brdSheet.getDataRange().getValues();
-        execution_lock.releaseLock();
         
         for(var i = 1; i < boardMap.length; i++)
         {
@@ -614,17 +611,13 @@ function executeNotificationCommand_(notifData)
           }
         }//loop for all this board's rows ends
     }
-
     writeInfo_("Now coming to " + GLOBAL_COMMANDS_NAME_ + "...");
-    var execution_lock  = LockService.getScriptLock();
-    execution_lock.tryLock(1000);
     var globalSheet = Trellinator.fastGetSheetByName(GLOBAL_COMMANDS_NAME_);
     if(!globalSheet)
     {
       throw "Global command sheet not found";
     }
     var globalMap = globalSheet.getDataRange().getValues();
-    execution_lock.releaseLock();
 
     for(var i = 1; i < globalMap.length; i++)
     {
@@ -642,7 +635,6 @@ function executeNotificationCommand_(notifData)
       {
           continue;
       }
-      
       var funcObj = { "functionName" : functionName, "parameters" : notifData};
       var includeList = (mapRow[0] + "").trim();
       var excludeList = (mapRow[1] + "").trim();
@@ -687,7 +679,6 @@ function executeNotificationCommand_(notifData)
   }
   catch(error)
   {
-    execution_lock.releaseLock();
     writeInfo_("Executing Notification Command " + error);
     writeInfo_("Executing Notification Command Stack " + error["stack"]);
     return successFlag;

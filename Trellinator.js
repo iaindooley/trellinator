@@ -154,48 +154,57 @@ Trellinator.log = function(msg)
 */
 Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
 {
-    if(Trellinator.isGoogleAppsScript())
-    {
-      var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
-      var globData = globSheet.getDataRange().getValues();
-      var added = false;
-      
-      for(var row = 1; row < globData.length; row++)
-      {
-        if(globData[row][0] == group_name)
-        {
-            var value   = globData[row][1].trim();
-            var to_add  = board.name()+" ["+board.id()+"]";
-            var to_test = board.id();
-            var arr = new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
-            {
-                if(elem && (new RegExp("^[^]+ \\[(.+)\\]$").exec(elem.trim())[1].trim() == to_test))
-                    return false;
-                else
-                    return elem;
-            }).asArray();
-            arr.push(to_add);
-            globSheet.getRange(row+1, 2).setValue(arr.join(GLOBAL_GROUP_SEPARATOR_));
-          getBoardData_.cache = null;
-          getBoardNamesFromGlobalCommandGroups.cache
-            timeTrigger4NewBoard_(board.id());
-            writeInfo_("Added "+board.name()+" to "+group_name);
-            added = true;
-        }
-      }//loop for all global commmands ends
-      
-      if(!added)
-      {
-        globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]"]);
-        getBoardData_.cache = null;
-        getBoardNamesFromGlobalCommandGroups.cache
-        timeTrigger4NewBoard_(board.id());
-        writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
-      }
-    }
+  if(Trellinator.isGoogleAppsScript())
+  {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
+    var globData = globSheet.getDataRange().getValues();
+    var added = false;
     
-    return board;
+    for(var row = 1; row < globData.length; row++)
+    {
+      if(globData[row][0] == group_name)
+      {
+        var value   = globData[row][1].trim();
+        var to_add  = board.name()+" ["+board.id()+"]";
+        var to_test = board.id();
+        var arr = new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+                                                                                    {
+                                                                                      if(elem && (new RegExp("^[^]+ \\[(.+)\\]$").exec(elem.trim())[1].trim() == to_test))
+                                                                                      {
+                                                                                        return false;
+                                                                                      }
+                                                                                      
+                                                                                      else
+                                                                                      {
+                                                                                        return elem;
+                                                                                      }
+                                                                                    }).asArray();
+        arr.push(to_add);
+        globSheet.getRange(row+1, 2).setValue(arr.join(GLOBAL_GROUP_SEPARATOR_));
+        getBoardData_.cache = null;
+        getBoardNamesFromGlobalCommandGroups.cache = null;
+        getBoardNames4mGroup_.grpData = null;
+        getBoardNames4mGroup_.board_names_by_group = {};
+        timeTrigger4NewBoard_(board.id());
+        writeInfo_("Added "+board.name()+" to "+group_name);
+        added = true;
+      }
+    }//loop for all global commmands ends
+    
+    if(!added)
+    {
+      globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]"]);
+      getBoardData_.cache = null;
+      getBoardNamesFromGlobalCommandGroups.cache = null;
+      getBoardNames4mGroup_.grpData = null;
+      getBoardNames4mGroup_.board_names_by_group = {};
+      timeTrigger4NewBoard_(board.id());
+      writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
+    }
+  }
+  
+  return board;
 }
 
 Trellinator.boardsInGlobalCommandGroup = function(group_name)

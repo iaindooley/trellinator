@@ -450,7 +450,6 @@ function createNewBoardSheet_(actionData)
     if(success)
     {
       success = false;
-      timeTrigger4NewBoard_(boardID)
 
       if((typeof SKIP_BOARD_LEVEL_COMMANDS === 'undefined') || (typeof SKIP_BOARD_LEVEL_COMMANDS !== 'undefined') && !SKIP_BOARD_LEVEL_COMMANDS)
       {
@@ -471,6 +470,12 @@ function createNewBoardSheet_(actionData)
           Trellinator.addBoardToGlobalCommandGroup(new Board({id: boardID}),group_name);        
           success = true;
       }
+
+      getBoardData_.cache = null;
+      getBoardNamesFromGlobalCommandGroups.cache = null;
+      getBoardNames4mGroup_.grpData = null;
+      getBoardNames4mGroup_.board_names_by_group = {};
+      timeTrigger4NewBoard_(boardID)
     }
     return success;
   }

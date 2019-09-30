@@ -177,6 +177,8 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
             }).asArray();
             arr.push(to_add);
             globSheet.getRange(row+1, 2).setValue(arr.join(GLOBAL_GROUP_SEPARATOR_));
+          getBoardData_.cache = null;
+          getBoardNamesFromGlobalCommandGroups.cache
             timeTrigger4NewBoard_(board.id());
             writeInfo_("Added "+board.name()+" to "+group_name);
             added = true;
@@ -186,6 +188,8 @@ Trellinator.addBoardToGlobalCommandGroup = function(board,group_name)
       if(!added)
       {
         globSheet.appendRow([group_name,board.name()+" ["+board.id()+"]"]);
+        getBoardData_.cache = null;
+        getBoardNamesFromGlobalCommandGroups.cache
         timeTrigger4NewBoard_(board.id());
         writeInfo_("Added "+board.name()+" to NEW global command group "+group_name);
       }

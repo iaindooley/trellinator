@@ -1354,7 +1354,17 @@ Trellinator.cachedCollection = function(key)
 
           ret = new IterableCollection(obj).find(function(inst)
                                                  {
-                                                   return new cons(inst.data);
+                                                   var ret = new cons(inst.data);
+                                                   
+                                                   for(var key in inst)
+                                                   {
+                                                     if(key != "data")
+                                                     {
+                                                       ret[key] = inst[key];
+                                                     }
+                                                   }
+                                                   
+                                                   return ret;
                                                  });
         }
         

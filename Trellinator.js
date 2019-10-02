@@ -1291,3 +1291,116 @@ if (!String.prototype.padStart) {
     };
 }
 
+var trellinator_global_functions_list = this;
+
+Trellinator.cacheCollection = function(key,collection)
+{
+  if(Trellinator.isGoogleAppsScript());
+  {
+    try
+    {
+      var first = collection.first();
+      to_cache = [first.constructor.toString(),collection.obj];
+    }
+    
+    catch(e)
+    {
+      Notification.expectException(InvalidDataException,e);
+      to_cache = [];
+    }
+    
+    PropertiesService
+    .getUserProperties()
+    .setProperty(key,
+                 Card
+                 .findOrCreate(Board
+                               .findOrCreate("TrelloBackedCache")
+                               .findOrCreateList("Cached Collections"),key)
+                 .setDescription(Utilities.base64Encode(JSON.stringify(to_cache))).link());
+  }
+}
+
+Trellinator.cachedCollection = function(key)
+{
+  var ret = null;
+  var props = PropertiesService.getUserProperties();
+  
+  if(Trellinator.isGoogleAppsScript())
+  {
+    var link = props.getProperty(key);
+    
+    try
+    {
+      var card = new Card({link: link});
+
+      if(!card.isArchived())
+      {
+        var cached = JSON.parse(Utilities.newBlob(Utilities.base64Decode(card.description())).getDataAsString());
+
+        if(Object.keys(cached).length)
+        {
+          var cons = new IterableCollection(trellinator_global_functions_list).find(function(glob)
+                                                                                    {
+                                                                                      var ret = false;
+
+                                                                                      if((glob instanceof Function) && (glob.toString() === cached[0]))
+                                                                                      {
+                                                                                        ret = glob;
+                                                                                      }
+                                                                                      
+                                                                                      return ret;
+                                                                                    }).first();
+          var obj = cached[1];
+
+          ret = new IterableCollection(obj).find(function(inst)
+                                                 {
+                                                   return new cons(inst.data);
+                                                 });
+        }
+        
+        else
+        {
+          ret = new IterableCollection({});
+        }
+      }
+      
+      else
+      {
+        props.deleteProperty(key);
+      }
+    }
+    
+    catch(e)
+    {
+      //Doesn't matter why this fails, we just return null if we 
+      //can't get a cached value for any reason. At the same time,
+      //clear existing value from PropertiesService in case it's
+      //because of some corrupt data
+      props.deleteProperty(key);
+    }
+  }
+  
+  return ret;
+}
+
+Trellinator.unCacheCollection = function(key)
+{
+  var props = PropertiesService.getUserProperties();
+  
+  if(Trellinator.isGoogleAppsScript())
+  {
+    if(link = props.getProperty(key))
+    {
+      try
+      {
+        new Card({link: link}).del();
+      }
+      
+      catch(e)
+      {
+      }
+      
+      props.deleteProperty(key);
+    }
+  }
+}

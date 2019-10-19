@@ -141,6 +141,8 @@ function doPosting(notifText)
   
   catch(e)
   {
+    writeInfo_(e+"\n\n"+e["stack"]);
+    flushInfoBuffer();
     var postOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>")
     return postOut;
   }

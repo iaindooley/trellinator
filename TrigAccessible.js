@@ -70,7 +70,7 @@ function processQueue()
         }
         catch(error)
         {
-          writeInfo_("Error executing function: "+error);
+          writeInfo_("Error executing function: "+error+"\n\n"+error["stack"]);
         }
       }
       //exit if exceeding time limit

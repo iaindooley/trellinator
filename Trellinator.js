@@ -1309,14 +1309,28 @@ Trellinator.cacheCollection = function(key,collection)
       to_cache = [];
     }
     
+    var cache_card = Card.findOrCreate(Board
+                                       .findOrCreate("TrelloBackedCache")
+                                       .findOrCreateList("Cached Collections"),key);
+    
+    var cache_text = Utilities.base64Encode(JSON.stringify(to_cache));
+    
+    if(cache_text.length < 16384)
+    {
+      cache_card.setDescription(cache_text);
+    }
+    
+    else
+    {
+      var cache_file = Trellinator.findOrCreateFileByName("TRELLOBACKEDCACHE-"+key,DocumentApp,Trellinator.findOrCreateFolderByName("TRELLOBACKEDCACHE"));
+      DocumentApp.openById(cache_file.getId()).getBody().setText(cache_text);
+      cache_card.attachLink(cache_file.getUrl());
+    }
+    
+    
     PropertiesService
     .getUserProperties()
-    .setProperty(key,
-                 Card
-                 .findOrCreate(Board
-                               .findOrCreate("TrelloBackedCache")
-                               .findOrCreateList("Cached Collections"),key)
-                 .setDescription(Utilities.base64Encode(JSON.stringify(to_cache))).link());
+    .setProperty(key,cache_card.link());
   }
 }
 
@@ -1335,7 +1349,15 @@ Trellinator.cachedCollection = function(key)
 
       if(!card.isArchived())
       {
-        var cached = JSON.parse(Utilities.newBlob(Utilities.base64Decode(card.description())).getDataAsString());
+        if(card.attachments().length())
+        {
+          var cached = JSON.parse(Utilities.newBlob(Utilities.base64Decode(DocumentApp.openByUrl(card.attachments().first().link()).getBody().getText())).getDataAsString());
+        }
+        
+        else
+        {
+          var cached = JSON.parse(Utilities.newBlob(Utilities.base64Decode(card.description())).getDataAsString());
+        }
 
         if(Object.keys(cached).length)
         {

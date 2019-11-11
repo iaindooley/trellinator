@@ -838,6 +838,12 @@ Trellinator.getFileByURL = function(fileUrl)
 Trellinator.getFolderByURL = function(folderUrl)
 {
   var folderID = folderUrl.match(/.*[^-\w]([-\w]{25,})[^-\w]?.*/);
+  
+  if(folderID)
+    folderID = folderID[1];
+  else
+    throw new InvalidDataException("Could not get folder by URL: "+folderUrl);
+  
   var folder = DriveApp.getFolderById(folderID);
   return folder;
 }

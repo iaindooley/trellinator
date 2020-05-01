@@ -34,7 +34,7 @@ function doGet(e)
   
   else
   {
-    var htmlOut = HtmlService.createHtmlOutput("<p>Processed Notification</p>");
+    var htmlOut = HtmlService.createHtmlOutput(htmlOut+"<p>Processed Notification</p>");
     flushInfoBuffer();
   }
   

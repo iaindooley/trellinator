@@ -1,3 +1,4 @@
+<a href="http://docs.trellinator.com/">Full documentation</a>
 The Modules on the right hand side will give you an overview of each group of classes.
 
 Each class is also listed for quick reference in the Classes list below.

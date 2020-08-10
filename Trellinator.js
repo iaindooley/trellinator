@@ -1338,7 +1338,7 @@ Trellinator.cacheCollection = function(key,collection)
     
     else
     {
-      var cache_file = Trellinator.findOrCreateFileByName("TRELLOBACKEDCACHE-"+key,DocumentApp,Trellinator.findOrCreateFolderByName("TRELLOBACKEDCACHE"));
+      var cache_file = Trellinator.findOrCreateFileByName("TRELLOBACKEDCACHE-"+key+cache_card.id(),DocumentApp,Trellinator.findOrCreateFolderByName("TRELLOBACKEDCACHE"));
       DocumentApp.openById(cache_file.getId()).getBody().setText(cache_text);
       cache_card.attachLink(cache_file.getUrl());
     }

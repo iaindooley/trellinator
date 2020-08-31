@@ -1297,6 +1297,16 @@ if (!String.prototype.padStart) {
     };
 }
 
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+if (!String.prototype.endsWith) {
+	String.prototype.endsWith = function(search, this_len) {
+		if (this_len === undefined || this_len > this.length) {
+			this_len = this.length;
+		}
+		return this.substring(this_len - search.length, this_len) === search;
+	};
+}
+
 var trellinator_global_functions_list = this;
 
 Trellinator.cacheCollection = function(key,collection)
@@ -1328,7 +1338,7 @@ Trellinator.cacheCollection = function(key,collection)
     
     else
     {
-      var cache_file = Trellinator.findOrCreateFileByName("TRELLOBACKEDCACHE-"+key,DocumentApp,Trellinator.findOrCreateFolderByName("TRELLOBACKEDCACHE"));
+      var cache_file = Trellinator.findOrCreateFileByName("TRELLOBACKEDCACHE-"+key+cache_card.id(),DocumentApp,Trellinator.findOrCreateFolderByName("TRELLOBACKEDCACHE"));
       DocumentApp.openById(cache_file.getId()).getBody().setText(cache_text);
       cache_card.attachLink(cache_file.getUrl());
     }

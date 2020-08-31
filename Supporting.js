@@ -690,6 +690,8 @@ function executeNotificationCommand_(notifData)
     execution_lock.releaseLock();
     writeInfo_("Executing Notification Command " + error);
     writeInfo_("Executing Notification Command Stack " + error["stack"]);
+    var funcObj = { "functionName" : "executeNotificationCommand_", "parameters" : notifData};
+    push(new Date(), funcObj);
     return successFlag;
   }
   

@@ -622,6 +622,19 @@ Date.prototype.monthName = function()
     return this.getMonthName();
 }
 
+/**
+* Find out the name of the month, returned
+* as the short month name eg. Aug
+* @memberof module:TrellinatorCore.Trellinator
+* @example
+* Trellinator.now().shortMonthName();
+*/
+Date.prototype.shortMonthName = function()
+{
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return monthNames[this.getMonth()];
+}
+
 //DEPRECATED use monthName
 Date.prototype.getMonthName = function()
 {
@@ -807,6 +820,31 @@ Date.prototype.stringFormat = function(format)
         throw new Error("Unsupported format passed to Date.stringFormat: "+format+" add more formats!");
 
     return ret;
+}
+
+/**
+* Return a string that is the day number 
+* followed by ordinal suffix (th,rd,st)
+* @memberof module:TrellinatorCore.Trellinator
+* @example
+* Trellinator.now().ordinalDay();
+*/
+Date.prototype.ordinalDay = function()
+{
+    return new Number(this.getDate()).nth();
+}
+
+//https://stackoverflow.com/a/15397539
+Number.prototype.nth= function(){
+    if(this%1) return this;
+    var s= this%100;
+    if(s>3 && s<21) return this+'th';
+    switch(s%10){
+        case 1: return this+'st';
+        case 2: return this+'nd';
+        case 3: return this+'rd';
+        default: return this+'th';
+    }
 }
 
 Trellinator.googleDriveIdRegExp = function()

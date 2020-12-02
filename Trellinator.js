@@ -611,6 +611,26 @@ Date.prototype.dayName = function()
 }
 
 /**
+* Find out the name of the day, returned
+* as the short day name eg. Mon
+* @memberof module:TrellinatorCore.Trellinator
+* @example
+* Trellinator.now().shortDayName();
+*/
+Date.prototype.shortDayName = function()
+{
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+    return weekday[this.getDay()];
+}
+
+/**
 * Find out the name of the month, returned
 * as the full month name eg. August
 * @memberof module:TrellinatorCore.Trellinator

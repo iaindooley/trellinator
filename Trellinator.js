@@ -466,7 +466,7 @@ Date.prototype.minusMinutes = function(minutes)
 */
 Date.prototype.addHours = function(hours)
 {
-    return this.addMinutes(parseInt(hours)*60);
+    return this.addMinutes(parseFloat(hours)*60);
 }
 
 /**
@@ -478,7 +478,7 @@ Date.prototype.addHours = function(hours)
 */
 Date.prototype.minusHours = function(hours)
 {
-    return this.minusMinutes(parseInt(hours)*60);
+    return this.minusMinutes(parseFloat(hours)*60);
 }
 
 /**

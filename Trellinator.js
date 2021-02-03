@@ -543,6 +543,25 @@ Date.prototype.minusWeeks = function(weeks)
     return this.minusDays(parseInt(weeks)*7);
 }
 
+Date.isLeapYear = function (year) { 
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+};
+
+Date.getDaysInMonth = function (year, month) {
+    return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+
+Date.prototype.isLeapYear = function () { 
+    return Date.isLeapYear(this.getFullYear()); 
+};
+
+Date.prototype.getDaysInMonth = function () { 
+    return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+};
+
+Date.prototype.addMonths = function (value) {
+};
+
 /**
 * Add X months to the date
 * @memberof module:TrellinatorCore.Trellinator
@@ -550,9 +569,12 @@ Date.prototype.minusWeeks = function(weeks)
 * @example
 * Trellinator.now().addMonths(1);
 */
-Date.prototype.addMonths = function(months)
+Date.prototype.addMonths = function(value)
 {
-    this.setMonth(this.getMonth() + parseInt(months));
+    var n = this.getDate();
+    this.setDate(1);
+    this.setMonth(this.getMonth() + parseInt(value));
+    this.setDate(Math.min(n, this.getDaysInMonth()));
     return this;
 }
 

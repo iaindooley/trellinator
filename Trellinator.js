@@ -1120,8 +1120,8 @@ var MockDriveFile = function(url,name)
 * used as part of a regular expression
 * @memberof module:TrellinatorCore.Trellinator
 */
-RegExp.escape= function(s) {
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+RegExp.escape = function(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\\\$&');
 };
 
 String.prototype.replaceAll = function(search, replacement) {

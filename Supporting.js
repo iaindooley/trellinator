@@ -156,6 +156,9 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
+  if(COMPLETELY_DISABLE_LOGGING)
+    return;
+  
     try
     {
       var flush_lock  = LockService.getScriptLock();

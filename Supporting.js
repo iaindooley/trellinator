@@ -156,7 +156,7 @@ function getFetchParameters_(methodType)
 var write_info_buffer = new Array();
 function flushInfoBuffer()
 {
-  if(COMPLETELY_DISABLE_LOGGING)
+  if((typeof COMPLETELY_DISABLE_LOGGING !== 'undefined') && COMPLETELY_DISABLE_LOGGING)
     return;
   
     try

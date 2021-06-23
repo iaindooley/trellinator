@@ -1532,3 +1532,33 @@ Trellinator.unCacheCollection = function(key)
     }
   }
 }
+
+Trellinator.configVariable = function(name)
+{
+  var ret = null;
+  
+  if(Trellinator.configVariable.cache[name])
+  {
+    ret = Trellinator.configVariable.cache[name];
+  }
+  
+  else if(Trellinator.isGoogleAppsScript())
+  {
+    var col = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG_NAME_).getDataRange().getValues();
+    new IterableCollection(col).each(function(row)
+                                     {   
+                                       if(row[0] == name)
+                                       {   
+                                         ret = row[1].toString().trim();
+                                         Trellinator.configVariable.cache[name] = ret;
+                                       }   
+                                     }); 
+  }
+  
+  else
+    ret = "dummy";
+  
+  return ret;
+}
+  
+Trellinator.configVariable.cache = {};

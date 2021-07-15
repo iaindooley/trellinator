@@ -559,9 +559,6 @@ Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
-Date.prototype.addMonths = function (value) {
-};
-
 /**
 * Add X months to the date
 * @memberof module:TrellinatorCore.Trellinator

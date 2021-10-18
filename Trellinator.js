@@ -314,6 +314,43 @@ Trellinator.removeBoardFromGlobalCommandGroup = function(board,group_name)
    }
 }
 
+Trellinator.removeBoardFromGlobalCommandGroupById = function(board_id,group_name)
+{
+    if(Trellinator.isGoogleAppsScript())
+    {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var globSheet = Trellinator.fastGetSheetByName(GLOBAL_GROUP_NAME_);
+      var globData = globSheet.getDataRange().getValues();
+      var added = false;
+      
+      for(var row = 1; row < globData.length; row++)
+      {
+        if(globData[row][0] == group_name)
+        {
+            var value = globData[row][1].trim();
+            var to_remove = board_id;
+            globSheet.getRange(row+1, 2).setValue(
+            new IterableCollection(value.split(GLOBAL_GROUP_SEPARATOR_)).find(function(elem)
+            {
+                if(elem && (new RegExp("^[^]+ \\[(.+)\\]$").exec(elem.trim())[1].trim() == to_remove))
+                    return false;
+                else
+                    return elem;
+            }).asArray().join(GLOBAL_GROUP_SEPARATOR_)
+            );
+            
+           //We need to do this, but calling this now will
+           //also clear all triggers for the board that are
+           //not from this global command group, so put this
+           //back in when the Trigger system is more consistent
+           //and better refactored
+           //clearTimeTriggers4Board_(board.id());
+            writeInfo_("Removed "+board_id+" from "+group_name);
+        }
+      }//loop for all global commmands ends
+   }
+}
+
 //USED INTERNALLY
 Trellinator.getStack = function()
 {

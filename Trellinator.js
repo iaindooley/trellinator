@@ -1606,3 +1606,15 @@ Trellinator.configVariable = function(name)
 }
   
 Trellinator.configVariable.cache = {};
+
+
+/**
+* Static method to wrap a regex for safe
+* reuse to avoid this insane JS bug:
+* https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
+* @memberof module:TrellinatorCore.Trellinator
+*/
+Trellinator.regex = function(reg)
+{
+  return (new RegExp(reg));
+}

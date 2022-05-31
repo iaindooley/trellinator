@@ -1604,5 +1604,25 @@ Trellinator.configVariable = function(name)
   
   return ret;
 }
+
+Trellinator.provider = function()
+{
+    var ret = null;
+
+    if((typeof TRELLINATOR_PROVIDER !== 'undefined') && TRELLINATOR_PROVIDER)
+    {
+        ret = JSON.parse(TRELLINATOR_PROVIDER);
+    }
+    
+    return ret;
+}
+
+Trellinator.standardId = function(data)
+{
+    if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+        return data['_id'];
+    else
+        return data.id;
+}
   
 Trellinator.configVariable.cache = {};

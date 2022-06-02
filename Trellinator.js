@@ -47,34 +47,42 @@ var Trellinator = function()
 {
     if(!Trellinator.data)
     {
-      var trello_token = null;
-
-      if(Trellinator.isGoogleAppsScript())
-      {
-          var col = Trellinator.fastGetSheetByName(CONFIG_NAME_).getDataRange().getValues();
-          new IterableCollection(col).each(function(row)
-                                           { 
-                                             if(row[0] == "Trello Token")
-                                             {
-                                               trello_token = row[1];
-                                             }
-                                           });
-      }
+        if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+        {
+            Trellinator.data = WekanApi.login();
+        }
+        
+        else
+        {
+            var trello_token = null;
       
-      else if(Trellinator.override_token)
-      {
-          trello_token = Trellinator.override_token;
-      }
-
-      else
-      {
-        trello_token = process.argv[3];
-      }
-
-      if(trello_token)
-        Trellinator.data = TrelloApi.get("tokens/"+trello_token+"/member");
-      else
-        throw new Error("Could not find trello token");
+            if(Trellinator.isGoogleAppsScript())
+            {
+                var col = Trellinator.fastGetSheetByName(CONFIG_NAME_).getDataRange().getValues();
+                new IterableCollection(col).each(function(row)
+                                                 { 
+                                                   if(row[0] == "Trello Token")
+                                                   {
+                                                     trello_token = row[1];
+                                                   }
+                                                 });
+            }
+            
+            else if(Trellinator.override_token)
+            {
+                trello_token = Trellinator.override_token;
+            }
+      
+            else
+            {
+              trello_token = process.argv[3];
+            }
+      
+            if(trello_token)
+              Trellinator.data = TrelloApi.get("tokens/"+trello_token+"/member");
+            else
+              throw new Error("Could not find trello token");
+        }
     }
 
     this.member = new Member(Trellinator.data);

@@ -1621,6 +1621,14 @@ Trellinator.provider = function()
     {
         ret = JSON.parse(TRELLINATOR_PROVIDER);
     }
+
+    else if(
+      ((provider = Trellinator.configVariable("Trellinator Provider"))) &&
+      ((provider = Trellinator.configVariable("Trellinator Provider")) != "dummy")
+    )
+    {
+        ret = JSON.parse(provider);
+    }
     
     return ret;
 }

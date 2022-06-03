@@ -44,16 +44,38 @@ function registerWebhook_(boardID)
     var urlParts = url.split("/");
     var scriptID = urlParts[urlParts.length - 2];
     var proxyURL = PROXY_URL_.replace("{script-id}", scriptID);
-    var modelID = (!boardID) ? getMyMemberID_() : boardID;//either member id or board id
-    //var error = getTrelloKeys_();
-    var trelloUrl = constructTrelloURL_("webhooks/?callbackURL=" + encodeURIComponent(proxyURL) + "&idModel=" + modelID);
-    var params = getFetchParameters_("post");
-    Utilities.sleep(5);
-    var resp = UrlFetchApp.fetch(trelloUrl, params);
-    //writeInfo_(resp.getResponseCode() + ":" + resp.getContentText());
-    var respText = resp.getContentText();
-    var respCode = resp.getResponseCode();
-    var entityMsg = (!boardID) ? " for member." : " for board.";
+
+    if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+    {
+        if(boardID)
+        {
+            var resp = WekanApi.post("boards/"+boardID+"/integrations",{url: proxyURL});
+            var respCode = 200;
+            var respText = JSON.stringify(resp);
+            var entityMsg = "Registered webhook for board: "+boardID;
+        }
+
+        else
+        {
+            var respCode = 200;
+            var entityMsg = "Can't register a webhook for a member in WeKan API yet";
+        }
+    }
+
+    else
+    {
+        var modelID = (!boardID) ? getMyMemberID_() : boardID;//either member id or board id
+        //var error = getTrelloKeys_();
+        var trelloUrl = constructTrelloURL_("webhooks/?callbackURL=" + encodeURIComponent(proxyURL) + "&idModel=" + modelID);
+        var params = getFetchParameters_("post");
+        Utilities.sleep(5);
+        var resp = UrlFetchApp.fetch(trelloUrl, params);
+        //writeInfo_(resp.getResponseCode() + ":" + resp.getContentText());
+        var respText = resp.getContentText();
+        var respCode = resp.getResponseCode();
+        var entityMsg = (!boardID) ? " for member." : " for board.";
+    }
+
     if (respCode == 200) 
     {
       writeInfo_("Webhook successfully registered" + entityMsg);// + "\n" + respText);
@@ -84,7 +106,7 @@ function registerWebhook_(boardID)
   }
   catch(e)
   {
-    writeInfo_("Webhook registration..." + e);
+    writeInfo_("Webhook registration..." + e+"\n"+e["stack"]);
     return false;
   }
 }
@@ -229,21 +251,27 @@ function listCurrentUserBoards_()
   //var tStart = new Date().valueOf();
   //var sheet = SpreadsheetApp.getActiveSheet();
   
-//  var error = checkControlValues_(false,false);
-//  if (error.err != "") {
-//    writeInfo_(error.err);
-//    return [];
-//  }
+  //var error = checkControlValues_(false,false);
+  //if (error.err != "") {
+  //  writeInfo_(error.err);
+  //  return [];
+  //}
   
   //tStart = showUpdateProgress_(tStart, sheet, msgList);
   
-  var url = constructTrelloURL_("members/me/boards?filter=open");
-  var params = getFetchParameters_("get");
-  Utilities.sleep(5);
-  var resp = UrlFetchApp.fetch(url, params);
-  var values = JSON.parse(resp.getContentText())
-  writeInfo_("No of Boards retrieved: " + values.length);
-  //tStart = showUpdateProgress_(tStart, sheet, msgList);
+  if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+      var values = new Trellinator().boards().asArray();
+  else
+  {
+      var url = constructTrelloURL_("members/me/boards?filter=open");
+      var params = getFetchParameters_("get");
+      Utilities.sleep(5);
+      var resp = UrlFetchApp.fetch(url, params);
+      var values = JSON.parse(resp.getContentText())
+      writeInfo_("No of Boards retrieved: " + values.length);
+      //tStart = showUpdateProgress_(tStart, sheet, msgList);
+  }
+
   return values;
 }
 ///////////////////////////////////////////////////////////////////////////////////
@@ -253,7 +281,10 @@ function storeCurrentUserBoards_()
   var boardData = [];
   for(var i = 0; i < boards.length; i++)
   {
-    boardData.push([boards[i].name, boards[i].id])
+    if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+        boardData.push([boards[i].name(), boards[i].id()])
+    else
+        boardData.push([boards[i].name, boards[i].id])
   }//loop ends  
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var brdSheet = Trellinator.fastGetSheetByName(BOARD_DB_NAME_);
@@ -543,6 +574,7 @@ function timeTrigger4NewBoard_(boardID)
   }//loop for all global commmands ends
   writeInfo_("Total " + globTrigCount + " time-trigger(s) added for new board.");
 }
+
 //////////////////////////////////////////////////////////////////////////////
 function executeNotificationCommand_(notifData)
 {
@@ -553,12 +585,16 @@ function executeNotificationCommand_(notifData)
     var successFlag = false;
     var quFlag = false;
     var tStart = (new Date()).valueOf();
-    var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
-    writeInfo_("Processing notification for board: " + boardSheetName);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
 
     if((typeof SKIP_BOARD_LEVEL_COMMANDS === 'undefined') || (typeof SKIP_BOARD_LEVEL_COMMANDS !== 'undefined') && !SKIP_BOARD_LEVEL_COMMANDS)
     {
+        if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+            throw new InvalidRequestException("WeKan API currently only works if SKIP_BOARD_LEVEL_COMMANDS is enabled");
+
+        var boardSheetName = notifData.action.data.board.name + " [" + notifData.action.data.board.id + "]";
+        writeInfo_("Processing notification for board: " + boardSheetName);
+
         var brdSheet = Trellinator.fastGetSheetByName(boardSheetName);
         if(!brdSheet)
         {
@@ -649,7 +685,13 @@ function executeNotificationCommand_(notifData)
       var funcObj = { "functionName" : functionName, "parameters" : notifData};
       var includeList = (mapRow[0] + "").trim();
       var excludeList = (mapRow[1] + "").trim();
-      var execFlag = checkExecutionCriteria_(includeList, excludeList, notifData.action.data.board.id);
+
+      if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+          var check_board_id = notifData.boardId;
+      else
+          var check_board_id = notifData.action.data.board.id;
+
+      var execFlag = checkExecutionCriteria_(includeList, excludeList,check_board_id);
 
       if(!execFlag)
       {
@@ -658,9 +700,14 @@ function executeNotificationCommand_(notifData)
       //else execute function
       try
       {
+        if((prov = Trellinator.provider()) && (prov.name == "WeKan"))
+          var action = notifData.description;
+        else
+          var action = notifData.action.type;
+
         //should execute or push to queue
         writeInfo_("executing realtime function from global commands: " + functionName);
-        var currStr = [GLOBAL_COMMANDS_NAME_ , notifData.action.type , functionName].join(",");
+        var currStr = [GLOBAL_COMMANDS_NAME_ , action , functionName].join(",");
         var signatStr = createMd5String_(currStr);
         writeInfo_(currStr + "\n" + signatStr);
         this[functionName](notifData, signatStr);
@@ -778,6 +825,7 @@ function createGlobalGroupSheet_()
   ss.moveActiveSheet(configSheet.getIndex() + 1);  
   configSheet.activate();
 }
+
 //////////////////////////////////////////////////////////////////////////////
 function checkExecutionCriteria_(includeList, excludeList, boardId)
 {   
@@ -800,7 +848,7 @@ function checkExecutionCriteria_(includeList, excludeList, boardId)
       var groupName = grpList[i];
       var boardList = getBoardNames4mGroup_(groupName);  
 
-      if(boardList.indexOf(boardId) > -1)
+      if(boardList.indexOf(boardId.toLowerCase()) > -1)
       {
         return true;
       }

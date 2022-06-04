@@ -1588,8 +1588,8 @@ Trellinator.unCacheCollection = function(key)
 Trellinator.configVariable = function(name)
 {
   var ret = null;
-  
-  if(Trellinator.configVariable.cache[name])
+
+  if(name in Trellinator.configVariable.cache)
   {
     ret = Trellinator.configVariable.cache[name];
   }

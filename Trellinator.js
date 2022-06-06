@@ -1610,6 +1610,9 @@ Trellinator.configVariable = function(name)
   else
     ret = "dummy";
   
+  if(!(name in Trellinator.configVariable.cache))
+    Trellinator.configVariable.cache[name] = false;
+    
   return ret;
 }
 
